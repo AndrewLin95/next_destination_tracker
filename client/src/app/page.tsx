@@ -12,7 +12,7 @@ export default function Home() {
     <>
       <div className="w-screen h-screen overflow-hidden flex flex-col justify-center items-center">
         <div className="h-5/12 w-1/5 flex flex-col py-12 px-8 border border-blue-200">
-          {signUpToggle ? (
+          {!signUpToggle ? (
             <div className="flex justify-center text-5xl"> Welcome </div>
           ) : (
             <div className="flex justify-center text-5xl"> Sign Up </div>
@@ -28,7 +28,7 @@ export default function Home() {
             />
           </div>
 
-          {signUpToggle ? (
+          {!signUpToggle ? (
             <div className="w-full">
               <input
                 className="w-full my-2 p-2"
@@ -49,7 +49,7 @@ export default function Home() {
                 Login
               </button>
               <div className="flex justify-center pt-3">
-                Don&#39t have an account? &nbsp;
+                Do not have an account? &nbsp;
                 <span
                   className="font-bold text-blue-300"
                   // @click="handleSignUpToggle(true)"
