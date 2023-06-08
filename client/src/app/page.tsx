@@ -1,4 +1,5 @@
 "use client";
+import InLineTextButton from "@/components/InLineTextButton";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -8,10 +9,15 @@ export default function Home() {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
+  const [signupFirstName, setSignupFirstName] = useState("");
+  const [signupLastName, setSignupLastName] = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
+
   return (
     <>
       <div className="w-screen h-screen overflow-hidden flex flex-col justify-center items-center">
-        <div className="h-5/12 w-1/5 flex flex-col py-12 px-8 border border-blue-200">
+        <div className="h-5/12 w-4/5 max-w-sm flex flex-col py-12 px-8 border border-blue-200">
           {!signUpToggle ? (
             <div className="flex justify-center text-5xl"> Welcome </div>
           ) : (
@@ -29,18 +35,19 @@ export default function Home() {
           </div>
 
           {!signUpToggle ? (
+            // Login Component
             <div className="w-full">
               <input
                 className="w-full my-2 p-2"
                 placeholder="Email"
                 type="email"
-                v-model="loginEmail"
+                onChange={(e) => setLoginEmail(e.target.value)}
               />
               <input
                 className="w-full my-2 p-2"
                 placeholder="Password"
                 type="password"
-                v-model="loginPassword"
+                onChange={(e) => setLoginPassword(e.target.value)}
               />
               <button
                 className="mt-4 w-full"
@@ -50,48 +57,43 @@ export default function Home() {
               </button>
               <div className="flex justify-center pt-3">
                 Do not have an account? &nbsp;
-                <span
-                  className="font-bold text-blue-300"
-                  // @click="handleSignUpToggle(true)"
-                >
-                  Sign Up
+                <span onClick={() => setSignUpToggle(true)}>
+                  <InLineTextButton buttonText="Sign Up" />
                 </span>
               </div>
             </div>
           ) : (
-            <div v-else className="w-full">
+            // Sign up Component
+            <div className="w-full">
               <div className="flex flex-row justify-around">
                 <input
                   className="w-[50%] my-2 p-2 mr-2"
                   placeholder="First Name"
-                  v-model="signupFirstName"
+                  onChange={(e) => setSignupFirstName(e.target.value)}
                 />
                 <input
                   className="w-[50%] my-2 p-2"
                   placeholder="Last Name"
-                  v-model="signupLastName"
+                  onChange={(e) => setSignupLastName(e.target.value)}
                 />
               </div>
               <input
                 className="w-full my-2 p-2"
                 placeholder="Email"
                 type="email"
-                v-model="signupEmail"
+                onChange={(e) => setSignupEmail(e.target.value)}
               />
               <input
                 className="w-full my-2 p-2"
                 placeholder="Password"
                 type="password"
-                v-model="signupPassword"
+                onChange={(e) => setSignupPassword(e.target.value)}
               />
               <button className="mt-2 w-full">Sign Up</button>
               <div className="flex justify-center pt-3">
                 Already have an account? &nbsp;
-                <span
-                  className="font-bold text-blue-300"
-                  // @click="handleSignUpToggle(false)"
-                >
-                  Log In
+                <span onClick={() => setSignUpToggle(false)}>
+                  <InLineTextButton buttonText="Log In" />
                 </span>
               </div>
             </div>
