@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 const bcrypt = require("bcryptjs");
+const passport = require('passport');
+const localStrategy = require('passport-local').Strategy;
 
 dotenv.config();
 const app: Express = express();
@@ -17,6 +19,36 @@ db.once("open", () => console.log("Connected to DB!"));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
+
+const AuthUserSchema = require("./src/models/authUserSchema")
+
+passport.use(
+  'login',
+  new localStrategy(
+    {
+      usernameField: 'username',
+      passwordField: 'password'
+    },
+    async (username: any, password: any, done: any) => {
+      try {
+        const user = await AuthUserSchema.findOne({ userEmail: username });
+        if (!user) {
+          return done(null, false, { message: "Incorrect username" });
+        };
+        
+        bcrypt.compare(password, user.userPassword, (err: any, res: any) => {
+          if (res) {
+            return done(null, user, { message: 'Logged in Successfully' });
+          } else {
+            return done(null, false, { message: "Incorrect password"});
+          }
+        })
+      } catch (error) {
+        return done(error);
+      }
+    }
+  )
+);
 
 // Routes
 // import authRoutes from './src/routes/authRoutes';
