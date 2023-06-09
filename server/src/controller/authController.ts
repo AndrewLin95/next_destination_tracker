@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { IGetUserAuthInfoRequest } from '../utils/definitions'
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const authService = require('../services/authService');
@@ -12,7 +13,7 @@ export const signUp = async (req: Request, res: Response) => {
   }
 }
 
-export const logIn = async (req: any, res: Response, next: any ) => {
+export const logIn = async (req: IGetUserAuthInfoRequest, res: Response, next: any ) => {
   passport.authenticate(
     'login',
     async (err: any, user: any, info: any) => {
