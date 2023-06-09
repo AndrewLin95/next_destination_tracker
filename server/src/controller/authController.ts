@@ -13,7 +13,6 @@ export const signUp = async (req: Request, res: Response) => {
 }
 
 export const logIn = async (req: any, res: Response, next: any ) => {
-
   passport.authenticate(
     'login',
     async (err: any, user: any, info: any) => {
@@ -31,7 +30,7 @@ export const logIn = async (req: any, res: Response, next: any ) => {
             if (error) return next(error);
 
             const body = { _id: user._id, email: user.email };
-            const token = jwt.sign({ user: body }, 'TOP_SECRET');
+            const token = jwt.sign({ user: body }, process.env.JWT_SECRET);
 
             return res.json({ token });
           }
@@ -41,7 +40,6 @@ export const logIn = async (req: any, res: Response, next: any ) => {
       }
     }
   )(req, res, next);
-
 }
 
 export const test = async (req: Request, res: Response) => {

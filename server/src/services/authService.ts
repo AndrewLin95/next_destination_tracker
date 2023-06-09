@@ -1,6 +1,6 @@
 import { ErrorRequestHandler, Request } from "express";
-const AuthUserSchema = require("../models/AuthUserSchema");
 const bcrypt = require("bcryptjs");
+const AuthUserSchema = require("../models/AuthUserSchema");
 
 const signUpService = async (req: Request) => {
   try {
