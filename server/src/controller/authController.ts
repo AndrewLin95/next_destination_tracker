@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { IGetUserAuthInfoRequest } from '../utils/definitions'
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
@@ -13,7 +13,7 @@ export const signUp = async (req: Request, res: Response) => {
   }
 }
 
-export const logIn = async (req: IGetUserAuthInfoRequest, res: Response, next: any ) => {
+export const logIn = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction ) => {
   passport.authenticate(
     'login',
     async (err: any, user: any, info: any) => {
@@ -29,9 +29,12 @@ export const logIn = async (req: IGetUserAuthInfoRequest, res: Response, next: a
           { session: false },
           async (error: any) => {
             if (error) return next(error);
-
-            const body = { _id: user._id, email: user.email };
-            const token = jwt.sign({ user: body }, process.env.JWT_SECRET);
+            debugger;
+            const body = { 
+              _id: user._id, 
+              email: user.userEmail
+            };
+            const token = jwt.sign({ user: body }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
             return res.json({ token });
           }
