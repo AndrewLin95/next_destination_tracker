@@ -29,7 +29,6 @@ export const logIn = async (req: IGetUserAuthInfoRequest, res: Response, next: N
           { session: false },
           async (error: any) => {
             if (error) return next(error);
-            debugger;
             const body = { 
               _id: user._id, 
               email: user.userEmail
