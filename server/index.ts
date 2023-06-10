@@ -71,8 +71,9 @@ passport.use(
 
 // Routes
 import authRoutes from './src/routes/authRoutes';
-app.use('/api/auth', authRoutes);
 import testSecureRoute from './src/routes/testSecureRoute';
+
+app.use('/api/auth', authRoutes);
 app.use('/api/test', passport.authenticate('jwt', { session: false }) ,testSecureRoute);
 
 
