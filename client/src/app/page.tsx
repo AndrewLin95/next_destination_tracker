@@ -2,6 +2,7 @@
 import InLineTextButton from "@/components/InLineTextButton";
 import Image from "next/image";
 import { useState } from "react";
+import axios from "axios";
 
 export default function Home() {
   const [signUpToggle, setSignUpToggle] = useState(false);
@@ -13,6 +14,34 @@ export default function Home() {
   const [signupLastName, setSignupLastName] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
+
+  const handleLogin = async () => {
+    try {
+      const body = {
+        email: loginEmail,
+        password: loginPassword,
+      };
+      const response = await axios.post("api/auth/login", body);
+      window.alert(response.data.token);
+    } catch (err) {
+      window.alert(`error: ${err}`);
+    }
+  };
+
+  const handleSignUp = async () => {
+    try {
+      const body = {
+        signupEmail: signupEmail,
+        signupPassword: signupPassword,
+        signupFirstName: signupFirstName,
+        signupLastName: signupLastName,
+      };
+      const response = await axios.post("api/auth/signup", body);
+      // TODO: response handling
+    } catch (err) {
+      window.alert(`error: ${err}`);
+    }
+  };
 
   return (
     <>
@@ -49,10 +78,7 @@ export default function Home() {
                 type="password"
                 onChange={(e) => setLoginPassword(e.target.value)}
               />
-              <button
-                className="mt-4 w-full"
-                // @click="handleLogin()"
-              >
+              <button className="mt-4 w-full" onClick={() => handleLogin()}>
                 Login
               </button>
               <div className="flex justify-center pt-3">
@@ -89,7 +115,9 @@ export default function Home() {
                 type="password"
                 onChange={(e) => setSignupPassword(e.target.value)}
               />
-              <button className="mt-2 w-full">Sign Up</button>
+              <button className="mt-2 w-full" onClick={() => handleSignUp()}>
+                Sign Up
+              </button>
               <div className="flex justify-center pt-3">
                 Already have an account? &nbsp;
                 <span onClick={() => setSignUpToggle(false)}>
