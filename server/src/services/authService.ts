@@ -12,8 +12,6 @@ const signUp = async (req: Request) => {
 
     const saltLength = 10;
     bcrypt.hash(req.body.signupPassword, saltLength, async(err: ErrorRequestHandler, hashedPassword: string) => {
-      console.log(err);
-
       const user = new AuthUserSchema({
         userEmail: req.body.signupEmail,
         userPassword: hashedPassword,
@@ -21,9 +19,7 @@ const signUp = async (req: Request) => {
         firstName: req.body.signupFirstName,
         lastName: req.body.signupLastName,
       })
-  
       const result = await user.save();
-      
       return result;
     })
 
