@@ -1,6 +1,8 @@
 import { ErrorRequestHandler, Request } from "express";
 const bcrypt = require("bcryptjs");
 const AuthUserSchema = require("../models/AuthUserSchema");
+const jwt = require('jsonwebtoken');
+import { jwtToken } from "../utils/types";
 
 const signUp = async (req: Request) => {
   try {
@@ -28,8 +30,32 @@ const signUp = async (req: Request) => {
   }
 };
 
+const verifyToken = async (req: Request) => {
+  const token: string = req.body.token;
+  if (token) {
+    const decodedToken: jwtToken = jwt.verify(token, process.env.JWT_SECRET);
+    const now = Date.now();
+
+    if (decodedToken.exp > now) {
+      return 'Invalid token'
+    } else {
+      const body = { 
+        _id: decodedToken.user._id, 
+        email: decodedToken.user.email
+      };
+      const refreshToken: string = jwt.sign({ user: body }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+      return refreshToken;
+    }
+  } else {
+    return "Invalid token"
+  }
+
+}
+
 const authService = {
-  signUp
+  signUp,
+  verifyToken,
 };
 
 export default authService;

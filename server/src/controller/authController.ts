@@ -45,6 +45,15 @@ export const logIn = async (req: IGetUserAuthInfoRequest, res: Response, next: N
   )(req, res, next);
 }
 
+export const verifyToken = async (req: Request, res: Response) => {
+  try {
+    const response = await authService.verifyToken(req);
+    res.status(200).send(JSON.stringify(response))
+  } catch (err) {
+    res.status(500).send(err);
+  }
+}
+
 export const test = async (req: Request, res: Response) => {
   try {
     res.status(200).send(JSON.stringify('asdfasdf'));
