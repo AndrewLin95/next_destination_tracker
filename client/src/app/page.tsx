@@ -6,9 +6,7 @@ import axios from "axios";
 import Image from "next/image";
 import InLineTextButton from "@/components/InLineTextButton";
 
-interface Props {}
-
-const Home: NextPage<Props> = () => {
+const Home: NextPage = () => {
   const router = useRouter();
   const [signUpToggle, setSignUpToggle] = useState(false);
 
@@ -29,11 +27,11 @@ const Home: NextPage<Props> = () => {
       return;
     }
 
-    const body = {
-      token: userToken,
-    };
-
     const validateJWT = async () => {
+      const body = {
+        token: userToken,
+      };
+
       const response = await axios.post("api/auth/verifytoken", body);
 
       if (response.data === "Invalid token") {
@@ -57,7 +55,6 @@ const Home: NextPage<Props> = () => {
       const response = await axios.post("api/auth/login", body);
       localStorage.setItem("user", JSON.stringify(response.data.token));
       router.push("/homepage");
-      // const items = JSON.parse(localStorage.getItem('user') as string);
     } catch (err) {
       window.alert(`error: ${err}`);
     }
