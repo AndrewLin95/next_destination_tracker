@@ -74,8 +74,7 @@ import authRoutes from './src/routes/authRoutes';
 import testSecureRoute from './src/routes/testSecureRoute';
 
 app.use('/api/auth', authRoutes);
-app.use('/api/test', passport.authenticate('jwt', { session: false }) ,testSecureRoute);
-
+app.use('/api/test', passport.authenticate('jwt', { session: false }), testSecureRoute);
 
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);

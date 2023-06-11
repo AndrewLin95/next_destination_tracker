@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
 import { IGetUserAuthInfoRequest } from '../utils/definitions'
+import authService from '../services/authService';
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
-const authService = require('../services/authService');
 
 export const signUp = async (req: Request, res: Response) => {
   try {
-    const response = await authService.signUpService(req);
+    const response = await authService.signUp(req);
     res.status(200).send(JSON.stringify(response))
   } catch (err) {
     res.status(500).send(err);
