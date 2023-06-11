@@ -3,8 +3,10 @@ import InLineTextButton from "@/components/InLineTextButton";
 import Image from "next/image";
 import { useState } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
   const [signUpToggle, setSignUpToggle] = useState(false);
 
   const [loginEmail, setLoginEmail] = useState("");
@@ -22,7 +24,9 @@ export default function Home() {
         password: loginPassword,
       };
       const response = await axios.post("api/auth/login", body);
-      window.alert(response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.token));
+      router.push("/homePage");
+      // const items = JSON.parse(localStorage.getItem('user') as string);
     } catch (err) {
       window.alert(`error: ${err}`);
     }
