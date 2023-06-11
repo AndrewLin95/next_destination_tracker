@@ -1,11 +1,14 @@
 "use client";
-import InLineTextButton from "@/components/InLineTextButton";
-import Image from "next/image";
-import { useState } from "react";
-import axios from "axios";
+import { NextPage } from "next";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import Image from "next/image";
+import InLineTextButton from "@/components/InLineTextButton";
 
-export default function Home() {
+interface Props {}
+
+const Home: NextPage<Props> = () => {
   const router = useRouter();
   const [signUpToggle, setSignUpToggle] = useState(false);
 
@@ -17,6 +20,34 @@ export default function Home() {
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
 
+  useEffect(() => {
+    const userToken: string = JSON.parse(
+      localStorage.getItem("user") as string
+    );
+
+    if (userToken === null) {
+      return;
+    }
+
+    const body = {
+      token: userToken,
+    };
+
+    const validateJWT = async () => {
+      const response = await axios.post("api/auth/verifytoken", body);
+
+      if (response.data === "Invalid token") {
+        localStorage.removeItem("user");
+        return;
+      } else {
+        localStorage.setItem("user", JSON.stringify(response.data));
+
+        router.push("/homepage");
+      }
+    };
+    validateJWT();
+  });
+
   const handleLogin = async () => {
     try {
       const body = {
@@ -25,7 +56,7 @@ export default function Home() {
       };
       const response = await axios.post("api/auth/login", body);
       localStorage.setItem("user", JSON.stringify(response.data.token));
-      router.push("/homePage");
+      router.push("/homepage");
       // const items = JSON.parse(localStorage.getItem('user') as string);
     } catch (err) {
       window.alert(`error: ${err}`);
@@ -134,4 +165,6 @@ export default function Home() {
       </div>
     </>
   );
-}
+};
+
+export default Home;
