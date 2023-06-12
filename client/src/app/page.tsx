@@ -44,7 +44,7 @@ const Home: NextPage = () => {
       }
     };
     validateJWT();
-  });
+  }, [router]);
 
   const handleLogin = async () => {
     try {
