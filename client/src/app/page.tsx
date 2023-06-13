@@ -10,14 +10,6 @@ const Home: NextPage = () => {
   const router = useRouter();
   const [signUpToggle, setSignUpToggle] = useState(false);
 
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-
-  const [signupFirstName, setSignupFirstName] = useState("");
-  const [signupLastName, setSignupLastName] = useState("");
-  const [signupEmail, setSignupEmail] = useState("");
-  const [signupPassword, setSignupPassword] = useState("");
-
   useEffect(() => {
     const userToken: string = JSON.parse(
       localStorage.getItem("user") as string
@@ -46,11 +38,15 @@ const Home: NextPage = () => {
     validateJWT();
   }, [router]);
 
-  const handleLogin = async () => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const email: string = (e.target as HTMLFormElement).email.value;
+    const password: string = (e.target as HTMLFormElement).password.value;
+
     try {
       const body = {
-        email: loginEmail,
-        password: loginPassword,
+        email: email,
+        password: password,
       };
       const response = await axios.post("api/auth/login", body);
       localStorage.setItem("user", JSON.stringify(response.data.token));
@@ -60,13 +56,19 @@ const Home: NextPage = () => {
     }
   };
 
-  const handleSignUp = async () => {
+  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const firstName: string = (e.target as HTMLFormElement).firstName.value;
+    const lastName: string = (e.target as HTMLFormElement).lastName.value;
+    const email: string = (e.target as HTMLFormElement).email.value;
+    const password: string = (e.target as HTMLFormElement).password.value;
+
     try {
       const body = {
-        signupEmail: signupEmail,
-        signupPassword: signupPassword,
-        signupFirstName: signupFirstName,
-        signupLastName: signupLastName,
+        signupEmail: email,
+        signupPassword: password,
+        signupFirstName: firstName,
+        signupLastName: lastName,
       };
       const response = await axios.post("api/auth/signup", body);
       // TODO: response handling
@@ -98,21 +100,28 @@ const Home: NextPage = () => {
           {!signUpToggle ? (
             // Login Component
             <div className="w-full">
-              <input
-                className="w-full my-2 p-2"
-                placeholder="Email"
-                type="email"
-                onChange={(e) => setLoginEmail(e.target.value)}
-              />
-              <input
-                className="w-full my-2 p-2"
-                placeholder="Password"
-                type="password"
-                onChange={(e) => setLoginPassword(e.target.value)}
-              />
-              <button className="mt-4 w-full" onClick={() => handleLogin()}>
-                Login
-              </button>
+              <form onSubmit={handleLogin}>
+                <input
+                  className="w-full my-2 p-2"
+                  placeholder="Email"
+                  type="email"
+                  name="email"
+                  required
+                />
+                <input
+                  className="w-full my-2 p-2"
+                  placeholder="Password"
+                  type="password"
+                  name="password"
+                  required
+                />
+                <button
+                  className="mt-2 w-full border-solid border-gray-600"
+                  type="submit"
+                >
+                  Login
+                </button>
+              </form>
               <div className="flex justify-center pt-3">
                 Do not have an account? &nbsp;
                 <span onClick={() => setSignUpToggle(true)}>
@@ -123,33 +132,42 @@ const Home: NextPage = () => {
           ) : (
             // Sign up Component
             <div className="w-full">
-              <div className="flex flex-row justify-around">
+              <form onSubmit={handleSignUp}>
+                <div className="flex flex-row justify-around">
+                  <input
+                    className="w-[50%] my-2 p-2 mr-2"
+                    placeholder="First Name"
+                    name="firstName"
+                    required
+                  />
+                  <input
+                    className="w-[50%] my-2 p-2"
+                    placeholder="Last Name"
+                    name="lastName"
+                    required
+                  />
+                </div>
                 <input
-                  className="w-[50%] my-2 p-2 mr-2"
-                  placeholder="First Name"
-                  onChange={(e) => setSignupFirstName(e.target.value)}
+                  className="w-full my-2 p-2"
+                  placeholder="Email"
+                  type="email"
+                  name="email"
+                  required
                 />
                 <input
-                  className="w-[50%] my-2 p-2"
-                  placeholder="Last Name"
-                  onChange={(e) => setSignupLastName(e.target.value)}
+                  className="w-full my-2 p-2"
+                  placeholder="Password"
+                  type="password"
+                  name="password"
+                  required
                 />
-              </div>
-              <input
-                className="w-full my-2 p-2"
-                placeholder="Email"
-                type="email"
-                onChange={(e) => setSignupEmail(e.target.value)}
-              />
-              <input
-                className="w-full my-2 p-2"
-                placeholder="Password"
-                type="password"
-                onChange={(e) => setSignupPassword(e.target.value)}
-              />
-              <button className="mt-2 w-full" onClick={() => handleSignUp()}>
-                Sign Up
-              </button>
+                <button
+                  className="mt-2 w-full border-solid border-gray-600"
+                  type="submit"
+                >
+                  Sign Up
+                </button>
+              </form>
               <div className="flex justify-center pt-3">
                 Already have an account? &nbsp;
                 <span onClick={() => setSignUpToggle(false)}>
