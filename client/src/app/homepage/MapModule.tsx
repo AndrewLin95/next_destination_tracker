@@ -37,11 +37,6 @@ const MapModule = () => {
   const [activeInfoWindow, setActiveInfoWindow] = useState();
   const [markers, setMarkers] = useState(initialMarkers);
 
-  const containerStyle = {
-    width: "100%",
-    height: "400px",
-  };
-
   const center = {
     lat: 28.626137,
     lng: 79.821603,
@@ -60,11 +55,12 @@ const MapModule = () => {
     console.log(event.latLng.lat());
     console.log(event.latLng.lng());
   };
+
   return (
     <div className="h-full w-full">
       <LoadScript googleMapsApiKey="">
         <GoogleMap
-          mapContainerStyle={containerStyle}
+          mapContainerClassName="w-full h-full"
           center={center}
           zoom={15}
           onClick={mapClicked}
