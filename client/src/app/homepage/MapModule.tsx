@@ -34,7 +34,7 @@ const MapModule = () => {
       draggable: true,
     },
   ];
-  const [activeInfoWindow, setActiveInfoWindow] = useState();
+  const [activeInfoWindow, setActiveInfoWindow] = useState<number | null>(null);
   const [markers, setMarkers] = useState(initialMarkers);
 
   const center = {
@@ -46,7 +46,7 @@ const MapModule = () => {
     console.log(event.latLng.lat(), event.latLng.lng());
   };
 
-  const markerClicked = (marker: any, index: any) => {
+  const markerClicked = (marker: any, index: number) => {
     setActiveInfoWindow(index);
     console.log(marker, index);
   };
