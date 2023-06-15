@@ -45,7 +45,11 @@ const projectLocationDataSchema = new mongoose.Schema({
       required: false,
     },
     priority: {
-      type: Number,
+      type: String,
+      enum: {
+        values: ["High", "Medium", "Low"],
+        messsage: `{VALUE} is not supported`
+      },
       required: false,
     }
   },
