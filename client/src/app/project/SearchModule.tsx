@@ -1,14 +1,24 @@
-import { useContext } from "react";
-import ProjectContext from "../context/ProjectContext";
+import { Dispatch, FC, SetStateAction } from "react";
+import SearchBar from "./searchComponents/SearchBar";
 
-const SearchModule = () => {
-  const { projectState, setProjectState } = useContext(ProjectContext);
+interface Props {
+  searchText: string;
+  setSearchText: Dispatch<SetStateAction<string>>;
+  handleSearch: () => void;
+}
 
+const SearchModule: FC<Props> = ({
+  searchText,
+  setSearchText,
+  handleSearch,
+}) => {
   return (
     <div className="flex flex-col w-1/5 h-full border border-gray-600">
-      search moudle
-      {projectState}
-      <button onClick={() => setProjectState("2")}>Click</button>
+      <SearchBar
+        searchText={searchText}
+        setSearchText={setSearchText}
+        handleSearch={handleSearch}
+      />
     </div>
   );
 };

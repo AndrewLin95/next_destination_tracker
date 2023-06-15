@@ -38,8 +38,8 @@ const MapModule = () => {
   const [markers, setMarkers] = useState(initialMarkers);
 
   const center = {
-    lat: 28.626137,
-    lng: 79.821603,
+    lat: 43.65107,
+    lng: -79.347015,
   };
 
   const mapClicked = (event: any) => {
@@ -62,7 +62,7 @@ const MapModule = () => {
         <GoogleMap
           mapContainerClassName="w-full h-full"
           center={center}
-          zoom={15}
+          zoom={12}
           onClick={mapClicked}
         >
           {markers.map((marker, index) => (

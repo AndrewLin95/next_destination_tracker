@@ -2,7 +2,7 @@
 import Header from "./Header";
 import { NextPage } from "next";
 
-const homepage: NextPage = () => {
+const HomePage: NextPage = () => {
   return (
     <div className="w-screen h-screen overflow-hidden flex flex-col justify-center items-center">
       <Header />
@@ -11,4 +11,4 @@ const homepage: NextPage = () => {
   );
 };
 
-export default homepage;
+export default HomePage;
