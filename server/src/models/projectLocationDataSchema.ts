@@ -44,6 +44,10 @@ const projectLocationDataSchema = new mongoose.Schema({
       type: String,
       required: false,
     },
+    priority: {
+      type: Number,
+      required: false,
+    }
   },
   scheduleData: {
     scheduleDate: {
