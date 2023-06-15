@@ -33,7 +33,7 @@ export const logIn = async (req: IGetUserAuthInfoRequest, res: Response, next: N
               _id: user._id, 
               email: user.userEmail
             };
-            const token = jwt.sign({ user: body }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            const token = jwt.sign({ user: body }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
             return res.json({ token });
           }
