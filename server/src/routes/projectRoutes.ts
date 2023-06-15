@@ -3,8 +3,6 @@ import { searchLocation } from '../controller/projectController';
 
 const router = express.Router();
 
-router.post('/searchlocation', searchLocation)
-
-
+router.get('/searchlocation', searchLocation)
 
 export default router

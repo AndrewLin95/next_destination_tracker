@@ -6,3 +6,11 @@ export interface jwtToken {
     email: string,
   }
 }
+
+export interface SearchQuery {
+  data: {
+    query: string,
+    projectID: string,
+    projectName: string,
+  }
+}

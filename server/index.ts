@@ -57,7 +57,7 @@ passport.use(
   new JWTstrategy(
     {
       secretOrKey: process.env.JWT_SECRET,
-      jwtFromRequest: ExtractJWT.fromUrlQueryParameter('secret_token')
+      jwtFromRequest: ExtractJWT.fromHeader('jwt')
     },
     async (token: any, done: any) => {
       try {
@@ -71,9 +71,11 @@ passport.use(
 
 // Routes
 import authRoutes from './src/routes/authRoutes';
+import projectRoutes from './src/routes/projectRoutes';
 import testSecureRoute from './src/routes/testSecureRoute';
 
 app.use('/api/auth', authRoutes);
+app.use('/api/project', passport.authenticate('jwt', { session: false }), projectRoutes);
 app.use('/api/test', passport.authenticate('jwt', { session: false }), testSecureRoute);
 
 app.listen(port, () => {
