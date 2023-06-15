@@ -2,6 +2,8 @@
 
 import { Dispatch, createContext, useState } from "react";
 
+// TODO: update to store user shared state
+
 const ProjectContext = createContext<{
   projectState: string;
   setProjectState: Dispatch<string>;
