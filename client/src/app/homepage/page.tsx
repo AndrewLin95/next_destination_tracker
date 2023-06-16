@@ -8,6 +8,8 @@ import NewProject from "./NewProject";
 import ExistingProjects from "./ExistingProjects";
 
 const HomePage: NextPage = () => {
+  // https://blog.logrocket.com/nextauth-js-for-next-js-client-side-authentication/
+
   // Strategy:
   // load all associated projects on mount.
   // map to a component called AllProjects (name TBD)
