@@ -3,6 +3,11 @@ const jwt = require('jsonwebtoken');
 import { jwtToken, SearchQuery } from "../utils/types";
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
 
+const createNewProject = async (payload: any, tokenString: string) => {
+
+}
+
+
 const searchLocation = async (payload: SearchQuery, tokenString: string) => {
   const decodedToken: jwtToken = jwt.verify(tokenString, process.env.JWT_SECRET);
   try {
@@ -19,23 +24,16 @@ const searchLocation = async (payload: SearchQuery, tokenString: string) => {
         googleLocationID: queryResponse.results[0].place_id
       }
 
-      
-
-
-
     } 
 
 
   } catch (err) {
     console.log(err);
   }
-
-
-
-
 }
 
 const projectService = {
+  createNewProject,
   searchLocation,
 }
 
