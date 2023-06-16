@@ -1,13 +1,18 @@
 "use client";
 import { NextPage } from "next";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import Image from "next/image";
+import jwtDecode from "jwt-decode";
+
 import InLineTextButton from "@/components/InLineTextButton";
+import UserContext from "./context/UserProfileContext";
+import { DecodedJWT } from "@/util/models";
 
 const Home: NextPage = () => {
   const router = useRouter();
+  const { userProfileState, setUserProfileState } = useContext(UserContext);
   const [signUpToggle, setSignUpToggle] = useState(false);
 
   useEffect(() => {
@@ -31,12 +36,18 @@ const Home: NextPage = () => {
         return;
       } else {
         localStorage.setItem("user", JSON.stringify(response.data));
+        const decodedJWT: DecodedJWT = jwtDecode(response.data);
+
+        setUserProfileState({
+          userID: decodedJWT.user._id,
+          userEmail: decodedJWT.user.email,
+        });
 
         router.push("/homepage");
       }
     };
     validateJWT();
-  }, [router]);
+  }, []);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

@@ -1,4 +1,5 @@
-import { ProjectProvider } from "./context/ProjectContext";
+// import { ProjectProvider } from "./context/ProjectContext";
+import { UserContextProvider } from "./context/UserProfileContext";
 import "./globals.css";
 import { Inter } from "next/font/google";
 
@@ -16,9 +17,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <ProjectProvider>
+      <UserContextProvider>
         <body className={inter.className}>{children}</body>
-      </ProjectProvider>
+      </UserContextProvider>
     </html>
   );
 }
