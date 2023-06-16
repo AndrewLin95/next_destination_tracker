@@ -9,6 +9,8 @@ import ExistingProjects from "./ExistingProjects";
 
 const HomePage: NextPage = () => {
   // https://blog.logrocket.com/nextauth-js-for-next-js-client-side-authentication/
+  // https://nextjs.org/docs/pages/building-your-application/routing/authenticating bring yourr own database
+  // middleware.ts file. RUNS BEFORE routes? https://nextjs.org/docs/pages/building-your-application/routing/middleware
 
   // Strategy:
   // load all associated projects on mount.
