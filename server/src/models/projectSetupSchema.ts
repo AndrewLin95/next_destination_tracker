@@ -9,6 +9,10 @@ const projectSetupSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  projectName: {
+    type: String,
+    required: true,
+  },
   projectDescription: {
     type: String,
     required: true

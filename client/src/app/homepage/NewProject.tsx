@@ -3,13 +3,18 @@ import Image from "next/image";
 const NewProject = () => {
   return (
     <div className="flex h-1/2 w-full border border-red-500 justify-center items-center">
-      <div className="flex flex-col border border-dashed w-4/12 h-4/5 p-8">
+      <div className="flex flex-col border border-dashed w-4/12 h-5/6 p-6">
         <form>
           <div className="flex flex-col h-full">
             <input
               className="w-full mb-2"
               placeholder="Target Destination"
               name="destination"
+            />
+            <input
+              className="w-full mb-2"
+              placeholder="Project Name"
+              name="name"
             />
             <input
               className="w-full mb-2"
