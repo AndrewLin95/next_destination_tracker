@@ -15,9 +15,11 @@ module.exports = {
     },
     colors: {
       Background: '#1a0e1b',
+      Background_Lighter: '#361e38',
+      Background_Darker: '#160d17',
       Text: '#f4ebf4',
       PrimaryButton: '#a760a9',
-      SecondaryButton: '070407',
+      SecondaryButton: '#070407',
       Accent: '#b070b2'
     }
   },

@@ -1,6 +1,8 @@
 "use client";
 import Header from "./Header";
 import { NextPage } from "next";
+import NewProject from "./NewProject";
+import ExistingProjects from "./ExistingProjects";
 
 const HomePage: NextPage = () => {
   // Strategy:
@@ -11,7 +13,10 @@ const HomePage: NextPage = () => {
   return (
     <div className="w-screen h-screen overflow-hidden flex flex-col justify-center items-center">
       <Header />
-      <div className="flex flex-row w-full h-full"></div>
+      <div className="flex flex-col w-full h-full">
+        <NewProject />
+        <ExistingProjects />
+      </div>
     </div>
   );
 };
