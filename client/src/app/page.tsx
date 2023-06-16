@@ -41,6 +41,7 @@ const Home: NextPage = () => {
         setUserProfileState({
           userID: decodedJWT.user._id,
           userEmail: decodedJWT.user.email,
+          token: response.data,
         });
 
         router.push("/homepage");
@@ -61,6 +62,15 @@ const Home: NextPage = () => {
       };
       const response = await axios.post("api/auth/login", body);
       localStorage.setItem("user", JSON.stringify(response.data.token));
+
+      const decodedJWT: DecodedJWT = jwtDecode(response.data);
+
+      setUserProfileState({
+        userID: decodedJWT.user._id,
+        userEmail: decodedJWT.user.email,
+        token: response.data,
+      });
+
       router.push("/homepage");
     } catch (err) {
       window.alert(`error: ${err}`);

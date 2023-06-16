@@ -2,14 +2,14 @@ import Image from "next/image";
 import { FC } from "react";
 
 interface Props {
-  submitNewProject: () => void;
+  submitNewProject: (e: React.FormEvent<HTMLFormElement>) => void;
 }
 
 const NewProject: FC<Props> = ({ submitNewProject }) => {
   return (
     <div className="flex h-[420px] w-full justify-center items-center mt-8">
       <div className="flex flex-col border border-dashed w-4/12 h-[420px] p-6">
-        <form>
+        <form onSubmit={submitNewProject}>
           <input
             className="w-full mb-2 px-2"
             placeholder="Target Destination"
@@ -18,12 +18,12 @@ const NewProject: FC<Props> = ({ submitNewProject }) => {
           <input
             className="w-full mb-2 px-2"
             placeholder="Project Name"
-            name="name"
+            name="projectName"
           />
           <input
             className="w-full mb-2 px-2"
             placeholder="Project Description"
-            name="description"
+            name="projectDescription"
           />
           <div className="flex flex-row mb-2">
             <div className="w-64">Planned Start Date:</div>

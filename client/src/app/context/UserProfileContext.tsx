@@ -5,6 +5,7 @@ import { Dispatch, SetStateAction, createContext, useState } from "react";
 interface UserProfileState {
   userID: string;
   userEmail: string;
+  token: string;
 }
 
 const UserContext = createContext<{

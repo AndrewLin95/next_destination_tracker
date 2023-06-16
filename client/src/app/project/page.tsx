@@ -4,10 +4,8 @@ import { NextPage } from "next";
 import SearchModule from "./SearchModule";
 import MapModule from "./MapModule";
 import { useContext, useState } from "react";
-import ProjectContext from "../context/ProjectContext";
 
 const ProjectPage: NextPage = () => {
-  const { projectState, setProjectState } = useContext(ProjectContext);
   const [searchText, setSearchText] = useState<string>("");
 
   const handleSearch = () => {
