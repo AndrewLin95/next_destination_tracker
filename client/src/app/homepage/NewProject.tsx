@@ -1,6 +1,11 @@
 import Image from "next/image";
+import { FC } from "react";
 
-const NewProject = () => {
+interface Props {
+  submitNewProject: () => void;
+}
+
+const NewProject: FC<Props> = ({ submitNewProject }) => {
   return (
     <div className="flex h-[420px] w-full justify-center items-center mt-8">
       <div className="flex flex-col border border-dashed w-4/12 h-[420px] p-6">
