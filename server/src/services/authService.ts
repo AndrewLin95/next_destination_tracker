@@ -43,7 +43,7 @@ const verifyToken = async (req: Request) => {
         _id: decodedToken.user._id, 
         email: decodedToken.user.email
       };
-      const refreshToken: string = jwt.sign({ user: body }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      const refreshToken: string = jwt.sign({ user: body }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
       return refreshToken;
     }
