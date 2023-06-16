@@ -7,6 +7,15 @@ export interface jwtToken {
   }
 }
 
+export interface CreateProjectQuery {
+  userID: string,
+  projectName: string,
+  projectDescription: string,
+  projectStartDate: string,
+  projectEndDate: string,
+  projectDestination: string,
+}
+
 export interface SearchQuery {
   data: {
     query: string,
