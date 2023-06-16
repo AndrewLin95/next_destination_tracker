@@ -19,11 +19,11 @@ const projectSetupSchema = new mongoose.Schema({
       required: true
     },
     projectStartDate: {
-      type: Date,
+      type: Number,
       required: true
     },
     projectEndDate: {
-      type: Date,
+      type: Number,
       required: true,
     },
     projectCoords: {

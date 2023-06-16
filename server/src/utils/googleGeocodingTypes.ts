@@ -1,6 +1,10 @@
 export interface GoogleGeocodeResponse { 
-  results: GoogleGeocodeResults[],
-  status: string,
+  data: { 
+    results: GoogleGeocodeResults[],
+    status: string,
+  }
+  status: number,
+  statusText: string,
 }
 
 interface GoogleGeocodeResults {
