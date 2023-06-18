@@ -4,6 +4,7 @@ import { CreateProjectQuery, SearchQuery } from "../utils/types";
 
 export const createNewProject = async (req: Request, res: Response) => {
   try {
+    // to add image
     const payload: CreateProjectQuery = req.body;
 
     const response = await projectService.createNewProject(payload);
