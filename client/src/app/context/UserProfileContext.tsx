@@ -6,14 +6,19 @@ import { UserProfileState } from "@/util/models";
 const UserContext = createContext<{
   userProfileState: UserProfileState | {};
   setUserProfileState: Dispatch<SetStateAction<UserProfileState>>;
-}>({ userProfileState: {}, setUserProfileState: () => null });
+}>({
+  userProfileState: {} as UserProfileState,
+  setUserProfileState: () => null,
+});
 
 export const UserContextProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const [userProfileState, setUserProfileState] = useState({});
+  const [userProfileState, setUserProfileState] = useState<
+    UserProfileState | {}
+  >({} as UserProfileState);
 
   return (
     <UserContext.Provider

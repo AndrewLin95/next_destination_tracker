@@ -1,5 +1,6 @@
 "use client";
 import { NextPage } from "next";
+import { useRouter } from "next/navigation";
 import { useContext, useState, useEffect } from "react";
 import UserContext from "../context/UserProfileContext";
 import { ImageListType } from "react-images-uploading/dist/typings";
@@ -8,15 +9,23 @@ import Header from "./Header";
 import NewProject from "./NewProject";
 import ExistingProjects from "./ExistingProjects";
 import axios from "axios";
-import { authConfig } from "@/util/axiosConfig";
+import { UserProfileState } from "@/util/models";
 
 const HomePage: NextPage = () => {
   // https://blog.logrocket.com/nextauth-js-for-next-js-client-side-authentication/
   // https://nextjs.org/docs/pages/building-your-application/routing/authenticating bring yourr own database
   // middleware.ts file. RUNS BEFORE routes? https://nextjs.org/docs/pages/building-your-application/routing/middleware
+  const router = useRouter();
 
   const { userProfileState, setUserProfileState } = useContext(UserContext);
   const [uploadedImage, setUploadedImage] = useState<any[]>([]);
+
+  useEffect(() => {
+    console.log(userProfileState);
+    if ((userProfileState as UserProfileState).token === undefined) {
+      router.push("/");
+    }
+  }, []);
 
   const submitNewProject = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,7 +39,7 @@ const HomePage: NextPage = () => {
     try {
       const url = "/api/project/newproject";
       const body = {
-        userID: "646d080dc5cfef7a48897822",
+        userID: (userProfileState as UserProfileState).userID,
         projectName: projectName,
         projectDescription: projectDescription,
         projectStartDate: startDate,
@@ -38,7 +47,13 @@ const HomePage: NextPage = () => {
         projectDestination: destination,
         projectImage: uploadedImage[0].dataURL,
       };
-
+      const authConfig = {
+        headers: {
+          Authorization: `Bearer ${
+            (userProfileState as UserProfileState).token
+          }`,
+        },
+      };
       const response = await axios.post(url, body, authConfig);
       console.log(response);
     } catch (err) {
