@@ -26,6 +26,10 @@ const projectSetupSchema = new mongoose.Schema({
       type: Number,
       required: true,
     },
+    projectImage: {
+      type: String,
+      required: true,
+    },
     projectCoords: {
       destination: {
         type: String,
