@@ -6,3 +6,9 @@ export interface DecodedJWT {
     _id: string
   }
 }
+
+export interface UserProfileState {
+  userID: string;
+  userEmail: string;
+  token: string;
+}

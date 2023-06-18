@@ -1,12 +1,7 @@
 "use client";
 
 import { Dispatch, SetStateAction, createContext, useState } from "react";
-
-interface UserProfileState {
-  userID: string;
-  userEmail: string;
-  token: string;
-}
+import { UserProfileState } from "@/util/models";
 
 const UserContext = createContext<{
   userProfileState: UserProfileState | {};

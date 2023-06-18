@@ -7,18 +7,16 @@ import { ImageListType } from "react-images-uploading/dist/typings";
 import Header from "./Header";
 import NewProject from "./NewProject";
 import ExistingProjects from "./ExistingProjects";
+import axios from "axios";
+import { authConfig } from "@/util/axiosConfig";
 
 const HomePage: NextPage = () => {
   // https://blog.logrocket.com/nextauth-js-for-next-js-client-side-authentication/
   // https://nextjs.org/docs/pages/building-your-application/routing/authenticating bring yourr own database
   // middleware.ts file. RUNS BEFORE routes? https://nextjs.org/docs/pages/building-your-application/routing/middleware
 
-  // Strategy:
-  // load all associated projects on mount.
-  // map to a component called AllProjects (name TBD)
-  // load user information? Create context for user profile information
   const { userProfileState, setUserProfileState } = useContext(UserContext);
-  const [uploadedImage, setUploadedImage] = useState<ImageListType[]>([]);
+  const [uploadedImage, setUploadedImage] = useState<any[]>([]);
 
   const submitNewProject = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,8 +27,23 @@ const HomePage: NextPage = () => {
     const startDate: string = (e.target as HTMLFormElement).startDate.value;
     const endDate: string = (e.target as HTMLFormElement).endDate.value;
 
-    console.log(startDate);
-    console.log(userProfileState);
+    try {
+      const url = "/api/project/newproject";
+      const body = {
+        userID: "646d080dc5cfef7a48897822",
+        projectName: projectName,
+        projectDescription: projectDescription,
+        projectStartDate: startDate,
+        projectEndDate: endDate,
+        projectDestination: destination,
+        projectImage: uploadedImage[0].dataURL,
+      };
+
+      const response = await axios.post(url, body, authConfig);
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleImageUploadChange = (imageList: ImageListType) => {
@@ -39,6 +52,7 @@ const HomePage: NextPage = () => {
 
   useEffect(() => {
     console.log(uploadedImage);
+    console.log(userProfileState);
   }, [uploadedImage]);
 
   return (
