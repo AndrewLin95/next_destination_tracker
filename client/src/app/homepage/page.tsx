@@ -1,7 +1,8 @@
 "use client";
 import { NextPage } from "next";
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import UserContext from "../context/UserProfileContext";
+import { ImageListType } from "react-images-uploading/dist/typings";
 
 import Header from "./Header";
 import NewProject from "./NewProject";
@@ -17,6 +18,7 @@ const HomePage: NextPage = () => {
   // map to a component called AllProjects (name TBD)
   // load user information? Create context for user profile information
   const { userProfileState, setUserProfileState } = useContext(UserContext);
+  const [uploadedImage, setUploadedImage] = useState<ImageListType[]>([]);
 
   const submitNewProject = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,11 +33,23 @@ const HomePage: NextPage = () => {
     console.log(userProfileState);
   };
 
+  const handleImageUploadChange = (imageList: ImageListType) => {
+    setUploadedImage(imageList as never[]);
+  };
+
+  useEffect(() => {
+    console.log(uploadedImage);
+  }, [uploadedImage]);
+
   return (
     <div className="w-screen h-screen overflow-hidden flex flex-col justify-center items-center">
       <Header />
       <div className="flex flex-col w-full h-full">
-        <NewProject submitNewProject={submitNewProject} />
+        <NewProject
+          submitNewProject={submitNewProject}
+          uploadedImage={uploadedImage}
+          handleImageUploadChange={handleImageUploadChange}
+        />
         <ExistingProjects />
       </div>
     </div>
