@@ -21,7 +21,6 @@ const HomePage: NextPage = () => {
   const [uploadedImage, setUploadedImage] = useState<any[]>([]);
 
   useEffect(() => {
-    console.log(userProfileState);
     if ((userProfileState as UserProfileState).token === undefined) {
       router.push("/");
     }
