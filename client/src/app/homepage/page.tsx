@@ -39,10 +39,9 @@ const HomePage: NextPage = () => {
       };
 
       const getProjectData = async () => {
-        const existingProjectData: ProjectData[] = await axios.get(
-          url,
-          authConfig
-        );
+        const response = await axios.get(url, authConfig);
+        const existingProjectData: ProjectData[] = response.data;
+
         setExistingProjectsList(existingProjectData);
         console.log(existingProjectData);
       };
