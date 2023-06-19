@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { FC } from "react";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 import { maxNumOfImages } from "@/util/constants";
@@ -49,11 +50,13 @@ const NewProject: FC<Props> = ({
             maxNumber={maxNumOfImages}
           >
             {({ imageList, onImageUpload, onImageRemoveAll }) => (
-              // write your building UIc
               <div className="upload__image-wrapper">
-                <button onClick={onImageUpload}>Upload Image</button>
+                {imageList[0] ? (
+                  <button onClick={onImageRemoveAll}>Remove image</button>
+                ) : (
+                  <button onClick={onImageUpload}>Upload Image</button>
+                )}
                 &nbsp;
-                <button onClick={onImageRemoveAll}>Remove image</button>
                 {imageList[0] ? (
                   imageList.map((image, index) => (
                     <div key={index} className="image-item">
