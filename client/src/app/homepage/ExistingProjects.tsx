@@ -43,7 +43,9 @@ const ExistingProjects: FC<Props> = ({ existingProjectsList }) => {
                   width={144}
                   height={144}
                 />
-                <div>{existingProject.project.projectName}</div>
+                <div className="font-bold">
+                  {existingProject.project.projectName}
+                </div>
                 <div className="h-20 pt-2 overflow-auto">
                   {existingProject.project.projectDescription}
                 </div>
