@@ -90,9 +90,21 @@ const searchLocation = async (payload: SearchQuery, tokenString: string) => {
   }
 }
 
+const getProject = async (currUserID :string) => {
+  try {
+    const userProjects = await ProjectSetupSchema.find({userID: currUserID});
+
+    const test = '1';
+    return userProjects;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 const projectService = {
   createNewProject,
   searchLocation,
+  getProject,
 }
 
 export default projectService;

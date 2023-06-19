@@ -4,7 +4,6 @@ import { CreateProjectQuery, SearchQuery } from "../utils/types";
 
 export const createNewProject = async (req: Request, res: Response) => {
   try {
-    // to add image
     const payload: CreateProjectQuery = req.body;
 
     const response = await projectService.createNewProject(payload);
@@ -20,6 +19,17 @@ export const searchLocation = async (req: Request, res: Response) => {
     const tokenString: string = req.headers['authorization']?.split(' ')[1] as string;
 
     const response = await projectService.searchLocation(payload, tokenString);
+    res.status(200).send(JSON.stringify(response))
+  } catch (err) {
+    res.status(500).send(err);
+  }
+}
+
+export const getProjects = async (req: Request, res: Response) => {
+  try {
+    const userID: string = req.params.userID;
+
+    const response = await projectService.getProject(userID);
     res.status(200).send(JSON.stringify(response))
   } catch (err) {
     res.status(500).send(err);
