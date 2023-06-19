@@ -9,7 +9,7 @@ import Header from "./Header";
 import NewProject from "./NewProject";
 import ExistingProjects from "./ExistingProjects";
 import axios from "axios";
-import { UserProfileState } from "@/util/models";
+import { UserProfileState, ProjectData } from "@/util/models";
 
 const HomePage: NextPage = () => {
   // https://blog.logrocket.com/nextauth-js-for-next-js-client-side-authentication/
@@ -19,10 +19,34 @@ const HomePage: NextPage = () => {
 
   const { userProfileState, setUserProfileState } = useContext(UserContext);
   const [uploadedImage, setUploadedImage] = useState<any[]>([]);
+  const [existingProjectsList, setExistingProjectsList] = useState<
+    ProjectData[]
+  >([]);
 
   useEffect(() => {
     if ((userProfileState as UserProfileState).token === undefined) {
       router.push("/");
+    } else {
+      const url = `/api/project/getprojects/${
+        (userProfileState as UserProfileState).userID
+      }`;
+      const authConfig = {
+        headers: {
+          Authorization: `Bearer ${
+            (userProfileState as UserProfileState).token
+          }`,
+        },
+      };
+
+      const getProjectData = async () => {
+        const existingProjectData: ProjectData[] = await axios.get(
+          url,
+          authConfig
+        );
+        setExistingProjectsList(existingProjectData);
+        console.log(existingProjectData);
+      };
+      getProjectData();
     }
   }, []);
 
@@ -78,7 +102,7 @@ const HomePage: NextPage = () => {
           uploadedImage={uploadedImage}
           handleImageUploadChange={handleImageUploadChange}
         />
-        <ExistingProjects />
+        <ExistingProjects existingProjectsList={existingProjectsList} />
       </div>
     </div>
   );

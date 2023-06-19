@@ -12,3 +12,21 @@ export interface UserProfileState {
   userEmail: string;
   token: string;
 }
+
+export interface ProjectData {
+  project: {
+    projectCoords: {
+      destination: string,
+      lat: string,
+      lng: string,
+    },
+    projectName: string,
+    projectDescription: string,
+    projectStartDate: number,
+    projectEndDate: number,
+    projectImage: string,
+  },
+  userID: string,
+  projectID: string,
+  _id: string,
+}
