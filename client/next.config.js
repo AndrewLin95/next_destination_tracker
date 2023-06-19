@@ -8,8 +8,15 @@ const nextConfig = {
       },
     ]
   },
-  env: {
-    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'destinationtracker.s3.amazonaws.com',
+        port: '',
+        pathname: '/**'
+      }
+    ]
   }
 }
 
