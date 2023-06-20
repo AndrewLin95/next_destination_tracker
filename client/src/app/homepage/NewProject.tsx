@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC } from "react";
+import { FC, useState, useEffect } from "react";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 import { maxNumOfImages } from "@/util/constants";
 
