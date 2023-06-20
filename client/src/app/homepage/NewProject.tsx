@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { FC, useState, useEffect } from "react";
+import { FC } from "react";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 import { maxNumOfImages } from "@/util/constants";
 
@@ -16,7 +16,7 @@ const NewProject: FC<Props> = ({
 }) => {
   return (
     <div className="flex h-[420px] w-full justify-center items-center mt-8">
-      <div className="flex flex-col border border-dashed w-4/12 h-[420px] p-6">
+      <div className="flex flex-col border border-dashed w-10/12 sm:w-6/12 md:w-4/12 xl:w-2/12 h-[420px] p-6">
         <form onSubmit={submitNewProject}>
           <input
             className="w-full mb-2 px-2"
@@ -37,11 +37,11 @@ const NewProject: FC<Props> = ({
             required
           />
           <div className="flex flex-row mb-2">
-            <div className="w-64">Planned Start Date:</div>
+            <div className="w-64">Start Date:</div>
             <input className="w-full px-2" type="date" name="startDate" />
           </div>
           <div className="flex flex-row mb-2">
-            <div className="w-64">Planned End Date:</div>
+            <div className="w-64">End Date:</div>
             <input className="w-full px-2" type="date" name="endDate" />
           </div>
           <ImageUploading
@@ -52,9 +52,13 @@ const NewProject: FC<Props> = ({
             {({ imageList, onImageUpload, onImageRemoveAll }) => (
               <div className="upload__image-wrapper">
                 {imageList[0] ? (
-                  <button onClick={onImageRemoveAll}>Remove image</button>
+                  <button className="mb-2" onClick={onImageRemoveAll}>
+                    Remove Banner
+                  </button>
                 ) : (
-                  <button onClick={onImageUpload}>Upload Image</button>
+                  <button className="mb-2" onClick={onImageUpload}>
+                    Upload Banner
+                  </button>
                 )}
                 &nbsp;
                 {imageList[0] ? (

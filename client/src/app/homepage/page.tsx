@@ -12,9 +12,6 @@ import axios from "axios";
 import { UserProfileState, ProjectData } from "@/util/models";
 
 const HomePage: NextPage = () => {
-  // https://blog.logrocket.com/nextauth-js-for-next-js-client-side-authentication/
-  // https://nextjs.org/docs/pages/building-your-application/routing/authenticating bring yourr own database
-  // middleware.ts file. RUNS BEFORE routes? https://nextjs.org/docs/pages/building-your-application/routing/middleware
   const router = useRouter();
 
   const { userProfileState, setUserProfileState } = useContext(UserContext);
@@ -86,11 +83,6 @@ const HomePage: NextPage = () => {
   const handleImageUploadChange = (imageList: ImageListType) => {
     setUploadedImage(imageList as never[]);
   };
-
-  useEffect(() => {
-    console.log(uploadedImage);
-    console.log(userProfileState);
-  }, [uploadedImage]);
 
   return (
     <div className="w-screen h-screen overflow-hidden flex flex-col justify-center items-center">
