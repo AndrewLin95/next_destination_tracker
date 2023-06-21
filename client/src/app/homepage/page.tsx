@@ -84,6 +84,10 @@ const HomePage: NextPage = () => {
     setUploadedImage(imageList as never[]);
   };
 
+  const handleEachProjectClick = (projectID: string) => {
+    router.push(`/project/${projectID}`);
+  };
+
   return (
     <div className="w-screen h-screen overflow-hidden flex flex-col justify-center items-center">
       <Header />
@@ -93,7 +97,10 @@ const HomePage: NextPage = () => {
           uploadedImage={uploadedImage}
           handleImageUploadChange={handleImageUploadChange}
         />
-        <ExistingProjects existingProjectsList={existingProjectsList} />
+        <ExistingProjects
+          existingProjectsList={existingProjectsList}
+          handleEachProjectClick={handleEachProjectClick}
+        />
       </div>
     </div>
   );

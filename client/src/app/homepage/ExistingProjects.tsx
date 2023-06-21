@@ -7,11 +7,15 @@ import { format } from "date-fns";
 
 interface Props {
   existingProjectsList: ProjectData[];
+  handleEachProjectClick: (projectID: string) => void;
 }
 
 const options = { delay: 2000 };
 
-const ExistingProjects: FC<Props> = ({ existingProjectsList }) => {
+const ExistingProjects: FC<Props> = ({
+  existingProjectsList,
+  handleEachProjectClick,
+}) => {
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { loop: true, dragFree: true },
     [Autoplay(options)]
@@ -35,6 +39,9 @@ const ExistingProjects: FC<Props> = ({ existingProjectsList }) => {
               <div
                 className="h-60 w-72 flex flex-col p-2 border border-red-200"
                 key={existingProject._id}
+                onClick={() =>
+                  handleEachProjectClick(existingProject.projectID)
+                }
               >
                 <Image
                   alt={`${existingProject.project.projectName} image`}
