@@ -35,3 +35,14 @@ export const getProjects = async (req: Request, res: Response) => {
     res.status(500).send(err);
   }
 }
+
+export const getEachProject = async (req: Request, res: Response) => {
+  try {
+    const projectID: string = req.params.projectID;
+    
+    const response = await projectService.getEachProject(projectID);
+    res.status(200).send(JSON.stringify(response))
+  } catch (err) {
+    res.send(500).send(err);
+  }
+}
