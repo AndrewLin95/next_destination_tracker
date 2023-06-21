@@ -100,7 +100,9 @@ const getProject = async (currUserID: string) => {
 }
 
 const getEachProject = async (projectID: string) => {
-
+  const test = projectID;
+  const asdf = 1
+  return "123"
 }
 
 const projectService = {
