@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 const jwt = require('jsonwebtoken');
 
 const ProjectSetupSchema = require('../models/projectSetupSchema');
+const ProjectLocationDataSchema = require('../models/projectLocationDataSchema');
 import { jwtToken, CreateProjectQuery, SearchQuery } from "../utils/types";
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
 import { msInDay } from '../utils/constants';
@@ -100,9 +101,21 @@ const getProject = async (currUserID: string) => {
 }
 
 const getEachProject = async (projectID: string) => {
-  const test = projectID;
-  const asdf = 1
-  return "123"
+  // return the projectsetup and all mappoints data
+  try {
+    const userProject = await ProjectSetupSchema.findOne({projectID: projectID});
+    const projectDataPoints = await ProjectLocationDataSchema.find({projectID: projectID});
+
+    const responseData = {
+      projectData: userProject,
+      locationData: projectDataPoints,
+    }
+
+    return responseData;
+
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 const projectService = {
