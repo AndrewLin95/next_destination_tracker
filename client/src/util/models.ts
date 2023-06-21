@@ -30,3 +30,26 @@ export interface ProjectData {
   projectID: string,
   _id: string,
 }
+
+export interface ProjectMapData {
+  userID: string,
+  projectID: string,
+  mapData: {
+    formattedAddress: string,
+    lat: number,
+    lng: number,
+    googleLocationID: string,
+  },
+  notedata: {
+    customName: string,
+    customNote: string,
+    openHours: string,
+    closeHours: string,
+    priority: string
+  },
+  scheduleData: {
+    scheduleDate: Date,
+    scheduleStart: Date,
+    scheduleEnd: Date,
+  }
+}
