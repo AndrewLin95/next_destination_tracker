@@ -5,8 +5,13 @@ import SearchModule from "./SearchModule";
 import MapModule from "./MapModule";
 import { useContext, useEffect, useState } from "react";
 import UserContext from "@/app/context/UserProfileContext";
-import { UserProfileState, ProjectMapData } from "@/util/models";
+import { UserProfileState, ProjectMapData, ProjectData } from "@/util/models";
 import axios from "axios";
+
+interface InitResponseData {
+  projectData: ProjectData;
+  locationData: ProjectMapData[];
+}
 
 interface Props {
   params: any;
@@ -16,7 +21,8 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   const { userProfileState, setUserProfileState } = useContext(UserContext);
 
   const [loading, setLoading] = useState(true);
-  const [pageData, setPageData] = useState<ProjectMapData[]>();
+  const [projectData, setProjectData] = useState<ProjectData>();
+  const [locationData, setLocationData] = useState<ProjectMapData[]>();
 
   const [searchText, setSearchText] = useState<string>("");
 
@@ -32,10 +38,12 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       };
 
       const response = await axios.get(url, authConfig);
-      const responseData: ProjectMapData[] = response.data;
+      const responseData: InitResponseData = response.data;
       console.log(responseData);
 
-      setPageData(responseData);
+      setProjectData(responseData.projectData);
+      setLocationData(responseData.locationData);
+
       setLoading(false);
     };
     fetchInitPageData();
@@ -60,7 +68,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
             setSearchText={setSearchText}
             handleSearch={handleSearch}
           />
-          <MapModule />
+          <MapModule projectData={projectData} />
         </div>
       )}
     </div>

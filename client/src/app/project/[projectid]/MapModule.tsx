@@ -1,12 +1,17 @@
-import { useState, useCallback } from "react";
+import { FC, useState, useCallback } from "react";
 import {
   GoogleMap,
   InfoWindow,
   LoadScript,
   Marker,
 } from "@react-google-maps/api";
+import { ProjectData } from "@/util/models";
 
-const MapModule = () => {
+interface Props {
+  projectData: ProjectData | undefined;
+}
+
+const MapModule: FC<Props> = ({ projectData }) => {
   //https://www.ultimateakash.com/blog-details/Ii0jNGAKYAo=/How-To-Integrate-Google-Maps-in-React-2022
   const initialMarkers = [
     {
@@ -34,13 +39,14 @@ const MapModule = () => {
       draggable: true,
     },
   ];
-  const [activeInfoWindow, setActiveInfoWindow] = useState<number | null>(null);
-  const [markers, setMarkers] = useState(initialMarkers);
 
   const center = {
-    lat: 43.65107,
-    lng: -79.347015,
+    lat: parseFloat(projectData!.project.projectCoords.lat),
+    lng: parseFloat(projectData!.project.projectCoords.lng),
   };
+
+  const [activeInfoWindow, setActiveInfoWindow] = useState<number | null>(null);
+  const [markers, setMarkers] = useState(initialMarkers);
 
   const mapClicked = (event: any) => {
     console.log(event.latLng.lat(), event.latLng.lng());
