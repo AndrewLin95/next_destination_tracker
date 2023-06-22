@@ -17,9 +17,71 @@ export interface CreateProjectQuery {
 }
 
 export interface SearchQuery {
-  data: {
-    query: string,
-    projectID: string,
-    projectName: string,
+  userID: string,
+  projectID: string,
+  query: string,
+}
+
+export interface LocationMongoResponse {
+  userID: string,
+  projectID: string,
+  locationID: string,
+  mapData: {
+    formattedAddress: string,
+    googleLocationID: string,
+    markerData: {
+      lat: number,
+      lng: number,
+    },
+  },
+  noteData: {
+    noteName: string,
+    priority: string,
+    customNote?: string,
+    openHours?: string,
+    closeHours?: string,
+  },
+  scheduleData?:{
+    scheduleDate: Date,
+    scheduleStart: Date,
+    scheduleEnd: Date,
   }
+}
+
+export interface ProjectPayload {
+  project: {
+    projectCoords: {
+      destination: string,
+      lat: string,
+      lng: string,
+    },
+    projectName: string,
+    projectDescription: string,
+    projectStartDate: number,
+    projectEndDate: number,
+    projectImage: string,
+  },
+  userID: string,
+  projectID: string,
+  _id: string,
+}
+
+export interface MapPayloadData {
+  lat: number,
+  lng: number,
+  locationID: string,
+}
+
+export interface NotePayloadData {
+  noteName: string,
+  priority: string,
+  customNote?: string,
+  openHours?: string,
+  closeHours?: string,
+}
+
+export interface SchedulePayloadData {
+  scheduleDate: Date,
+  scheduleStart: Date,
+  scheduleEnd: Date,
 }
