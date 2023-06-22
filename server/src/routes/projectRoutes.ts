@@ -4,7 +4,7 @@ import { searchLocation, createNewProject, getProjects, getEachProject } from '.
 const router = express.Router();
 
 router.post('/newproject', createNewProject)
-router.get('/searchlocation', searchLocation)
+router.post('/searchlocation', searchLocation)
 router.get('/getprojects/:userID', getProjects)
 router.get('/geteachproject/:projectID', getEachProject)
 

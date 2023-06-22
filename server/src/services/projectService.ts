@@ -2,11 +2,10 @@ import axios from 'axios';
 import { s3Client } from '../utils/s3';
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from 'uuid';
-const jwt = require('jsonwebtoken');
 
 const ProjectSetupSchema = require('../models/projectSetupSchema');
 const ProjectLocationDataSchema = require('../models/projectLocationDataSchema');
-import { jwtToken, CreateProjectQuery, SearchQuery } from "../utils/types";
+import { CreateProjectQuery, SearchQuery, LocationMongoResponse, ProjectPayload, MapPayloadData, NotePayloadData, SchedulePayloadData } from "../utils/types";
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
 import { msInDay } from '../utils/constants';
 
@@ -67,25 +66,48 @@ const createNewProject = async (payload: CreateProjectQuery) => {
 }
 
 
-const searchLocation = async (payload: SearchQuery, tokenString: string) => {
-  const decodedToken: jwtToken = jwt.verify(tokenString, process.env.JWT_SECRET);
+const searchLocation = async (payload: SearchQuery) => {
   try {
     // https://developers.google.com/maps/documentation/geocoding/requests-geocoding
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${payload.data.query}&key=${process.env.GOOGLE_MAPS_API_KEY}`
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${payload.query}&key=${process.env.GOOGLE_MAPS_API_KEY}`
     const queryResponse: GoogleGeocodeResponse = await axios.get(url)
     
     // TODO: error handling
     if (queryResponse.statusText === "OK") {
-      const data = {
-        formattedAddress: queryResponse.data.results[0].formatted_address,
-        lat: queryResponse.data.results[0].geometry.location.lat,
-        lng: queryResponse.data.results[0].geometry.location.lng,
-        googleLocationID: queryResponse.data.results[0].place_id
+      const projectLocationDataSchema = new ProjectLocationDataSchema({
+        userID: payload.userID,
+        projectID: payload.projectID,
+        locationID: uuidv4(),
+        mapData: {
+          formattedAddress: queryResponse.data.results[0].formatted_address,
+          googleLocationID: queryResponse.data.results[0].place_id,
+          markerData: {
+            lat: queryResponse.data.results[0].geometry.location.lat,
+            lng: queryResponse.data.results[0].geometry.location.lng,
+          },
+        },
+        noteData: {
+          noteName: payload.query.split('+').join(' '),
+          priority: "Medium", 
+        }
+      })
+
+      const mongoResponse: LocationMongoResponse = await projectLocationDataSchema.save();
+
+      const responsePayload: {mapData: MapPayloadData, noteData: NotePayloadData} = {
+        mapData: {
+          lat: mongoResponse.mapData.markerData.lat,
+          lng: mongoResponse.mapData.markerData.lng,
+          locationID: mongoResponse.locationID,
+        },
+        noteData: {
+          ...mongoResponse.noteData,
+          locationID: mongoResponse.locationID
+        }
       }
-
+      
+      return responsePayload;
     } 
-
-
   } catch (err) {
     console.log(err);
   }
@@ -103,12 +125,34 @@ const getProject = async (currUserID: string) => {
 const getEachProject = async (projectID: string) => {
   // return the projectsetup and all mappoints data
   try {
-    const userProject = await ProjectSetupSchema.findOne({projectID: projectID});
-    const projectDataPoints = await ProjectLocationDataSchema.find({projectID: projectID});
+    const userProject: ProjectPayload = await ProjectSetupSchema.findOne({projectID: projectID});
+    const projectDataPoints: LocationMongoResponse[] = await ProjectLocationDataSchema.find({projectID: projectID});
+
+    const mapData: MapPayloadData[] = [];
+    const noteData: NotePayloadData[] = [];
+    const scheduleData: SchedulePayloadData[] = [];
+
+    projectDataPoints.forEach(projectLocation => {
+      const eachMapData = {
+          lat: projectLocation.mapData.markerData.lat,
+          lng: projectLocation.mapData.markerData.lng,
+          locationID: projectLocation.locationID,
+      }
+      const eachNoteData = {...projectLocation.noteData, locationID: projectLocation.locationID}
+      mapData.push(eachMapData);
+      noteData.push(eachNoteData);
+      if (projectLocation.scheduleData?.scheduleDate !== undefined) {
+        const eachScheduleData = {...projectLocation.scheduleData, locationID: projectLocation.locationID}
+
+        scheduleData.push(eachScheduleData);
+      }
+    });
 
     const responseData = {
       projectData: userProject,
-      locationData: projectDataPoints,
+      mapData: mapData,
+      noteData: noteData,
+      scheduleData: scheduleData,
     }
 
     return responseData;
