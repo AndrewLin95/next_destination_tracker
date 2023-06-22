@@ -9,23 +9,29 @@ const projectLocationDataSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  locationID: {
+    type: String, 
+    required: true,
+  },
   mapData: {
     formattedAddress: {
       type: String,
       required: true,
     },
-    lat: {
-      type: Number,
-      required: true,
-    },
-    lng: {
-      type: Number,
-      required: true
-    },
     googleLocationID: {
       type: String,
       required: true,
     },
+    markerData: {
+      lat: {
+        type: Number,
+        required: true,
+      },
+      lng: {
+        type: Number,
+        required: true
+      }
+    }
   },
   noteData: {
     customName: {

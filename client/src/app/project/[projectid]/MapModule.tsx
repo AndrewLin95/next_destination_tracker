@@ -35,8 +35,7 @@ const MapModule: FC<Props> = ({ projectData }) => {
         lat: 28.625182,
         lng: 79.81464,
       },
-      label: { color: "white", text: "P3" },
-      draggable: true,
+      id: 123,
     },
   ];
 
