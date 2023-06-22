@@ -51,8 +51,26 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
 
   const handleSearch = () => {
     //https://developers.google.com/maps/documentation/geocoding/requests-geocoding#json
+    const fetchSearchData = async () => {
+      const url = `/api/project/searchLocation`;
+      const authConfig = {
+        headers: {
+          Authorization: `Bearer ${
+            (userProfileState as UserProfileState).token
+          }`,
+        },
+      };
+      const body = {
+        userID: (userProfileState as UserProfileState).userID,
+        projectID: params.projectid as string,
+        query: searchText.split(" ").join("+"),
+      };
 
-    const query = searchText.split(" ").join("+");
+      const response = await axios.post(url, body, authConfig);
+      const responseData = response.data;
+      console.log(responseData);
+    };
+    fetchSearchData();
   };
 
   return (
