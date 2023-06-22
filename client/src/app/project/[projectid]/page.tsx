@@ -52,7 +52,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   const handleSearch = () => {
     //https://developers.google.com/maps/documentation/geocoding/requests-geocoding#json
     const fetchSearchData = async () => {
-      const url = `/api/project/searchLocation`;
+      const url = `/api/project/searchlocation`;
       const authConfig = {
         headers: {
           Authorization: `Bearer ${
