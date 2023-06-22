@@ -73,6 +73,7 @@ export interface MapPayloadData {
 }
 
 export interface NotePayloadData {
+  locationID: string,
   noteName: string,
   priority: string,
   customNote?: string,
@@ -81,6 +82,7 @@ export interface NotePayloadData {
 }
 
 export interface SchedulePayloadData {
+  locationID: string,
   scheduleDate: Date,
   scheduleStart: Date,
   scheduleEnd: Date,
