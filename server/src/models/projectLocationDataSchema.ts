@@ -34,7 +34,7 @@ const projectLocationDataSchema = new mongoose.Schema({
     }
   },
   noteData: {
-    customName: {
+    noteName: {
       type: String,
       required: false,
     },
