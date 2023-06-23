@@ -69,6 +69,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       setProjectData(responseData.projectData);
       setAllLocationData(responseData.locationData);
 
+      // handle initial data mapping
       const tempMapData: MapData[] = [];
       const tempNoteData: NoteData[] = [];
       const tempScheduleData: ScheduleData[] = [];
@@ -97,6 +98,10 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       setMapData(tempMapData);
       setNoteData(tempNoteData);
       setScheduleData(tempScheduleData);
+
+      // handle initial pagination state
+      const totalPages = Math.ceil(allLocationData.length / 10);
+      setNumberOfPages(totalPages);
 
       setLoading(false);
     };
@@ -144,6 +149,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       }
     };
     fetchSearchData();
+    handleValidatePagination("+");
   };
 
   const handlePageChange = (value: string | number) => {
@@ -240,8 +246,23 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     }
   }, [numberOfPages, currPage]);
 
+  const handleValidatePagination = (type: string) => {
+    let newNumberOfPages;
+    if (type === "+") {
+      newNumberOfPages = Math.ceil((allLocationData.length + 1) / 10);
+    } else {
+      newNumberOfPages = Math.ceil((allLocationData.length - 1) / 10);
+    }
+
+    if (newNumberOfPages !== numberOfPages) {
+      setNumberOfPages(newNumberOfPages);
+    }
+  };
+
   useEffect(() => {
     console.log(mapData);
+    console.log(paginationState);
+    console.log(numberOfPages);
   }, [mapData]);
 
   return (
