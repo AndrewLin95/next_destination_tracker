@@ -26,7 +26,7 @@ const projectLocationDataSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
-    markerData: {
+    position: {
       lat: {
         type: Number,
         required: true,
@@ -39,6 +39,10 @@ const projectLocationDataSchema = new mongoose.Schema({
   },
   noteData: {
     noteName: {
+      type: String,
+      required: false,
+    },
+    formattedAddress: {
       type: String,
       required: false,
     },
@@ -64,6 +68,14 @@ const projectLocationDataSchema = new mongoose.Schema({
     }
   },
   scheduleData: {
+    scheduled : {
+      type: Boolean,
+      required: false,
+    },
+    noteName: {
+      type: String,
+      required: false,
+    },
     scheduleDate: {
       type: Date,
       required: false,

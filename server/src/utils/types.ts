@@ -30,7 +30,7 @@ export interface LocationMongoResponse {
   mapData: {
     formattedAddress: string,
     googleLocationID: string,
-    markerData: {
+    position: {
       lat: number,
       lng: number,
     },
@@ -38,11 +38,14 @@ export interface LocationMongoResponse {
   noteData: {
     noteName: string,
     priority: string,
+    formattedAddress: string,
     customNote?: string,
     openHours?: string,
     closeHours?: string,
   },
   scheduleData?:{
+    scheduled: boolean,
+    noteName: string,
     scheduleDate: Date,
     scheduleStart: Date,
     scheduleEnd: Date,
@@ -75,7 +78,7 @@ export interface LocationPayload {
   mapData: {
     formattedAddress: string,
     googleLocationID: string,
-    markerData: {
+    position: {
       lat: number,
       lng: number,
     },
@@ -83,11 +86,14 @@ export interface LocationPayload {
   noteData: {
     noteName: string,
     priority: string,
+    formattedAddress: string,
     customNote?: string,
     openHours?: string,
     closeHours?: string,
   },
   scheduleData?:{
+    scheduled: boolean,
+    noteName: string,
     scheduleDate: Date,
     scheduleStart: Date,
     scheduleEnd: Date,
@@ -104,12 +110,15 @@ export interface NotePayloadData {
   locationID: string,
   noteName: string,
   priority: string,
+  formattedAddress: string,
   customNote?: string,
   openHours?: string,
   closeHours?: string,
 }
 
 export interface SchedulePayloadData {
+  scheduled: boolean,
+  noteName: string,
   locationID: string,
   scheduleDate: Date,
   scheduleStart: Date,

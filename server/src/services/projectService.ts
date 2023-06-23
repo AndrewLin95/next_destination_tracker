@@ -78,10 +78,11 @@ const searchLocation = async (payload: SearchQuery) => {
         userID: payload.userID,
         projectID: payload.projectID,
         locationID: uuidv4(),
+        deleteFlag: false,
         mapData: {
           formattedAddress: queryResponse.data.results[0].formatted_address,
           googleLocationID: queryResponse.data.results[0].place_id,
-          markerData: {
+          position: {
             lat: queryResponse.data.results[0].geometry.location.lat,
             lng: queryResponse.data.results[0].geometry.location.lng,
           },
@@ -89,24 +90,13 @@ const searchLocation = async (payload: SearchQuery) => {
         noteData: {
           noteName: payload.query.split('+').join(' '),
           priority: "Medium", 
+          formattedAddress: queryResponse.data.results[0].formatted_address,
         }
       })
 
       const mongoResponse: LocationMongoResponse = await projectLocationDataSchema.save();
-
-      const responsePayload: {mapData: MapPayloadData, noteData: NotePayloadData} = {
-        mapData: {
-          lat: mongoResponse.mapData.markerData.lat,
-          lng: mongoResponse.mapData.markerData.lng,
-          locationID: mongoResponse.locationID,
-        },
-        noteData: {
-          ...mongoResponse.noteData,
-          locationID: mongoResponse.locationID
-        }
-      }
       
-      return responsePayload;
+      return mongoResponse;
     } 
   } catch (err) {
     console.log(err);
@@ -128,31 +118,9 @@ const getEachProject = async (projectID: string) => {
     const userProject: ProjectPayload = await ProjectSetupSchema.findOne({projectID: projectID});
     const projectDataPoints: LocationMongoResponse[] = await ProjectLocationDataSchema.find({projectID: projectID});
 
-    const mapData: MapPayloadData[] = [];
-    const noteData: NotePayloadData[] = [];
-    const scheduleData: SchedulePayloadData[] = [];
-
-    projectDataPoints.forEach(projectLocation => {
-      const eachMapData = {
-          lat: projectLocation.mapData.markerData.lat,
-          lng: projectLocation.mapData.markerData.lng,
-          locationID: projectLocation.locationID,
-      }
-      const eachNoteData = {...projectLocation.noteData, locationID: projectLocation.locationID}
-      mapData.push(eachMapData);
-      noteData.push(eachNoteData);
-      if (projectLocation.scheduleData?.scheduleDate !== undefined) {
-        const eachScheduleData = {...projectLocation.scheduleData, locationID: projectLocation.locationID}
-
-        scheduleData.push(eachScheduleData);
-      }
-    });
-
     const responseData = {
       projectData: userProject,
-      mapData: mapData,
-      noteData: noteData,
-      scheduleData: scheduleData,
+      locationData: projectDataPoints,
     }
 
     return responseData;
