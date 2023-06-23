@@ -9,6 +9,10 @@ const projectSetupSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  deleteFlag: {
+    type: Boolean,
+    required: false,
+  },
   project: {
     projectName: {
       type: String,

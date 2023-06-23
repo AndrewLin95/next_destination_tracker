@@ -26,6 +26,7 @@ export interface LocationMongoResponse {
   userID: string,
   projectID: string,
   locationID: string,
+  deleteFlag: boolean,
   mapData: {
     formattedAddress: string,
     googleLocationID: string,
@@ -64,6 +65,33 @@ export interface ProjectPayload {
   userID: string,
   projectID: string,
   _id: string,
+}
+
+export interface LocationPayload {
+  userID: string,
+  projectID: string,
+  locationID: string,
+  deleteFlag: boolean,
+  mapData: {
+    formattedAddress: string,
+    googleLocationID: string,
+    markerData: {
+      lat: number,
+      lng: number,
+    },
+  },
+  noteData: {
+    noteName: string,
+    priority: string,
+    customNote?: string,
+    openHours?: string,
+    closeHours?: string,
+  },
+  scheduleData?:{
+    scheduleDate: Date,
+    scheduleStart: Date,
+    scheduleEnd: Date,
+  }
 }
 
 export interface MapPayloadData {

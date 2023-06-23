@@ -13,6 +13,10 @@ const projectLocationDataSchema = new mongoose.Schema({
     type: String, 
     required: true,
   },
+  deleteFlag: {
+    type: Boolean,
+    required: true,
+  },
   mapData: {
     formattedAddress: {
       type: String,
