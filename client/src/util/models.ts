@@ -31,25 +31,61 @@ export interface ProjectData {
   _id: string,
 }
 
-export interface ProjectMapData {
+export interface LocationData {
   userID: string,
   projectID: string,
+  locationID: string,
+  deleteFlag: boolean,
   mapData: {
     formattedAddress: string,
-    lat: number,
-    lng: number,
     googleLocationID: string,
+    position: {
+      lat: number,
+      lng: number,
+    },
   },
-  notedata: {
-    customName: string,
-    customNote: string,
-    openHours: string,
-    closeHours: string,
-    priority: string
+  noteData: {
+    noteName: string,
+    priority: string,
+    formattedAddress: string,
+    customNote?: string,
+    openHours?: string,
+    closeHours?: string,
   },
-  scheduleData: {
+  scheduleData?:{
+    scheduled: boolean,
+    noteName: string,
     scheduleDate: Date,
     scheduleStart: Date,
     scheduleEnd: Date,
   }
+}
+
+export interface MapData {
+  position: {
+    lat: number,
+    lng: number,
+  }
+  locationID: string;
+  formattedAddress: string;
+  googleLocationID: string;
+}
+
+export interface NoteData {
+  locationID: string,
+  noteName: string,
+  priority: string,
+  formattedAddress: string,
+  customNote?: string,
+  openHours?: string,
+  closeHours?: string,
+}
+
+export interface ScheduleData {
+  scheduled: boolean,
+  noteName: string,
+  locationID: string,
+  scheduleDate: Date,
+  scheduleStart: Date,
+  scheduleEnd: Date,
 }
