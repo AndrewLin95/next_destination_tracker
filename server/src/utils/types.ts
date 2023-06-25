@@ -90,6 +90,7 @@ export interface LocationPayload {
     customNote?: string,
     openHours?: string,
     closeHours?: string,
+    picture?: string,
   },
   scheduleData?:{
     scheduled: boolean,
@@ -114,6 +115,7 @@ export interface NotePayloadData {
   customNote?: string,
   openHours?: string,
   closeHours?: string,
+  picture?: string,
 }
 
 export interface SchedulePayloadData {

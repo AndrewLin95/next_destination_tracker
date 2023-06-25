@@ -58,6 +58,10 @@ const projectLocationDataSchema = new mongoose.Schema({
       type: String,
       required: false,
     },
+    picture: {
+      type: String,
+      required: false
+    },
     priority: {
       type: String,
       enum: {
