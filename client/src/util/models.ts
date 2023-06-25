@@ -79,6 +79,7 @@ export interface NoteData {
   customNote?: string,
   openHours?: string,
   closeHours?: string,
+  picture?: string,
 }
 
 export interface ScheduleData {
