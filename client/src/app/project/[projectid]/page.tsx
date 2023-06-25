@@ -48,7 +48,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   // TODO: fix
   const [mapData, setMapData] = useState<MapData[]>([]);
   const [noteData, setNoteData] = useState<NoteData[]>([]);
-  const [scheduleData, setScheduleData] = useState<ScheduleData[]>();
+  const [scheduleData, setScheduleData] = useState<ScheduleData[]>([]);
 
   const [searchText, setSearchText] = useState<string>("");
 
@@ -100,7 +100,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       setScheduleData(tempScheduleData);
 
       // handle initial pagination state
-      const totalPages = Math.ceil(allLocationData.length / 10);
+      const totalPages = Math.ceil(responseData.locationData.length / 10);
       setNumberOfPages(totalPages);
 
       setLoading(false);
@@ -279,8 +279,8 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
               setSearchText={setSearchText}
               handleSearch={handleSearch}
             />
-            <SearchResults />
-            <SearchPagination />
+            <SearchResults noteData={noteData} />
+            <SearchPagination paginationState={paginationState} />
           </div>
           <MapModule projectData={projectData} mapData={mapData} />
         </div>
