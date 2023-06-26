@@ -17,6 +17,7 @@ import axios from "axios";
 import SearchResults from "./searchComponents/SearchResults";
 import SearchPagination from "./searchComponents/SearchPagination";
 import { NUM_RESULTS_PER_PAGE } from "@/util/constants";
+import { handleValidatePagination } from "./util";
 
 interface InitResponseData {
   projectData: ProjectData;
@@ -149,7 +150,12 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       }
     };
     fetchSearchData();
-    handleValidatePagination("+");
+    handleValidatePagination(
+      "+",
+      allLocationData,
+      numberOfPages,
+      setNumberOfPages
+    );
   };
 
   const handlePageChange = (value: string | number) => {
@@ -245,19 +251,6 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       }
     }
   }, [numberOfPages, currPage]);
-
-  const handleValidatePagination = (type: string) => {
-    let newNumberOfPages;
-    if (type === "+") {
-      newNumberOfPages = Math.ceil((allLocationData.length + 1) / 10);
-    } else {
-      newNumberOfPages = Math.ceil((allLocationData.length - 1) / 10);
-    }
-
-    if (newNumberOfPages !== numberOfPages) {
-      setNumberOfPages(newNumberOfPages);
-    }
-  };
 
   useEffect(() => {
     console.log(mapData);
