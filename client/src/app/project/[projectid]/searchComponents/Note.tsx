@@ -15,7 +15,7 @@ const Note: FC<Props> = ({ note }) => {
   return (
     <div className="pb-8 w-full flex flex-col justify-center items-center">
       <div className="flex justify-between w-full">
-        {note.noteName}
+        <div className="capitalize">{note.noteName}</div>
         <button
           type="button"
           className={SIMPLE_BUTTON_STYLE}

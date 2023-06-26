@@ -133,14 +133,14 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       setAllLocationData(tempAllLocationData);
 
       if (currPage === numberOfPages && noteData.length <= 9) {
-        const tempMapData = mapData;
+        const tempMapData = [...mapData];
         tempMapData.push({
           ...responseData.mapData,
           locationID: responseData.locationID,
         });
         setMapData(tempMapData);
 
-        const tempNoteData = noteData;
+        const tempNoteData = [...noteData];
         tempNoteData.push({
           ...responseData.noteData,
           locationID: responseData.locationID,
@@ -261,6 +261,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
 
   useEffect(() => {
     console.log(mapData);
+    console.log(noteData);
     console.log(paginationState);
     console.log(numberOfPages);
   }, [mapData]);
