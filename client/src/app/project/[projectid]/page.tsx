@@ -281,7 +281,10 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
               handleSearch={handleSearch}
             />
             <SearchResults noteData={noteData} />
-            <SearchPagination paginationState={paginationState} />
+            <SearchPagination
+              paginationState={paginationState}
+              handlePageChange={handlePageChange}
+            />
           </div>
           <MapModule projectData={projectData} mapData={mapData} />
         </div>
