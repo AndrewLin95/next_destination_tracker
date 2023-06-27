@@ -41,10 +41,11 @@ const EditNoteDialog: FC<Props> = ({ noteData, setNoteDialogToggle }) => {
   };
 
   return (
-    <div
-      className="absolute h-screen w-screen bg-slate-900/40"
-      onClick={() => setNoteDialogToggle(false)}
-    >
+    <>
+      <div
+        className="absolute h-screen w-screen bg-slate-900/40"
+        onClick={() => setNoteDialogToggle(false)}
+      />
       <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[30rem] h-[15.5rem] bg-Background flex flex-col p-4">
         <div className="text-xl font-bold pb-1 underline text-Accent">
           Edit Note
@@ -146,7 +147,7 @@ const EditNoteDialog: FC<Props> = ({ noteData, setNoteDialogToggle }) => {
           </div>
         </form>
       </div>
-    </div>
+    </>
   );
 };
 
