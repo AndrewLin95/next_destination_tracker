@@ -12,17 +12,17 @@ module.exports = {
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
+      colors: {
+        Background: '#1a0e1b',
+        Background_Lighter: '#361e38',
+        Background_Darker: '#160d17',
+        Text: '#f4ebf4',
+        PrimaryButton: '#a760a9',
+        SecondaryButton: '#070407',
+        Accent: '#b070b2',
+        Accent2: 'd280ff',
+      }
     },
-    colors: {
-      Background: '#1a0e1b',
-      Background_Lighter: '#361e38',
-      Background_Darker: '#160d17',
-      Text: '#f4ebf4',
-      PrimaryButton: '#a760a9',
-      SecondaryButton: '#070407',
-      Accent: '#b070b2',
-      Accent2: 'd280ff',
-    }
   },
   plugins: [],
 }
