@@ -9,5 +9,5 @@ export const FORM_CANCEL_BUTTON = "font-bold border-r-0 text-md p-0 bg-Secondary
 export const PRIORITY_SELECTED_STYLE = "pr-2 text-Accent";
 export const PRIORITY_DEFAULT_STYLE = "pr-2";
 
-export const REMOVE_IMG_BTN_STYLE = "h-10 w-[9rem] text-sm font-bold border-r-0 text-md p-0 bg-transparent hover:border-transparent focus:outline-none"
-export const UPLOAD_IMG_BTN_STYLE = "h-10 w-[9rem] text-sm font-bold border-r-0 text-md p-0 hover:border-transparent focus:outline-none"
+export const REMOVE_IMG_BTN_STYLE = "h-10 w-[9.5rem] text-sm font-bold border-r-0 text-md p-0 bg-transparent hover:border-transparent focus:outline-none"
+export const UPLOAD_IMG_BTN_STYLE = "h-10 w-[9.5rem] text-sm font-bold border-r-0 text-md p-0 hover:border-transparent focus:outline-none"
