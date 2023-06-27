@@ -4,9 +4,10 @@ import { SIMPLE_BUTTON_STYLE } from "@/util/constants";
 
 interface Props {
   note: NoteData;
+  handleUpdateNotes: (locationID: string) => void;
 }
 
-const Note: FC<Props> = ({ note }) => {
+const Note: FC<Props> = ({ note, handleUpdateNotes }) => {
   const [expandState, setExpandState] = useState(false);
 
   // TODO: API calls to edit
@@ -15,13 +16,12 @@ const Note: FC<Props> = ({ note }) => {
   return (
     <div className="pb-8 w-full flex flex-col justify-center items-center">
       <div className="flex justify-between w-full">
-        <div className="capitalize">{note.noteName}</div>
         <button
           type="button"
-          className={SIMPLE_BUTTON_STYLE}
+          className={`${SIMPLE_BUTTON_STYLE} capitalize w-full flex justify-start `}
           onClick={() => setExpandState(!expandState)}
         >
-          +
+          {note.noteName}
         </button>
       </div>
       {expandState ? (

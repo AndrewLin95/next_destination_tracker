@@ -257,6 +257,35 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     }
   }, [numberOfPages, currPage]);
 
+  const handleUpdateNotes = (locationID: string) => {
+    const updateRequest = async () => {
+      const url = `/api/project/updatenote`;
+      const body = noteData.filter((note) => note.locationID === locationID);
+      body[0].noteName = "royal ontario museum";
+      const authConfig = {
+        headers: {
+          Authorization: `Bearer ${
+            (userProfileState as UserProfileState).token
+          }`,
+        },
+      };
+
+      const updateNoteResponse: NoteData = await axios.put(
+        url,
+        body,
+        authConfig
+      );
+
+      const indexOfUpdate = noteData.findIndex(
+        (note) => note.locationID === updateNoteResponse.locationID
+      );
+      const tempNoteData = [...noteData];
+      tempNoteData[indexOfUpdate] = updateNoteResponse;
+      setNoteData(tempNoteData);
+    };
+    updateRequest();
+  };
+
   useEffect(() => {
     console.log(mapData);
     console.log(noteData);
@@ -278,7 +307,10 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
               setSearchText={setSearchText}
               handleSearch={handleSearch}
             />
-            <SearchResults noteData={noteData} />
+            <SearchResults
+              noteData={noteData}
+              handleUpdateNotes={handleUpdateNotes}
+            />
             <SearchPagination
               paginationState={paginationState}
               handlePageChange={handlePageChange}
