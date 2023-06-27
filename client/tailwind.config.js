@@ -20,7 +20,7 @@ module.exports = {
         PrimaryButton: '#a760a9',
         SecondaryButton: '#070407',
         Accent: '#b070b2',
-        Accent2: 'd280ff',
+        Accent2: '#d280ff',
       }
     },
   },
