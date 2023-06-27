@@ -108,7 +108,7 @@ export interface MapPayloadData {
 }
 
 export interface NotePayloadData {
-  locationID: string,
+  locationID?: string,
   noteName: string,
   priority: string,
   formattedAddress: string,

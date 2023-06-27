@@ -130,11 +130,27 @@ const getEachProject = async (projectID: string) => {
   }
 }
 
+const updateNote = async (payload: NotePayloadData) => {
+  const filter = {"locationID": payload.locationID};
+  const data = { noteData: payload};
+  delete data.noteData.locationID;
+
+  try {
+    const update: LocationMongoResponse = await ProjectLocationDataSchema.findOneAndUpdate(filter, data, {returnNewDocument: true});
+
+    const responseNoteData: NotePayloadData = {...update.noteData, locationID: update.locationID}
+    return responseNoteData;
+  } catch (err) {
+    console.log(err)
+  }
+}
+
 const projectService = {
   createNewProject,
   searchLocation,
   getProject,
   getEachProject,
+  updateNote,
 }
 
 export default projectService;

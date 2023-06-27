@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import projectService from "../services/projectService";
-import { CreateProjectQuery, SearchQuery } from "../utils/types";
+import { CreateProjectQuery, NotePayloadData, SearchQuery } from "../utils/types";
 
 export const createNewProject = async (req: Request, res: Response) => {
   try {
@@ -42,6 +42,17 @@ export const getEachProject = async (req: Request, res: Response) => {
     const response = await projectService.getEachProject(projectID);
     res.status(200).send(JSON.stringify(response))
   } catch (err) {
-    res.send(500).send(err);
+    res.status(500).send(err);
+  }
+}
+
+export const updateNote = async (req: Request, res: Response) => {
+  try{
+    const payload: NotePayloadData = req.body[0];
+
+    const response = await projectService.updateNote(payload);
+    res.status(200).send(JSON.stringify(response))
+  } catch (err){
+    res.status(500).send(err);
   }
 }
