@@ -75,7 +75,11 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       const tempNoteData: NoteData[] = [];
       const tempScheduleData: ScheduleData[] = [];
 
+      let i = 0;
       responseData.locationData.forEach((eachLocationData) => {
+        if (i === 10) {
+          return;
+        }
         const eachMapData = {
           ...eachLocationData.mapData,
           locationID: eachLocationData.locationID,
@@ -95,6 +99,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
           };
           tempScheduleData.push(eachScheduleData);
         }
+        i++;
       });
       setMapData(tempMapData);
       setNoteData(tempNoteData);
@@ -260,14 +265,14 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   }, [mapData]);
 
   return (
-    <div className="w-screen h-screen overflow-hidden flex flex-col justify-center items-center">
+    <div className="w-screen h-screen max-h-screen overflow-hidden flex flex-col justify-center items-center">
       <Header />
       {loading ? (
         // TODO: loading component
         <></>
       ) : (
-        <div className="flex flex-row w-full h-full">
-          <div className="flex flex-col w-1/5 h-full border border-gray-600">
+        <div className="flex flex-row w-full h-[calc(100vh-4rem)]">
+          <div className="flex flex-col w-96 h-full border border-gray-600">
             <SearchModule
               searchText={searchText}
               setSearchText={setSearchText}

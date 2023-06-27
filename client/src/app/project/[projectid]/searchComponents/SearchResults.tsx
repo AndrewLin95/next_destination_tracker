@@ -16,7 +16,8 @@ const SearchResults: FC<Props> = ({ noteData }) => {
       <div className="flex flex-row justify-center items-center p-4 text-2xl">
         <div className="pr-4 text-lg">Searched Places</div>
       </div>
-      <div className="flex flex-col items-center h-full pb-32">
+      {/* TODO: fix height and overflow */}
+      <div className="flex flex-col items-center h-[calc(100vh-17rem)] overflow-y-auto">
         {noteData.map((note) => {
           return <Note key={note.locationID} note={note} />;
         })}
