@@ -18,6 +18,7 @@ import SearchResults from "./searchComponents/SearchResults";
 import SearchPagination from "./searchComponents/SearchPagination";
 import { NUM_RESULTS_PER_PAGE } from "@/util/constants";
 import { handleValidatePagination } from "./util";
+import EditNoteDialog from "./components/EditNoteDialog";
 
 interface InitResponseData {
   projectData: ProjectData;
@@ -38,6 +39,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   const [allLocationData, setAllLocationData] = useState<LocationData[]>(
     [] as LocationData[]
   );
+  const [searchText, setSearchText] = useState<string>("");
 
   // Pagination Data
   const [numberOfPages, setNumberOfPages] = useState(1);
@@ -46,12 +48,16 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     []
   );
 
-  // TODO: fix
+  // Page Data
   const [mapData, setMapData] = useState<MapData[]>([]);
   const [noteData, setNoteData] = useState<NoteData[]>([]);
   const [scheduleData, setScheduleData] = useState<ScheduleData[]>([]);
 
-  const [searchText, setSearchText] = useState<string>("");
+  // Dialog Data
+  const [noteDialogToggle, setNoteDialogToggle] = useState<Boolean>(false);
+  const [noteDialogData, setNoteDialogData] = useState<NoteData>(
+    {} as NoteData
+  );
 
   useEffect(() => {
     const fetchInitPageData = async () => {
@@ -257,6 +263,11 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     }
   }, [numberOfPages, currPage]);
 
+  const handleEditNoteDialog = (note: NoteData) => {
+    setNoteDialogToggle(true);
+    setNoteDialogData(note);
+  };
+
   const handleUpdateNotes = (locationID: string) => {
     const updateRequest = async () => {
       const url = `/api/project/updatenote`;
@@ -284,6 +295,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       setNoteData(tempNoteData);
     };
     updateRequest();
+    setNoteDialogToggle(false);
   };
 
   useEffect(() => {
@@ -301,7 +313,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
         <></>
       ) : (
         <div className="flex flex-row w-full h-[calc(100vh-4rem)]">
-          <div className="flex flex-col w-96 h-full border border-gray-600">
+          <div className="flex flex-col w-96 max-w-[24rem] h-full border border-gray-600">
             <SearchModule
               searchText={searchText}
               setSearchText={setSearchText}
@@ -309,7 +321,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
             />
             <SearchResults
               noteData={noteData}
-              handleUpdateNotes={handleUpdateNotes}
+              handleEditNoteDialog={handleEditNoteDialog}
             />
             <SearchPagination
               paginationState={paginationState}
@@ -319,6 +331,12 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
           <MapModule projectData={projectData} mapData={mapData} />
         </div>
       )}
+      {noteDialogToggle ? (
+        <EditNoteDialog
+          noteData={noteDialogData}
+          setNoteDialogToggle={setNoteDialogToggle}
+        />
+      ) : null}
     </div>
   );
 };

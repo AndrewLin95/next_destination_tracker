@@ -1,13 +1,13 @@
-import InLineTextButton from "@/components/InLineTextButton";
 import { NoteData } from "@/util/models";
 import { FC } from "react";
 import Note from "./Note";
+
 interface Props {
   noteData: NoteData[];
-  handleUpdateNotes: (locationID: string) => void;
+  handleEditNoteDialog: (note: NoteData) => void;
 }
 
-const SearchResults: FC<Props> = ({ noteData, handleUpdateNotes }) => {
+const SearchResults: FC<Props> = ({ noteData, handleEditNoteDialog }) => {
   if (noteData.length === 0) {
     return null;
   }
@@ -23,7 +23,7 @@ const SearchResults: FC<Props> = ({ noteData, handleUpdateNotes }) => {
             <Note
               key={note.locationID}
               note={note}
-              handleUpdateNotes={handleUpdateNotes}
+              handleEditNoteDialog={handleEditNoteDialog}
             />
           );
         })}
