@@ -1,6 +1,8 @@
 import { NoteData } from "@/util/models";
 import { FC, useState } from "react";
 import { SIMPLE_BUTTON_STYLE } from "@/util/constants";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 
 interface Props {
   note: NoteData;
@@ -15,7 +17,7 @@ const Note: FC<Props> = ({ note, handleUpdateNotes }) => {
   // TODO: Priority
   return (
     <div className="pb-8 w-full flex flex-col justify-center items-center">
-      <div className="flex justify-between w-full">
+      <div className="flex justify-between w-full items-center">
         <button
           type="button"
           className={`${SIMPLE_BUTTON_STYLE} capitalize w-full flex justify-start `}
@@ -23,6 +25,7 @@ const Note: FC<Props> = ({ note, handleUpdateNotes }) => {
         >
           {note.noteName}
         </button>
+        <FontAwesomeIcon icon={faPenToSquare} style={{ color: "#b070b2" }} />
       </div>
       {expandState ? (
         <div className="flex flex-col h-48 w-full border border-grey">
