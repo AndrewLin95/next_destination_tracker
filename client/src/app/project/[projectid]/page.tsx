@@ -268,11 +268,10 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     setNoteDialogData(note);
   };
 
-  const handleUpdateNotes = (locationID: string) => {
+  const handleUpdateNotes = (newNoteData: NoteData) => {
     const updateRequest = async () => {
       const url = `/api/project/updatenote`;
-      const body = noteData.filter((note) => note.locationID === locationID);
-      body[0].noteName = "royal ontario museum";
+      const body = newNoteData;
       const authConfig = {
         headers: {
           Authorization: `Bearer ${
@@ -281,18 +280,22 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
         },
       };
 
-      const updateNoteResponse: NoteData = await axios.put(
-        url,
-        body,
-        authConfig
-      );
+      try {
+        const updateNoteResponse: NoteData = await axios.put(
+          url,
+          body,
+          authConfig
+        );
 
-      const indexOfUpdate = noteData.findIndex(
-        (note) => note.locationID === updateNoteResponse.locationID
-      );
-      const tempNoteData = [...noteData];
-      tempNoteData[indexOfUpdate] = updateNoteResponse;
-      setNoteData(tempNoteData);
+        const indexOfUpdate = noteData.findIndex(
+          (note) => note.locationID === updateNoteResponse.locationID
+        );
+        const tempNoteData = [...noteData];
+        tempNoteData[indexOfUpdate] = updateNoteResponse;
+        setNoteData(tempNoteData);
+      } catch (err) {
+        console.log(err);
+      }
     };
     updateRequest();
     setNoteDialogToggle(false);
@@ -335,6 +338,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
         <EditNoteDialog
           noteData={noteDialogData}
           setNoteDialogToggle={setNoteDialogToggle}
+          handleUpdateNotes={handleUpdateNotes}
         />
       ) : null}
     </div>

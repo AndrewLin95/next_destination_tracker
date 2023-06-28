@@ -15,15 +15,20 @@ import {
   faPersonRunning,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import ImageUploading, { ImageListType } from "react-images-uploading";
 
 interface Props {
   noteData: NoteData;
   setNoteDialogToggle: Dispatch<SetStateAction<Boolean>>;
+  handleUpdateNotes: (newNoteData: NoteData) => void;
 }
 
-const EditNoteDialog: FC<Props> = ({ noteData, setNoteDialogToggle }) => {
+const EditNoteDialog: FC<Props> = ({
+  noteData,
+  setNoteDialogToggle,
+  handleUpdateNotes,
+}) => {
   const [noteName, setNoteName] = useState<string>(noteData.noteName);
   const [noteAddress, setNoteAddress] = useState<string>(
     noteData.formattedAddress
@@ -38,17 +43,50 @@ const EditNoteDialog: FC<Props> = ({ noteData, setNoteDialogToggle }) => {
     noteData.customNote === undefined ? "" : noteData.customNote
   );
   const [priority, setPriority] = useState<string>(noteData.priority);
-  const [uploadedImage, setUploadedImage] = useState<ImageListType[]>([]);
+  const [existingImage, setExistingImage] = useState<string | undefined>(
+    noteData.picture
+  );
+  const [uploadedImage, setUploadedImage] = useState<any[]>([]);
 
   const handleImageUploadChange = (imageList: ImageListType) => {
     setUploadedImage(imageList as never[]);
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    // TODO: handle form submit. probably in parent component
     // validation for things that are REQUIRED
     e.preventDefault();
-    console.log(e);
+
+    const locationID: string = noteData.locationID;
+    const noteName: string = (e.target as HTMLFormElement).noteName.value;
+    const formattedAddress: string = (e.target as HTMLFormElement).noteAddress
+      .value;
+    const openHours: string = (e.target as HTMLFormElement).noteOpen.value;
+    const closeHours: string = (e.target as HTMLFormElement).noteClose.value;
+    const customNote: string = (e.target as HTMLFormElement).noteMessage.value;
+    const updatedPriority: string = priority;
+
+    let picture: string;
+    if (existingImage === "" || existingImage === undefined) {
+      picture =
+        uploadedImage[0]?.dataURL === undefined
+          ? ""
+          : uploadedImage[0]?.dataURL;
+    } else {
+      picture = existingImage;
+    }
+
+    const newNoteData = {
+      locationID: locationID,
+      noteName: noteName,
+      priority: updatedPriority,
+      formattedAddress: formattedAddress,
+      customNote: customNote,
+      openHours: openHours,
+      closeHours: closeHours,
+      picture: picture,
+    };
+
+    handleUpdateNotes(newNoteData);
   };
 
   return (
@@ -68,6 +106,7 @@ const EditNoteDialog: FC<Props> = ({ noteData, setNoteDialogToggle }) => {
             <input
               type="text"
               value={noteName}
+              name="noteName"
               className="px-2 text-sm w-[calc(100%-7rem)] bg-Background_Lighter capitalize"
               onChange={(e) => setNoteName(e.target.value)}
             />
@@ -77,6 +116,7 @@ const EditNoteDialog: FC<Props> = ({ noteData, setNoteDialogToggle }) => {
             <input
               type="text"
               value={noteAddress}
+              name="noteAddress"
               className="px-2 text-sm w-[calc(100%-7rem)] bg-Background_Lighter"
               onChange={(e) => setNoteAddress(e.target.value)}
             />
@@ -86,12 +126,14 @@ const EditNoteDialog: FC<Props> = ({ noteData, setNoteDialogToggle }) => {
             <input
               type="time"
               value={noteOpen}
+              name="noteOpen"
               className="px-2 text-sm w-[calc(((100%-7rem)/2)-0.1275rem)] mr-1 bg-Background_Lighter"
               onChange={(e) => setNoteOpen(e.target.value)}
             />
             <input
               type="time"
               value={noteClose}
+              name="noteClose"
               className="px-2 text-sm w-[calc(((100%-7rem)/2)-0.1275rem)] bg-Background_Lighter"
               onChange={(e) => setNoteClose(e.target.value)}
             />
@@ -101,6 +143,7 @@ const EditNoteDialog: FC<Props> = ({ noteData, setNoteDialogToggle }) => {
             <textarea
               rows={3}
               value={noteMessage}
+              name="noteMessage"
               placeholder="Enter a custom note"
               className="px-2 text-sm w-[calc(100%-7rem)] resize-none overflow-y-auto bg-Background_Lighter"
               onChange={(e) => setNoteMessage(e.target.value)}
@@ -116,6 +159,7 @@ const EditNoteDialog: FC<Props> = ({ noteData, setNoteDialogToggle }) => {
                 <div className="upload__image-wrapper w-full h-auto items-center flex flex-row">
                   {imageList[0] ? (
                     <button
+                      type="button"
                       className={`${REMOVE_IMG_BTN_STYLE} bg-SecondaryButton/40`}
                       onClick={onImageRemoveAll}
                     >
@@ -123,6 +167,7 @@ const EditNoteDialog: FC<Props> = ({ noteData, setNoteDialogToggle }) => {
                     </button>
                   ) : (
                     <button
+                      type="button"
                       className={`${UPLOAD_IMG_BTN_STYLE} bg-Accent/40`}
                       onClick={onImageUpload}
                     >
