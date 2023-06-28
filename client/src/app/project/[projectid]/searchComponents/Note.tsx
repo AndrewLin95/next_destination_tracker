@@ -1,8 +1,22 @@
 import { NoteData } from "@/util/models";
 import { FC, useState } from "react";
-import { SIMPLE_BUTTON_STYLE } from "@/util/constants";
+import {
+  PRIORITY_DEFAULT_STYLE,
+  PRIORITY_SELECTED_STYLE,
+  SIMPLE_BUTTON_STYLE,
+} from "@/util/constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrashCan } from "@fortawesome/free-regular-svg-icons";
+import {
+  faPerson,
+  faPersonWalking,
+  faPersonRunning,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  NOTE_PRIORITY_LOW,
+  NOTE_PRIORITY_MED,
+  NOTE_PRIORITY_HIGH,
+} from "@/util/constants";
 
 interface Props {
   note: NoteData;
@@ -15,6 +29,41 @@ const Note: FC<Props> = ({ note, handleEditNoteDialog }) => {
   // TODO: API calls to edit
   // TODO: API call to embed and add picture
   // TODO: Priority
+
+  const renderPriorityIcons = () => {
+    return (
+      <>
+        <FontAwesomeIcon
+          icon={faPerson}
+          size="lg"
+          className={
+            note.priority === NOTE_PRIORITY_LOW
+              ? PRIORITY_SELECTED_STYLE
+              : PRIORITY_DEFAULT_STYLE
+          }
+        />
+        <FontAwesomeIcon
+          icon={faPersonWalking}
+          size="lg"
+          className={
+            note.priority === NOTE_PRIORITY_MED
+              ? PRIORITY_SELECTED_STYLE
+              : PRIORITY_DEFAULT_STYLE
+          }
+        />
+        <FontAwesomeIcon
+          icon={faPersonRunning}
+          size="lg"
+          className={
+            note.priority === NOTE_PRIORITY_HIGH
+              ? PRIORITY_SELECTED_STYLE
+              : PRIORITY_DEFAULT_STYLE
+          }
+        />
+      </>
+    );
+  };
+
   return (
     <div className="pb-8 w-full flex flex-col justify-center items-center">
       <div className="flex justify-between w-full items-center p-1">
@@ -35,20 +84,23 @@ const Note: FC<Props> = ({ note, handleEditNoteDialog }) => {
       </div>
       {expandState ? (
         <div className="flex flex-col h-48 w-full border border-grey p-2">
-          <div className="font-bold">
+          <div className="font-bold pb-2">
             Address:{" "}
-            <div className="text-sm font-light">{note.formattedAddress}</div>
+            <div className="text-xs font-light">{note.formattedAddress}</div>
           </div>
           <div className="font-bold">
             Notes:
-            <div className="text-sm font-light h-16 overflow-y-auto overflow-x-hidden truncate">
-              {note.customNote ? note.customNote : "Enter a custom note"}
+            <div className="text-xs font-light h-20 overflow-y-auto overflow-x-hidden">
+              {note.customNote ? note.customNote : "Add a custom note"}
             </div>
           </div>
-          <div className="flex justify-end w-full font-light text-sm">
-            {note.openHours
-              ? `${note.openHours} - ${note.closeHours}`
-              : "Enter hours"}
+          <div className="flex justify-between items-center w-full font-light text-sm">
+            <div>{renderPriorityIcons()}</div>
+            <div>
+              {note.openHours
+                ? `Hours: ${note.openHours} - ${note.closeHours}`
+                : "Add hours"}
+            </div>
           </div>
         </div>
       ) : null}

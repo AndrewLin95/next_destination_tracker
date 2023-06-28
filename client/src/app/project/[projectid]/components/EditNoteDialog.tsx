@@ -7,6 +7,9 @@ import {
   maxNumOfImages,
   REMOVE_IMG_BTN_STYLE,
   UPLOAD_IMG_BTN_STYLE,
+  NOTE_PRIORITY_LOW,
+  NOTE_PRIORITY_MED,
+  NOTE_PRIORITY_HIGH,
 } from "@/util/constants";
 import { NoteData } from "@/util/models";
 import {
@@ -201,31 +204,31 @@ const EditNoteDialog: FC<Props> = ({
                 icon={faPerson}
                 size="lg"
                 className={
-                  priority === "Low"
+                  priority === NOTE_PRIORITY_LOW
                     ? PRIORITY_SELECTED_STYLE
                     : PRIORITY_DEFAULT_STYLE
                 }
-                onClick={() => setPriority("Low")}
+                onClick={() => setPriority(NOTE_PRIORITY_LOW)}
               />
               <FontAwesomeIcon
                 icon={faPersonWalking}
                 size="lg"
                 className={
-                  priority === "Medium"
+                  priority === NOTE_PRIORITY_MED
                     ? PRIORITY_SELECTED_STYLE
                     : PRIORITY_DEFAULT_STYLE
                 }
-                onClick={() => setPriority("Medium")}
+                onClick={() => setPriority(NOTE_PRIORITY_MED)}
               />
               <FontAwesomeIcon
                 icon={faPersonRunning}
                 size="lg"
                 className={
-                  priority === "High"
+                  priority === NOTE_PRIORITY_HIGH
                     ? PRIORITY_SELECTED_STYLE
                     : PRIORITY_DEFAULT_STYLE
                 }
-                onClick={() => setPriority("High")}
+                onClick={() => setPriority(NOTE_PRIORITY_HIGH)}
               />
             </div>
             <div>
