@@ -14,9 +14,6 @@ interface Props {
 const Note: FC<Props> = ({ note, handleEditNoteDialog }) => {
   const [expandState, setExpandState] = useState(false);
 
-  // TODO: API calls to edit
-  // TODO: API call to embed and add picture
-
   return (
     <div className="pb-8 w-full flex flex-col justify-center items-center">
       <div className="flex justify-between w-full items-center p-1">
@@ -39,7 +36,7 @@ const Note: FC<Props> = ({ note, handleEditNoteDialog }) => {
       {expandState ? (
         <div className="flex flex-col h-48 w-full border border-grey p-2">
           <div className="font-bold pb-2">
-            Address:{" "}
+            Address:
             <div className="text-xs font-light overflow-y-auto h-4">
               {note.formattedAddress}
             </div>
