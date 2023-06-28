@@ -281,17 +281,14 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       };
 
       try {
-        const updateNoteResponse: NoteData = await axios.put(
-          url,
-          body,
-          authConfig
-        );
+        const updateNoteResponse = await axios.put(url, body, authConfig);
+        const noteResponseData: NoteData = updateNoteResponse.data;
 
         const indexOfUpdate = noteData.findIndex(
-          (note) => note.locationID === updateNoteResponse.locationID
+          (note) => note.locationID === noteResponseData.locationID
         );
         const tempNoteData = [...noteData];
-        tempNoteData[indexOfUpdate] = updateNoteResponse;
+        tempNoteData[indexOfUpdate] = noteResponseData;
         setNoteData(tempNoteData);
       } catch (err) {
         console.log(err);
