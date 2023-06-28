@@ -15,7 +15,7 @@ const Note: FC<Props> = ({ note, handleEditNoteDialog }) => {
   const [expandState, setExpandState] = useState(false);
 
   return (
-    <div className="pb-8 w-full flex flex-col justify-center items-center">
+    <div className="mb-8 w-full flex flex-col justify-center items-center border border-Background_Lighter">
       <div className="flex justify-between w-full items-center p-1">
         <button
           type="button"
@@ -23,18 +23,22 @@ const Note: FC<Props> = ({ note, handleEditNoteDialog }) => {
           onClick={() => setExpandState(!expandState)}
         >
           <SelectivelyRenderPriorityIcons priority={note.priority} />
-          <div>{note.noteName}</div>
+          <div className="underline">{note.noteName}</div>
         </button>
-        <FontAwesomeIcon
-          icon={faPenToSquare}
-          style={{ color: "#b070b2" }}
-          onClick={() => handleEditNoteDialog(note)}
-          className="pr-1"
-        />
-        <FontAwesomeIcon icon={faTrashCan} style={{ color: "#b070b2" }} />
+        <button className={SIMPLE_BUTTON_STYLE}>
+          <FontAwesomeIcon
+            icon={faPenToSquare}
+            style={{ color: "#b070b2" }}
+            onClick={() => handleEditNoteDialog(note)}
+            className="pr-1"
+          />
+        </button>
+        <button className={SIMPLE_BUTTON_STYLE}>
+          <FontAwesomeIcon icon={faTrashCan} style={{ color: "#b070b2" }} />
+        </button>
       </div>
       {expandState ? (
-        <div className="flex flex-col h-48 w-full border border-grey p-2">
+        <div className="flex flex-col h-48 w-full p-2">
           <div className="font-bold pb-2">
             Address:
             <div className="text-xs font-light overflow-y-auto h-4">

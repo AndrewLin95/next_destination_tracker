@@ -313,7 +313,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
         <></>
       ) : (
         <div className="flex flex-row w-full h-[calc(100vh-4rem)]">
-          <div className="flex flex-col w-96 max-w-[24rem] h-full border border-gray-600">
+          <div className="flex flex-col w-96 max-w-[24rem] h-full border border-Background_Darker">
             <SearchModule
               searchText={searchText}
               setSearchText={setSearchText}

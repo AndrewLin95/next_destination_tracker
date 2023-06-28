@@ -13,7 +13,7 @@ const SearchModule: FC<Props> = ({
   handleSearch,
 }) => {
   return (
-    <div className="flex flex-col w-full h-24 border border-gray-600">
+    <div className="flex flex-col w-full h-24">
       <SearchBar
         searchText={searchText}
         setSearchText={setSearchText}
