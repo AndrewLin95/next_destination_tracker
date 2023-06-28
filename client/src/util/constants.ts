@@ -12,6 +12,9 @@ export const FORM_CANCEL_BUTTON = "font-bold border-r-0 text-md p-0 bg-Secondary
 // Styling for editNoteDialog
 export const PRIORITY_SELECTED_STYLE = "pr-2 text-Accent";
 export const PRIORITY_DEFAULT_STYLE = "pr-2";
+export const PRIORITY_LOW_STYLE = "pr-2 text-green-500"
+export const PRIORITY_MED_STYLE = "pr-2 text-yellow-500"
+export const PRIORITY_HIGH_STYLE = "pr-2 text-red-500"
 
 export const REMOVE_IMG_BTN_STYLE = "h-10 w-[9.5rem] text-sm font-bold border-r-0 text-md p-0 bg-transparent hover:border-transparent focus:outline-none"
 export const UPLOAD_IMG_BTN_STYLE = "h-10 w-[9.5rem] text-sm font-bold border-r-0 text-md p-0 hover:border-transparent focus:outline-none"
