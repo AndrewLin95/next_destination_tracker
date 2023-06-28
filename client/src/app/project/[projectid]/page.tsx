@@ -19,6 +19,7 @@ import SearchPagination from "./searchComponents/SearchPagination";
 import { NUM_RESULTS_PER_PAGE } from "@/util/constants";
 import { handleValidatePagination } from "./util";
 import EditNoteDialog from "./components/EditNoteDialog";
+import { useRouter } from "next/navigation";
 
 interface InitResponseData {
   projectData: ProjectData;
@@ -30,6 +31,7 @@ interface Props {
 }
 
 const ProjectPage: NextPage<Props> = ({ params }) => {
+  const router = useRouter();
   const { userProfileState, setUserProfileState } = useContext(UserContext);
 
   const [loading, setLoading] = useState(true);
@@ -60,6 +62,12 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   );
 
   useEffect(() => {
+    if (params.projectid === undefined) {
+      router.push("/homepage");
+    } else if ((userProfileState as UserProfileState).token === undefined) {
+      router.push("/");
+    }
+
     const fetchInitPageData = async () => {
       const url = `/api/project/geteachproject/${params.projectid}`;
       const authConfig = {
