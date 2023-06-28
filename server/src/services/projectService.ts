@@ -7,7 +7,7 @@ const ProjectSetupSchema = require('../models/projectSetupSchema');
 const ProjectLocationDataSchema = require('../models/projectLocationDataSchema');
 import { CreateProjectQuery, SearchQuery, LocationMongoResponse, ProjectPayload, MapPayloadData, NotePayloadData, SchedulePayloadData } from "../utils/types";
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
-import { msInDay } from '../utils/constants';
+import { msInDay, URL_REGEX } from '../utils/constants';
 
 const createNewProject = async (payload: CreateProjectQuery) => {
   const startDate = Date.parse(payload.projectStartDate);
@@ -131,12 +131,34 @@ const getEachProject = async (projectID: string) => {
 }
 
 const updateNote = async (payload: NotePayloadData) => {
-  const filter = {"locationID": payload.locationID};
+  const filter = {"locationID": payload.locationID as string};
   const data = { noteData: payload};
   delete data.noteData.locationID;
 
+  if (payload.picture === "" || payload.picture === undefined) {
+    data.noteData.picture = "";
+  } else if (URL_REGEX.test(payload.picture)) {
+    data.noteData.picture = payload.picture
+  } else {
+    const imageBase64 = payload.picture as string;
+    var imageBuffer = Buffer.from(imageBase64.replace(/^data:image\/\w+;base64,/, ""),'base64')
+    const imageType = imageBase64.split(';')[0].split('/')[1];
+
+    const input = {
+      Body: imageBuffer,
+      Bucket: process.env.AWS_S3_BUCKETNAME as string,
+      Key: filter.locationID,
+      ContentEncoding: 'base64',
+      ContentType: `image/${imageType}`
+    }
+  
+    const command = new PutObjectCommand(input)
+    await s3Client.send(command);
+    data.noteData.picture = `https://${process.env.AWS_S3_BUCKETNAME}.s3.amazonaws.com/${filter.locationID}`
+  }
+
   try {
-    const update: LocationMongoResponse = await ProjectLocationDataSchema.findOneAndUpdate(filter, data, {returnNewDocument: true});
+    const update: LocationMongoResponse = await ProjectLocationDataSchema.findOneAndUpdate(filter, data, {returnOriginal: false});
 
     const responseNoteData: NotePayloadData = {...update.noteData, locationID: update.locationID}
     return responseNoteData;

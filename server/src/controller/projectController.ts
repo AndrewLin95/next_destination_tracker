@@ -48,7 +48,7 @@ export const getEachProject = async (req: Request, res: Response) => {
 
 export const updateNote = async (req: Request, res: Response) => {
   try{
-    const payload: NotePayloadData = req.body[0];
+    const payload: NotePayloadData = req.body;
 
     const response = await projectService.updateNote(payload);
     res.status(200).send(JSON.stringify(response))
