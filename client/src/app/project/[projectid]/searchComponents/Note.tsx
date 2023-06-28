@@ -1,22 +1,10 @@
 import { NoteData } from "@/util/models";
 import { FC, useState } from "react";
-import {
-  PRIORITY_DEFAULT_STYLE,
-  PRIORITY_SELECTED_STYLE,
-  SIMPLE_BUTTON_STYLE,
-} from "@/util/constants";
+import { SIMPLE_BUTTON_STYLE } from "@/util/constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrashCan } from "@fortawesome/free-regular-svg-icons";
-import {
-  faPerson,
-  faPersonWalking,
-  faPersonRunning,
-} from "@fortawesome/free-solid-svg-icons";
-import {
-  NOTE_PRIORITY_LOW,
-  NOTE_PRIORITY_MED,
-  NOTE_PRIORITY_HIGH,
-} from "@/util/constants";
+import RenderAllPriorityIcons from "../components/RenderPriorityIcons";
+import SelectivelyRenderPriorityIcons from "../components/SelectivelyRenderPriorityIcons";
 
 interface Props {
   note: NoteData;
@@ -28,41 +16,6 @@ const Note: FC<Props> = ({ note, handleEditNoteDialog }) => {
 
   // TODO: API calls to edit
   // TODO: API call to embed and add picture
-  // TODO: Priority
-
-  const renderPriorityIcons = () => {
-    return (
-      <>
-        <FontAwesomeIcon
-          icon={faPerson}
-          size="lg"
-          className={
-            note.priority === NOTE_PRIORITY_LOW
-              ? PRIORITY_SELECTED_STYLE
-              : PRIORITY_DEFAULT_STYLE
-          }
-        />
-        <FontAwesomeIcon
-          icon={faPersonWalking}
-          size="lg"
-          className={
-            note.priority === NOTE_PRIORITY_MED
-              ? PRIORITY_SELECTED_STYLE
-              : PRIORITY_DEFAULT_STYLE
-          }
-        />
-        <FontAwesomeIcon
-          icon={faPersonRunning}
-          size="lg"
-          className={
-            note.priority === NOTE_PRIORITY_HIGH
-              ? PRIORITY_SELECTED_STYLE
-              : PRIORITY_DEFAULT_STYLE
-          }
-        />
-      </>
-    );
-  };
 
   return (
     <div className="pb-8 w-full flex flex-col justify-center items-center">
@@ -72,7 +25,8 @@ const Note: FC<Props> = ({ note, handleEditNoteDialog }) => {
           className={`${SIMPLE_BUTTON_STYLE} capitalize w-full flex justify-start px-1 truncate`}
           onClick={() => setExpandState(!expandState)}
         >
-          {note.noteName}
+          <SelectivelyRenderPriorityIcons priority={note.priority} />
+          <div>{note.noteName}</div>
         </button>
         <FontAwesomeIcon
           icon={faPenToSquare}
@@ -86,7 +40,9 @@ const Note: FC<Props> = ({ note, handleEditNoteDialog }) => {
         <div className="flex flex-col h-48 w-full border border-grey p-2">
           <div className="font-bold pb-2">
             Address:{" "}
-            <div className="text-xs font-light">{note.formattedAddress}</div>
+            <div className="text-xs font-light overflow-y-auto h-4">
+              {note.formattedAddress}
+            </div>
           </div>
           <div className="font-bold">
             Notes:
@@ -95,7 +51,7 @@ const Note: FC<Props> = ({ note, handleEditNoteDialog }) => {
             </div>
           </div>
           <div className="flex justify-between items-center w-full font-light text-sm">
-            <div>{renderPriorityIcons()}</div>
+            <RenderAllPriorityIcons priority={note.priority} />
             <div>
               {note.openHours
                 ? `Hours: ${note.openHours} - ${note.closeHours}`
