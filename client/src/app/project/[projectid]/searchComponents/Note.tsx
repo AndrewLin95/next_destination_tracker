@@ -55,8 +55,8 @@ const Note: FC<Props> = ({ note, handleEditNoteDialog }) => {
             <RenderAllPriorityIcons priority={note.priority} />
             <div>
               {note.openHours
-                ? `Hours: ${note.openHours} - ${note.closeHours}`
-                : "Add hours"}
+                ? `Operating Hours: ${note.openHours} - ${note.closeHours}`
+                : "Add Operating Hours"}
             </div>
           </div>
         </div>

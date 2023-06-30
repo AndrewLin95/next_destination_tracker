@@ -5,33 +5,27 @@ import {
   faPersonWalking,
   faPersonRunning,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  NOTE_PRIORITY_LOW,
-  NOTE_PRIORITY_MED,
-  PRIORITY_HIGH_STYLE,
-  PRIORITY_LOW_STYLE,
-  PRIORITY_MED_STYLE,
-} from "@/util/constants";
+import { NOTE_PRIORITY, PRIORITY_STYLE } from "@/util/constants";
 
 interface Props {
   priority: string;
 }
 
 const SelectivelyRenderPriorityIcons: FC<Props> = ({ priority }) => {
-  if (priority === NOTE_PRIORITY_LOW) {
+  if (priority === NOTE_PRIORITY.Low) {
     return (
       <FontAwesomeIcon
         icon={faPerson}
         size="lg"
-        className={PRIORITY_LOW_STYLE}
+        className={PRIORITY_STYLE.Low}
       />
     );
-  } else if (priority === NOTE_PRIORITY_MED) {
+  } else if (priority === NOTE_PRIORITY.Med) {
     return (
       <FontAwesomeIcon
         icon={faPersonWalking}
         size="lg"
-        className={PRIORITY_MED_STYLE}
+        className={PRIORITY_STYLE.Med}
       />
     );
   } else {
@@ -39,7 +33,7 @@ const SelectivelyRenderPriorityIcons: FC<Props> = ({ priority }) => {
       <FontAwesomeIcon
         icon={faPersonRunning}
         size="lg"
-        className={PRIORITY_HIGH_STYLE}
+        className={PRIORITY_STYLE.High}
       />
     );
   }

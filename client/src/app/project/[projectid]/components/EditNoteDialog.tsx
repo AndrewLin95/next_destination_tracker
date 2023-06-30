@@ -1,15 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 import {
-  PRIORITY_DEFAULT_STYLE,
-  PRIORITY_SELECTED_STYLE,
   FORM_SUBMIT_BUTTON,
   FORM_CANCEL_BUTTON,
-  maxNumOfImages,
+  MAX_NUM_OF_IMAGES,
   REMOVE_IMG_BTN_STYLE,
   UPLOAD_IMG_BTN_STYLE,
-  NOTE_PRIORITY_LOW,
-  NOTE_PRIORITY_MED,
-  NOTE_PRIORITY_HIGH,
+  NOTE_PRIORITY,
+  PRIORITY_STYLE,
 } from "@/util/constants";
 import { NoteData } from "@/util/models";
 import {
@@ -26,6 +23,8 @@ interface Props {
   setNoteDialogToggle: Dispatch<SetStateAction<Boolean>>;
   handleUpdateNotes: (newNoteData: NoteData) => void;
 }
+
+// TODO: ADD uploaded image to the preview
 
 const EditNoteDialog: FC<Props> = ({
   noteData,
@@ -156,14 +155,14 @@ const EditNoteDialog: FC<Props> = ({
             <ImageUploading
               value={uploadedImage}
               onChange={handleImageUploadChange}
-              maxNumber={maxNumOfImages}
+              maxNumber={MAX_NUM_OF_IMAGES}
             >
               {({ imageList, onImageUpload, onImageRemoveAll }) => (
                 <div className="upload__image-wrapper w-full h-auto items-center flex flex-row">
                   {imageList[0] ? (
                     <button
                       type="button"
-                      className={`${REMOVE_IMG_BTN_STYLE} bg-SecondaryButton/40`}
+                      className={`${REMOVE_IMG_BTN_STYLE} w-[9.4rem] bg-SecondaryButton/40`}
                       onClick={onImageRemoveAll}
                     >
                       Remove Image:
@@ -171,7 +170,7 @@ const EditNoteDialog: FC<Props> = ({
                   ) : (
                     <button
                       type="button"
-                      className={`${UPLOAD_IMG_BTN_STYLE} bg-Accent/40`}
+                      className={`${UPLOAD_IMG_BTN_STYLE} w-[9.4rem] bg-Accent/40`}
                       onClick={onImageUpload}
                     >
                       Upload Image:
@@ -204,31 +203,31 @@ const EditNoteDialog: FC<Props> = ({
                 icon={faPerson}
                 size="lg"
                 className={
-                  priority === NOTE_PRIORITY_LOW
-                    ? PRIORITY_SELECTED_STYLE
-                    : PRIORITY_DEFAULT_STYLE
+                  priority === NOTE_PRIORITY.Low
+                    ? PRIORITY_STYLE.Low
+                    : PRIORITY_STYLE.Default
                 }
-                onClick={() => setPriority(NOTE_PRIORITY_LOW)}
+                onClick={() => setPriority(NOTE_PRIORITY.Low)}
               />
               <FontAwesomeIcon
                 icon={faPersonWalking}
                 size="lg"
                 className={
-                  priority === NOTE_PRIORITY_MED
-                    ? PRIORITY_SELECTED_STYLE
-                    : PRIORITY_DEFAULT_STYLE
+                  priority === NOTE_PRIORITY.Med
+                    ? PRIORITY_STYLE.Med
+                    : PRIORITY_STYLE.Default
                 }
-                onClick={() => setPriority(NOTE_PRIORITY_MED)}
+                onClick={() => setPriority(NOTE_PRIORITY.Med)}
               />
               <FontAwesomeIcon
                 icon={faPersonRunning}
                 size="lg"
                 className={
-                  priority === NOTE_PRIORITY_HIGH
-                    ? PRIORITY_SELECTED_STYLE
-                    : PRIORITY_DEFAULT_STYLE
+                  priority === NOTE_PRIORITY.High
+                    ? PRIORITY_STYLE.High
+                    : PRIORITY_STYLE.Default
                 }
-                onClick={() => setPriority(NOTE_PRIORITY_HIGH)}
+                onClick={() => setPriority(NOTE_PRIORITY.High)}
               />
             </div>
             <div>
