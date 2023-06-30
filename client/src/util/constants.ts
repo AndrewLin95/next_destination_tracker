@@ -21,3 +21,23 @@ export enum PRIORITY_STYLE {
 
 export const REMOVE_IMG_BTN_STYLE = "h-10 text-sm font-bold border-r-0 text-md p-0 bg-transparent hover:border-transparent focus:outline-none"
 export const UPLOAD_IMG_BTN_STYLE = "h-10 text-sm font-bold border-r-0 text-md p-0 hover:border-transparent focus:outline-none"
+
+
+
+
+// Server Responses
+export enum STATUS_CODES {
+  SUCCESS = "200 Sucess",
+  Duplicate = "409 Error: Duplicate Record",
+  ServerError = "500 Error: Server Error"
+}
+
+export enum ERROR_CAUSE {
+  Search = "Your search query could not be completed.",
+  Server = "Our servers are experiencing technical issues."
+}
+
+export enum ERROR_DATA {
+  SearchDuplicate = "Your query was not completed since it was a duplicate entry. Please try another location.",
+  Server = "We could not complete your request due to a technical issue on our end. Please try again later."
+}

@@ -132,6 +132,6 @@ export interface SchedulePayloadData {
 
 export interface StatusPayload { 
   statusCode: STATUS_CODES,
-  errorCause?: ERROR_CAUSE,
-  errorData?: ERROR_DATA,
+  errorCause: ERROR_CAUSE,
+  errorData: ERROR_DATA,
 }

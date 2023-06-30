@@ -12,14 +12,16 @@ import {
   MapData,
   NoteData,
   ScheduleData,
+  StatusPayload,
 } from "@/util/models";
-import axios from "axios";
+import axios, { AxiosError, isAxiosError } from "axios";
 import SearchResults from "./searchComponents/SearchResults";
 import SearchPagination from "./searchComponents/SearchPagination";
-import { NUM_RESULTS_PER_PAGE } from "@/util/constants";
+import { NUM_RESULTS_PER_PAGE, STATUS_CODES } from "@/util/constants";
 import { handleValidatePagination } from "./util";
 import EditNoteDialog from "./components/EditNoteDialog";
 import { useRouter } from "next/navigation";
+import ErrorDialog from "@/components/ErrorDialog";
 
 interface InitResponseData {
   projectData: ProjectData;
@@ -59,6 +61,11 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   const [noteDialogToggle, setNoteDialogToggle] = useState<Boolean>(false);
   const [noteDialogData, setNoteDialogData] = useState<NoteData>(
     {} as NoteData
+  );
+
+  const [errorDialogToggle, setErrorDialogToggle] = useState<Boolean>(false);
+  const [errorDialogData, setErrorDialogData] = useState<StatusPayload>(
+    {} as StatusPayload
   );
 
   useEffect(() => {
@@ -144,37 +151,48 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
         projectID: params.projectid as string,
         query: searchText.split(" ").join("+"),
       };
+      debugger;
+      try {
+        const response = await axios.post(url, body, authConfig);
+        const responseData: LocationData = response.data;
 
-      const response = await axios.post(url, body, authConfig);
-      const responseData: LocationData = response.data;
+        const tempAllLocationData = allLocationData;
+        tempAllLocationData.push(responseData);
+        setAllLocationData(tempAllLocationData);
 
-      const tempAllLocationData = allLocationData;
-      tempAllLocationData.push(responseData);
-      setAllLocationData(tempAllLocationData);
+        if (currPage === numberOfPages && noteData.length <= 9) {
+          const tempMapData = [...mapData];
+          tempMapData.push({
+            ...responseData.mapData,
+            locationID: responseData.locationID,
+          });
+          setMapData(tempMapData);
 
-      if (currPage === numberOfPages && noteData.length <= 9) {
-        const tempMapData = [...mapData];
-        tempMapData.push({
-          ...responseData.mapData,
-          locationID: responseData.locationID,
-        });
-        setMapData(tempMapData);
+          const tempNoteData = [...noteData];
+          tempNoteData.push({
+            ...responseData.noteData,
+            locationID: responseData.locationID,
+          });
+          setNoteData(tempNoteData);
+        }
 
-        const tempNoteData = [...noteData];
-        tempNoteData.push({
-          ...responseData.noteData,
-          locationID: responseData.locationID,
-        });
-        setNoteData(tempNoteData);
+        handleValidatePagination(
+          "+",
+          tempAllLocationData,
+          numberOfPages,
+          setNumberOfPages
+        );
+      } catch (err) {
+        if (isAxiosError(err)) {
+          const responseBody: StatusPayload = err.response?.data.status;
+          if (responseBody.statusCode === STATUS_CODES.Duplicate) {
+            setErrorDialogData(responseBody);
+            setErrorDialogToggle(true);
+          }
+        }
       }
     };
     fetchSearchData();
-    handleValidatePagination(
-      "+",
-      allLocationData,
-      numberOfPages,
-      setNumberOfPages
-    );
     setSearchText("");
   };
 
@@ -345,6 +363,12 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
           noteData={noteDialogData}
           setNoteDialogToggle={setNoteDialogToggle}
           handleUpdateNotes={handleUpdateNotes}
+        />
+      ) : null}
+      {errorDialogToggle ? (
+        <ErrorDialog
+          setErrorDialogToggle={setErrorDialogToggle}
+          errorDialogData={errorDialogData}
         />
       ) : null}
     </div>

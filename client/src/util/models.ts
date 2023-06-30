@@ -1,3 +1,5 @@
+import { STATUS_CODES, ERROR_CAUSE, ERROR_DATA } from "./constants";
+
 export interface DecodedJWT {
   exp: number,
   iat: number,
@@ -58,7 +60,8 @@ export interface LocationData {
     scheduleDate: Date,
     scheduleStart: Date,
     scheduleEnd: Date,
-  }
+  },
+  status: StatusPayload,
 }
 
 export interface MapData {
@@ -89,4 +92,10 @@ export interface ScheduleData {
   scheduleDate: Date,
   scheduleStart: Date,
   scheduleEnd: Date,
+}
+
+export interface StatusPayload { 
+  statusCode: STATUS_CODES,
+  errorCause: ERROR_CAUSE,
+  errorData: ERROR_DATA,
 }
