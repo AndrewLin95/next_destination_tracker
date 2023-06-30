@@ -1,3 +1,5 @@
+import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA } from "./constants"
+
 export interface jwtToken {
   exp: number,
   iat: number,
@@ -49,7 +51,8 @@ export interface LocationMongoResponse {
     scheduleDate: Date,
     scheduleStart: Date,
     scheduleEnd: Date,
-  }
+  },
+  status: StatusPayload
 }
 
 export interface ProjectPayload {
@@ -125,4 +128,10 @@ export interface SchedulePayloadData {
   scheduleDate: Date,
   scheduleStart: Date,
   scheduleEnd: Date,
+}
+
+export interface StatusPayload { 
+  statusCode: STATUS_CODES,
+  errorCause?: ERROR_CAUSE,
+  errorData?: ERROR_DATA,
 }

@@ -5,9 +5,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 const ProjectSetupSchema = require('../models/projectSetupSchema');
 const ProjectLocationDataSchema = require('../models/projectLocationDataSchema');
-import { CreateProjectQuery, SearchQuery, LocationMongoResponse, ProjectPayload, MapPayloadData, NotePayloadData, SchedulePayloadData } from "../utils/types";
+import { CreateProjectQuery, SearchQuery, LocationMongoResponse, ProjectPayload, MapPayloadData, NotePayloadData, SchedulePayloadData, StatusPayload } from "../utils/types";
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
-import { ERROR_CODES, msInDay, URL_REGEX } from '../utils/constants';
+import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, msInDay, URL_REGEX } from '../utils/constants';
 
 const createNewProject = async (payload: CreateProjectQuery) => {
   const startDate = Date.parse(payload.projectStartDate);
@@ -77,7 +77,14 @@ const searchLocation = async (payload: SearchQuery) => {
       const findItem = await ProjectLocationDataSchema.findOne({"mapData.googleLocationID": `${queryResponse.data.results[0].place_id}`, "projectID": `${payload.projectID}`})
       
       if (findItem) {
-        return ERROR_CODES.Duplicate;
+        const statusPayload: {status: StatusPayload} = {
+          status: {
+            statusCode: STATUS_CODES.Duplicate,
+            errorCause: ERROR_CAUSE.Search,
+            errorData: ERROR_DATA.SearchDuplicate
+          }
+        }
+        return statusPayload;
       }
 
       const projectLocationDataSchema = new ProjectLocationDataSchema({
@@ -107,7 +114,14 @@ const searchLocation = async (payload: SearchQuery) => {
   } catch (err) {
     console.log(err);
   }
-  return ERROR_CODES.ServerError;
+  const statusPayload: {status: StatusPayload} = {
+    status: {
+      statusCode: STATUS_CODES.ServerError,
+      errorCause: ERROR_CAUSE.Server,
+      errorData: ERROR_DATA.Server
+    }
+  }
+  return statusPayload;
 }
 
 const getProject = async (currUserID: string) => {

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import projectService from "../services/projectService";
-import { CreateProjectQuery, LocationMongoResponse, NotePayloadData, SearchQuery } from "../utils/types";
-import { ERROR_CODES } from "../utils/constants";
+import { CreateProjectQuery, LocationMongoResponse, NotePayloadData, SearchQuery, StatusPayload } from "../utils/types";
+import { STATUS_CODES } from "../utils/constants";
 
 export const createNewProject = async (req: Request, res: Response) => {
   try {
@@ -18,9 +18,9 @@ export const searchLocation = async (req: Request, res: Response) => {
   try {
     const payload: SearchQuery = req.body;
 
-    const response: LocationMongoResponse | ERROR_CODES = await projectService.searchLocation(payload);
-    if (response === ERROR_CODES.Duplicate) {
-      res.status(409).send(JSON.stringify(ERROR_CODES.Duplicate))
+    const response: LocationMongoResponse | {status: StatusPayload} = await projectService.searchLocation(payload);
+    if (response.status.statusCode === STATUS_CODES.Duplicate) {
+      res.status(409).send(JSON.stringify(response))
     } else {
       res.status(201).send(JSON.stringify(response))
     }
