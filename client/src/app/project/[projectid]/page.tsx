@@ -14,7 +14,7 @@ import {
   ScheduleData,
   StatusPayload,
 } from "@/util/models";
-import axios, { AxiosError, isAxiosError } from "axios";
+import axios, { isAxiosError } from "axios";
 import SearchResults from "./searchComponents/SearchResults";
 import SearchPagination from "./searchComponents/SearchPagination";
 import { NUM_RESULTS_PER_PAGE, STATUS_CODES } from "@/util/constants";

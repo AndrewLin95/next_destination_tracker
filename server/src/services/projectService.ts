@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const ProjectSetupSchema = require('../models/projectSetupSchema');
 const ProjectLocationDataSchema = require('../models/projectLocationDataSchema');
-import { CreateProjectQuery, SearchQuery, LocationMongoResponse, ProjectPayload, MapPayloadData, NotePayloadData, SchedulePayloadData, StatusPayload } from "../utils/types";
+import { CreateProjectQuery, SearchQuery, LocationMongoResponse, ProjectPayload, NotePayloadData, StatusPayload } from "../utils/types";
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
 import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, msInDay, URL_REGEX } from '../utils/constants';
 
@@ -108,7 +108,10 @@ const searchLocation = async (payload: SearchQuery) => {
       })
 
       const mongoResponse: LocationMongoResponse = await projectLocationDataSchema.save();
-      
+      mongoResponse.status = {
+        statusCode: STATUS_CODES.SUCCESS
+      }
+
       return mongoResponse;
     } 
   } catch (err) {

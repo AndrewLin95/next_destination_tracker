@@ -13,7 +13,7 @@ interface Props {
 
 const Note: FC<Props> = ({ note, handleEditNoteDialog }) => {
   const [expandState, setExpandState] = useState(false);
-
+  // TODO: https://lokeshdhakar.com/projects/color-thief/
   return (
     <div className="mb-8 w-full flex flex-col justify-center items-center border border-Background_Lighter">
       <div className="flex justify-between w-full items-center p-1">
