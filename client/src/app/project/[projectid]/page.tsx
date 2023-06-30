@@ -151,7 +151,6 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
         projectID: params.projectid as string,
         query: searchText.split(" ").join("+"),
       };
-      debugger;
       try {
         const response = await axios.post(url, body, authConfig);
         const responseData: LocationData = response.data;
