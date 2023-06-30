@@ -175,6 +175,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       numberOfPages,
       setNumberOfPages
     );
+    setSearchText("");
   };
 
   const handlePageChange = (value: string | number) => {

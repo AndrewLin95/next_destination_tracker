@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { FC } from "react";
 import ImageUploading, { ImageListType } from "react-images-uploading";
-import { maxNumOfImages } from "@/util/constants";
+import { MAX_NUM_OF_IMAGES } from "@/util/constants";
 
 interface Props {
   submitNewProject: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -47,7 +47,7 @@ const NewProject: FC<Props> = ({
           <ImageUploading
             value={uploadedImage}
             onChange={handleImageUploadChange}
-            maxNumber={maxNumOfImages}
+            maxNumber={MAX_NUM_OF_IMAGES}
           >
             {({ imageList, onImageUpload, onImageRemoveAll }) => (
               <div className="upload__image-wrapper">
