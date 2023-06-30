@@ -7,7 +7,7 @@ const ProjectSetupSchema = require('../models/projectSetupSchema');
 const ProjectLocationDataSchema = require('../models/projectLocationDataSchema');
 import { CreateProjectQuery, SearchQuery, LocationMongoResponse, ProjectPayload, MapPayloadData, NotePayloadData, SchedulePayloadData } from "../utils/types";
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
-import { msInDay, URL_REGEX } from '../utils/constants';
+import { ERROR_CODES, msInDay, URL_REGEX } from '../utils/constants';
 
 const createNewProject = async (payload: CreateProjectQuery) => {
   const startDate = Date.parse(payload.projectStartDate);
@@ -15,7 +15,7 @@ const createNewProject = async (payload: CreateProjectQuery) => {
   const newProjectID = uuidv4();
 
   try {
-    const addressQuery = payload.projectDestination.split(' ').join('+');
+    const addressQuery = payload.projectDestination.split(' ').join('+').trim();
     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${addressQuery}&key=${process.env.GOOGLE_MAPS_API_KEY}`
     const queryResponse: GoogleGeocodeResponse = await axios.get(url);
 
@@ -69,11 +69,17 @@ const createNewProject = async (payload: CreateProjectQuery) => {
 const searchLocation = async (payload: SearchQuery) => {
   try {
     // https://developers.google.com/maps/documentation/geocoding/requests-geocoding
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${payload.query}&key=${process.env.GOOGLE_MAPS_API_KEY}`
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${payload.query.trim()}&key=${process.env.GOOGLE_MAPS_API_KEY}`
     const queryResponse: GoogleGeocodeResponse = await axios.get(url)
     
     // TODO: error handling
     if (queryResponse.statusText === "OK") {
+      const findItem = await ProjectLocationDataSchema.findOne({"mapData.googleLocationID": `${queryResponse.data.results[0].place_id}`, "projectID": `${payload.projectID}`})
+      
+      if (findItem) {
+        return ERROR_CODES.Duplicate;
+      }
+
       const projectLocationDataSchema = new ProjectLocationDataSchema({
         userID: payload.userID,
         projectID: payload.projectID,
@@ -101,6 +107,7 @@ const searchLocation = async (payload: SearchQuery) => {
   } catch (err) {
     console.log(err);
   }
+  return ERROR_CODES.ServerError;
 }
 
 const getProject = async (currUserID: string) => {
