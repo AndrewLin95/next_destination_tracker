@@ -1,4 +1,4 @@
-import { FC, useState, useCallback } from "react";
+import { FC, useState } from "react";
 import {
   GoogleMap,
   InfoWindow,
@@ -15,32 +15,6 @@ interface Props {
 
 const MapModule: FC<Props> = ({ projectData, mapData }) => {
   //https://www.ultimateakash.com/blog-details/Ii0jNGAKYAo=/How-To-Integrate-Google-Maps-in-React-2022
-  // const initialMarkers = [
-  //   {
-  //     position: {
-  //       lat: 28.625485,
-  //       lng: 79.821091,
-  //     },
-  //     label: { color: "white", text: "P1" },
-  //     draggable: true,
-  //   },
-  //   {
-  //     position: {
-  //       lat: 28.625293,
-  //       lng: 79.817926,
-  //     },
-  //     label: { color: "white", text: "P2" },
-  //     draggable: false,
-  //   },
-  //   {
-  //     position: {
-  //       lat: 28.625182,
-  //       lng: 79.81464,
-  //     },
-  //     id: 123,
-  //   },
-  // ];
-
   const center = {
     lat: parseFloat(projectData!.project.projectCoords.lat),
     lng: parseFloat(projectData!.project.projectCoords.lng),
