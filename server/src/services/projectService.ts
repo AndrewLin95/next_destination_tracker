@@ -191,12 +191,42 @@ const updateNote = async (payload: NotePayloadData) => {
   }
 }
 
+const deleteLocation = async (locationIDPayload: string) => {
+  try {
+    const filter = {"locationID": locationIDPayload};
+    const data = { deleteFlag: true }
+
+    await ProjectLocationDataSchema.findOneAndUpdate(filter, data, {returnOriginal: false});
+
+    const response: {status: StatusPayload} = {
+      status: {
+        statusCode: STATUS_CODES.SUCCESS,
+      }
+    }
+
+    return response;
+  } catch (err) {
+    console.log(err);
+  }
+
+  const statusPayload: {status: StatusPayload} = {
+    status: {
+      statusCode: STATUS_CODES.ServerError,
+      errorCause: ERROR_CAUSE.Server,
+      errorData: ERROR_DATA.Server
+    }
+  }
+  return statusPayload;
+}
+
+
 const projectService = {
   createNewProject,
   searchLocation,
   getProject,
   getEachProject,
   updateNote,
+  deleteLocation,
 }
 
 export default projectService;

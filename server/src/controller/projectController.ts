@@ -21,7 +21,10 @@ export const searchLocation = async (req: Request, res: Response) => {
     const response: LocationMongoResponse | {status: StatusPayload} = await projectService.searchLocation(payload);
     if (response.status.statusCode === STATUS_CODES.Duplicate) {
       res.status(409).send(JSON.stringify(response))
-    } else {
+    } else if (response.status.statusCode === STATUS_CODES.ServerError) {
+      res.status(500).send(JSON.stringify(response));
+    }  
+    else {
       res.status(201).send(JSON.stringify(response))
     }
   } catch (err) {
@@ -58,6 +61,22 @@ export const updateNote = async (req: Request, res: Response) => {
     const response = await projectService.updateNote(payload);
     res.status(200).send(JSON.stringify(response))
   } catch (err){
+    res.status(500).send(err);
+  }
+}
+
+export const deleteLocation = async (req: Request, res: Response) => {
+  try {
+    const locationIDPayload: string = req.params.locationID;
+
+    const response: {status: StatusPayload} = await projectService.deleteLocation(locationIDPayload);
+    if (response.status.statusCode === STATUS_CODES.ServerError) {
+      res.status(500).send(JSON.stringify(response));
+    } else {
+      res.status(200).send(JSON.stringify(response));
+    }
+    res.status(200).send(JSON.stringify(response))
+  } catch (err) {
     res.status(500).send(err);
   }
 }
