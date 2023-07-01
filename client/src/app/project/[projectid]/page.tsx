@@ -317,6 +317,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
           updateNoteResponse.data;
 
         if (noteResponseData.status.statusCode === STATUS_CODES.SUCCESS) {
+          debugger;
           const incomingLocationID = (noteResponseData as NoteDataResponse)
             .noteData.locationID;
 

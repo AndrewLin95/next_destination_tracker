@@ -6,6 +6,7 @@ import {
   Marker,
 } from "@react-google-maps/api";
 import { MapData, ProjectData } from "@/util/models";
+import Image from "next/image";
 
 interface Props {
   projectData: ProjectData;
@@ -82,9 +83,27 @@ const MapModule: FC<Props> = ({ projectData, mapData }) => {
             >
               {activeInfoWindow === index && (
                 <InfoWindow position={marker.position}>
-                  <b>
-                    {marker.position.lat}, {marker.position.lng}
-                  </b>
+                  <div className="text-black font-bold flex flex-col">
+                    <div className="capitalize pb-2 text-lg">
+                      {marker.noteName !== undefined
+                        ? marker.noteName
+                        : "no data"}
+                    </div>
+                    <div className="pb-2 font-normal">
+                      {marker.formattedAddress}
+                    </div>
+                    <div>
+                      {marker.picture !== undefined ? (
+                        <Image
+                          src={marker.picture}
+                          alt={`${marker.noteName} picture`}
+                          className="w-full h-20 object-cover"
+                          width={144}
+                          height={144}
+                        />
+                      ) : null}
+                    </div>
+                  </div>
                 </InfoWindow>
               )}
             </Marker>
