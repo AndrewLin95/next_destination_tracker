@@ -75,7 +75,6 @@ export const deleteLocation = async (req: Request, res: Response) => {
     } else {
       res.status(200).send(JSON.stringify(response));
     }
-    res.status(200).send(JSON.stringify(response))
   } catch (err) {
     res.status(500).send(err);
   }

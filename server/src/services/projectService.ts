@@ -140,7 +140,7 @@ const getEachProject = async (projectID: string) => {
   // return the projectsetup and all mappoints data
   try {
     const userProject: ProjectPayload = await ProjectSetupSchema.findOne({projectID: projectID});
-    const projectDataPoints: LocationMongoResponse[] = await ProjectLocationDataSchema.find({projectID: projectID});
+    const projectDataPoints: LocationMongoResponse[] = await ProjectLocationDataSchema.find({projectID: projectID, deleteFlag: false});
 
     const responseData = {
       projectData: userProject,
