@@ -13,6 +13,7 @@ import {
   NoteData,
   ScheduleData,
   StatusPayload,
+  NoteDataResponse,
 } from "@/util/models";
 import axios, { isAxiosError } from "axios";
 import SearchResults from "./searchComponents/SearchResults";
@@ -296,8 +297,12 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
 
   const handleUpdateNotes = (newNoteData: NoteData) => {
     const updateRequest = async () => {
+      const tempMapData = mapData.filter(
+        (data) => data.locationID === newNoteData.locationID
+      );
+
       const url = `/api/project/updatenote`;
-      const body = newNoteData;
+      const body = { noteData: newNoteData, mapData: tempMapData[0] };
       const authConfig = {
         headers: {
           Authorization: `Bearer ${
@@ -308,16 +313,41 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
 
       try {
         const updateNoteResponse = await axios.put(url, body, authConfig);
-        const noteResponseData: NoteData = updateNoteResponse.data;
+        const noteResponseData: NoteDataResponse | { status: StatusPayload } =
+          updateNoteResponse.data;
 
-        const indexOfUpdate = noteData.findIndex(
-          (note) => note.locationID === noteResponseData.locationID
-        );
-        const tempNoteData = [...noteData];
-        tempNoteData[indexOfUpdate] = noteResponseData;
-        setNoteData(tempNoteData);
+        if (noteResponseData.status.statusCode === STATUS_CODES.SUCCESS) {
+          const incomingLocationID = (noteResponseData as NoteDataResponse)
+            .noteData.locationID;
+
+          const indexOfUpdate = noteData.findIndex(
+            (note) => note.locationID === incomingLocationID
+          );
+
+          const tempNoteData = [...noteData];
+          tempNoteData[indexOfUpdate] = (
+            noteResponseData as NoteDataResponse
+          ).noteData;
+          setNoteData(tempNoteData);
+
+          const indexOfMapUpdate = mapData.findIndex(
+            (data) => data.locationID === incomingLocationID
+          );
+          const tempMapData = [...mapData];
+          tempMapData[indexOfMapUpdate] = (
+            noteResponseData as NoteDataResponse
+          ).mapData;
+          setMapData(tempMapData);
+        }
       } catch (err) {
-        console.log(err);
+        if (isAxiosError(err)) {
+          const responseBody: { status: StatusPayload } =
+            err.response?.data.status;
+          if (responseBody.status.statusCode === STATUS_CODES.ServerError) {
+            setErrorDialogData(responseBody.status);
+            setErrorDialogToggle(true);
+          }
+        }
       }
     };
     updateRequest();

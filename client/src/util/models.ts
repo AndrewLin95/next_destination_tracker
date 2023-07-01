@@ -103,3 +103,9 @@ export interface StatusPayload {
   errorCause?: ERROR_CAUSE,
   errorData?: ERROR_DATA,
 }
+
+export interface NoteDataResponse {
+  noteData: NoteData, 
+  mapData: MapData, 
+  status: StatusPayload 
+}
