@@ -324,6 +324,52 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     setNoteDialogToggle(false);
   };
 
+  const handleDeleteNote = (locationID: string) => {
+    const deleteRequest = async () => {
+      const url = `/api/project/deletelocation/${locationID}`;
+      const body = {};
+      const authConfig = {
+        headers: {
+          Authorization: `Bearer ${
+            (userProfileState as UserProfileState).token
+          }`,
+        },
+      };
+
+      try {
+        const deleteNoteResponse = await axios.put(url, body, authConfig);
+        const deleteNoteData: { status: StatusPayload } =
+          deleteNoteResponse.data;
+
+        if (deleteNoteData.status.statusCode === STATUS_CODES.SUCCESS) {
+          const tempMapData: MapData[] = [...mapData];
+          const tempNoteData: NoteData[] = [...noteData];
+          const tempScheduleData: ScheduleData[] = [...scheduleData];
+
+          const newMapData = tempMapData.filter(
+            (mapData) => mapData.locationID !== locationID
+          );
+          setMapData(newMapData);
+
+          const newNoteData = tempNoteData.filter(
+            (noteData) => noteData.locationID !== locationID
+          );
+          setNoteData(newNoteData);
+
+          if (tempScheduleData.length !== 0) {
+            const newScheduleData = tempScheduleData.filter(
+              (scheduleData) => scheduleData.locationID !== locationID
+            );
+            setScheduleData(newScheduleData);
+          }
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    deleteRequest();
+  };
+
   useEffect(() => {
     console.log(mapData);
     console.log(noteData);
@@ -348,6 +394,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
             <SearchResults
               noteData={noteData}
               handleEditNoteDialog={handleEditNoteDialog}
+              handleDeleteNote={handleDeleteNote}
             />
             <SearchPagination
               paginationState={paginationState}

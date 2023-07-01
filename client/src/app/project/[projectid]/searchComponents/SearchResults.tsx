@@ -5,9 +5,14 @@ import Note from "./Note";
 interface Props {
   noteData: NoteData[];
   handleEditNoteDialog: (note: NoteData) => void;
+  handleDeleteNote: (locationID: string) => void;
 }
 
-const SearchResults: FC<Props> = ({ noteData, handleEditNoteDialog }) => {
+const SearchResults: FC<Props> = ({
+  noteData,
+  handleEditNoteDialog,
+  handleDeleteNote,
+}) => {
   if (noteData.length === 0) {
     return null;
   }
@@ -24,6 +29,7 @@ const SearchResults: FC<Props> = ({ noteData, handleEditNoteDialog }) => {
               key={note.locationID}
               note={note}
               handleEditNoteDialog={handleEditNoteDialog}
+              handleDeleteNote={handleDeleteNote}
             />
           );
         })}

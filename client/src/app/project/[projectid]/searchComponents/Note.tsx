@@ -9,9 +9,10 @@ import SelectivelyRenderPriorityIcons from "../components/SelectivelyRenderPrior
 interface Props {
   note: NoteData;
   handleEditNoteDialog: (note: NoteData) => void;
+  handleDeleteNote: (locationID: string) => void;
 }
 
-const Note: FC<Props> = ({ note, handleEditNoteDialog }) => {
+const Note: FC<Props> = ({ note, handleEditNoteDialog, handleDeleteNote }) => {
   const [expandState, setExpandState] = useState(false);
   // TODO: https://lokeshdhakar.com/projects/color-thief/
   return (
@@ -34,7 +35,11 @@ const Note: FC<Props> = ({ note, handleEditNoteDialog }) => {
           />
         </button>
         <button className={SIMPLE_BUTTON_STYLE}>
-          <FontAwesomeIcon icon={faTrashCan} style={{ color: "#b070b2" }} />
+          <FontAwesomeIcon
+            icon={faTrashCan}
+            style={{ color: "#b070b2" }}
+            onClick={() => handleDeleteNote(note.locationID)}
+          />
         </button>
       </div>
       {expandState ? (
