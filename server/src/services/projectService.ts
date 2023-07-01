@@ -5,7 +5,16 @@ import { v4 as uuidv4 } from 'uuid';
 
 const ProjectSetupSchema = require('../models/projectSetupSchema');
 const ProjectLocationDataSchema = require('../models/projectLocationDataSchema');
-import { CreateProjectQuery, SearchQuery, LocationMongoResponse, ProjectPayload, NotePayloadData, StatusPayload } from "../utils/types";
+import { 
+  CreateProjectQuery, 
+  SearchQuery, 
+  LocationMongoResponse, 
+  ProjectPayload, 
+  NotePayloadData, 
+  StatusPayload, 
+  MapPayloadData,
+  NoteDataResponse,
+} from "../utils/types";
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
 import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, msInDay, URL_REGEX } from '../utils/constants';
 
@@ -64,7 +73,6 @@ const createNewProject = async (payload: CreateProjectQuery) => {
     console.log(err);
   }
 }
-
 
 const searchLocation = async (payload: SearchQuery) => {
   try {
@@ -154,18 +162,28 @@ const getEachProject = async (projectID: string) => {
   }
 }
 
-const updateNote = async (payload: NotePayloadData) => {
-  const filter = {"locationID": payload.locationID as string};
-  const data = { noteData: payload};
+const updateNote = async (payload: {noteData: NotePayloadData, mapData: MapPayloadData} ) => {
+  const filter = {"locationID": payload.noteData.locationID as string};
+  const data = { 
+    noteData: payload.noteData, 
+    mapData: { 
+      ...payload.mapData,
+      picture: payload.noteData.picture === undefined ? "" : payload.noteData.picture,
+      noteName: payload.noteData.noteName === undefined ? "" : payload.noteData.noteName,
+    }
+  };
   delete data.noteData.locationID;
+  delete data.mapData.locationID;
 
-  if (payload.picture === "" || payload.picture === undefined) {
+  if (payload.noteData.picture === "" || payload.noteData.picture === undefined) {
     data.noteData.picture = "";
-  } else if (URL_REGEX.test(payload.picture)) {
-    data.noteData.picture = payload.picture
+    data.mapData.picture = "";
+  } else if (URL_REGEX.test(payload.noteData.picture)) {
+    data.noteData.picture = payload.noteData.picture;
+    data.mapData.picture = payload.noteData.picture;
   } else {
-    const imageBase64 = payload.picture as string;
-    var imageBuffer = Buffer.from(imageBase64.replace(/^data:image\/\w+;base64,/, ""),'base64')
+    const imageBase64 = payload.noteData.picture as string;
+    const imageBuffer = Buffer.from(imageBase64.replace(/^data:image\/\w+;base64,/, ""),'base64')
     const imageType = imageBase64.split(';')[0].split('/')[1];
 
     const input = {
@@ -184,11 +202,26 @@ const updateNote = async (payload: NotePayloadData) => {
   try {
     const update: LocationMongoResponse = await ProjectLocationDataSchema.findOneAndUpdate(filter, data, {returnOriginal: false});
 
-    const responseNoteData: NotePayloadData = {...update.noteData, locationID: update.locationID}
+    const responseNoteData: NoteDataResponse = { 
+      noteData: {...update.noteData, locationID: update.locationID}, 
+      mapData:{...update.mapData, locationID: update.locationID},
+      status: {
+        statusCode: STATUS_CODES.SUCCESS
+      }
+    }
     return responseNoteData;
   } catch (err) {
     console.log(err)
   }
+
+  const statusPayload: {status: StatusPayload} = {
+    status: {
+      statusCode: STATUS_CODES.ServerError,
+      errorCause: ERROR_CAUSE.Server,
+      errorData: ERROR_DATA.Server
+    }
+  }
+  return statusPayload;
 }
 
 const deleteLocation = async (locationIDPayload: string) => {

@@ -1,6 +1,14 @@
 import { Request, Response } from "express";
 import projectService from "../services/projectService";
-import { CreateProjectQuery, LocationMongoResponse, NotePayloadData, SearchQuery, StatusPayload } from "../utils/types";
+import { 
+  CreateProjectQuery, 
+  LocationMongoResponse, 
+  MapPayloadData, 
+  NotePayloadData, 
+  SearchQuery, 
+  StatusPayload,
+  NoteDataResponse,
+} from "../utils/types";
 import { STATUS_CODES } from "../utils/constants";
 
 export const createNewProject = async (req: Request, res: Response) => {
@@ -56,9 +64,9 @@ export const getEachProject = async (req: Request, res: Response) => {
 
 export const updateNote = async (req: Request, res: Response) => {
   try{
-    const payload: NotePayloadData = req.body;
+    const payload: {noteData: NotePayloadData, mapData: MapPayloadData} = req.body;
 
-    const response = await projectService.updateNote(payload);
+    const response: NoteDataResponse | { status: StatusPayload } = await projectService.updateNote(payload);
     res.status(200).send(JSON.stringify(response))
   } catch (err){
     res.status(500).send(err);

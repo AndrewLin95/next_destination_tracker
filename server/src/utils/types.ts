@@ -109,9 +109,15 @@ export interface LocationPayload {
 }
 
 export interface MapPayloadData {
-  lat: number,
-  lng: number,
-  locationID: string,
+  formattedAddress: string,
+  googleLocationID: string,
+  locationID?: string,
+  picture?: string,
+  noteName?: string,
+  position: {
+    lat: number,
+    lng: number,
+  },
 }
 
 export interface NotePayloadData {
@@ -138,4 +144,10 @@ export interface StatusPayload {
   statusCode: STATUS_CODES,
   errorCause?: ERROR_CAUSE,
   errorData?: ERROR_DATA,
+}
+
+export interface NoteDataResponse {
+  noteData: NotePayloadData, 
+  mapData: MapPayloadData, 
+  status: StatusPayload 
 }
