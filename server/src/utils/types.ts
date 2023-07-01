@@ -32,6 +32,8 @@ export interface LocationMongoResponse {
   mapData: {
     formattedAddress: string,
     googleLocationID: string,
+    picture?: string,
+    noteName?: string,
     position: {
       lat: number,
       lng: number,
@@ -81,6 +83,8 @@ export interface LocationPayload {
   mapData: {
     formattedAddress: string,
     googleLocationID: string,
+    picture?: string,
+    noteName?: string,
     position: {
       lat: number,
       lng: number,

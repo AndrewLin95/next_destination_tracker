@@ -41,6 +41,8 @@ export interface LocationData {
   mapData: {
     formattedAddress: string,
     googleLocationID: string,
+    picture?: string,
+    noteName?: string,
     position: {
       lat: number,
       lng: number,
@@ -72,6 +74,8 @@ export interface MapData {
   locationID: string;
   formattedAddress: string;
   googleLocationID: string;
+  picture?: string,
+  noteName?: string,
 }
 
 export interface NoteData {
