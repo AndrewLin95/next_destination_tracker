@@ -1,9 +1,9 @@
+import HeaderTitle from "@/components/headerComponents/HeaderTitle";
+
 const Header = () => {
   return (
-    <div className="w-screen h-16 flex flex-row justify-around items-center">
-      <div>
-        <div className="font-bold">Local Time of Latest Search: </div>
-      </div>
+    <div className="w-screen h-16 flex flex-row justify-between items-center">
+      <HeaderTitle />
       <button>Get Current Location</button>
       <div className="pl-8">
         <div className="font-bold">Current Location</div>
