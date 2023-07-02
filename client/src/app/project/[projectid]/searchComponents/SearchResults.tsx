@@ -22,7 +22,7 @@ const SearchResults: FC<Props> = ({
       <div className="flex flex-row justify-center items-center pb-4 text-2xl">
         <div className="pr-4 text-lg font-bold">Searched Places</div>
       </div>
-      <div className="flex flex-col items-center h-[calc(100vh-17rem)] overflow-y-auto">
+      <div className="flex flex-col items-center h-[calc(100vh-15rem)] overflow-y-auto">
         {noteData.map((note) => {
           return (
             <Note
