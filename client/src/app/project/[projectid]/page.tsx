@@ -18,7 +18,11 @@ import {
 import axios, { isAxiosError } from "axios";
 import SearchResults from "./searchComponents/SearchResults";
 import SearchPagination from "./searchComponents/SearchPagination";
-import { NUM_RESULTS_PER_PAGE, STATUS_CODES } from "@/util/constants";
+import {
+  NUM_RESULTS_PER_PAGE,
+  STATUS_CODES,
+  VIEW_TYPES,
+} from "@/util/constants";
 import { handleValidatePagination } from "./util";
 import EditNoteDialog from "./components/EditNoteDialog";
 import { useRouter } from "next/navigation";
@@ -45,6 +49,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     [] as LocationData[]
   );
   const [searchText, setSearchText] = useState<string>("");
+  const [viewToggle, setViewToggle] = useState<VIEW_TYPES>(VIEW_TYPES.Map);
 
   // Pagination Data
   const [numberOfPages, setNumberOfPages] = useState(1);
@@ -401,6 +406,14 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     deleteRequest();
   };
 
+  const handleViewChange = () => {
+    if (viewToggle === VIEW_TYPES.Map) {
+      setViewToggle(VIEW_TYPES.Schedule);
+    } else {
+      setViewToggle(VIEW_TYPES.Map);
+    }
+  };
+
   useEffect(() => {
     console.log(mapData);
     console.log(noteData);
@@ -433,6 +446,15 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
             />
           </div>
           <MapModule projectData={projectData} mapData={mapData} />
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+            <button
+              type="button"
+              onClick={() => handleViewChange()}
+              className="bg-Background_Lighter/70 h-10 px-4 py-0 rounded-3xl"
+            >
+              Toggle Schedule View
+            </button>
+          </div>
         </div>
       )}
       {noteDialogToggle ? (
