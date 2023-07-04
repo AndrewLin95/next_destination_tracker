@@ -70,6 +70,10 @@ const projectLocationDataSchema = new mongoose.Schema({
       type: String,
       required: false
     },
+    scheduleDate: {
+      type: Date,
+      required: false,
+    },
     priority: {
       type: String,
       enum: {
