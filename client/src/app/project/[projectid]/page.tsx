@@ -265,6 +265,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     setMapData(tempMapData);
     setNoteData(tempNoteData);
     setScheduleData(tempScheduleData);
+    handleInactivateNote();
   };
 
   useEffect(() => {
@@ -410,12 +411,17 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     deleteRequest();
   };
 
-  const handleMarkerClick = (marker: MapData, index: number) => {
-    setActiveInfoWindow(index);
-    setActiveLocationID(marker.locationID);
+  const handleActiveNote = (locationID: string, index?: number) => {
+    if (index === undefined) {
+      const index = mapData.findIndex((data) => data.locationID === locationID);
+      setActiveInfoWindow(index);
+    } else {
+      setActiveInfoWindow(index);
+    }
+    setActiveLocationID(locationID);
   };
 
-  const handleMarkerClose = () => {
+  const handleInactivateNote = () => {
     setActiveInfoWindow(null);
     setActiveLocationID(null);
   };
@@ -454,6 +460,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
               handleEditNoteDialog={handleEditNoteDialog}
               handleDeleteNote={handleDeleteNote}
               activeLocationID={activeLocationID}
+              handleActiveNote={handleActiveNote}
             />
             <SearchPagination
               paginationState={paginationState}
@@ -463,9 +470,9 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
           <MapModule
             projectData={projectData}
             mapData={mapData}
-            handleMarkerClick={handleMarkerClick}
+            handleActiveNote={handleActiveNote}
             activeInfoWindow={activeInfoWindow}
-            handleMarkerClose={handleMarkerClose}
+            handleInactivateNote={handleInactivateNote}
           />
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
             <button

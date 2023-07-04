@@ -11,17 +11,17 @@ import Image from "next/image";
 interface Props {
   projectData: ProjectData;
   mapData: MapData[];
-  handleMarkerClick: (marker: MapData, index: number) => void;
+  handleActiveNote: (locationID: string, index: number) => void;
   activeInfoWindow: number | null;
-  handleMarkerClose: () => void;
+  handleInactivateNote: () => void;
 }
 
 const MapModule: FC<Props> = ({
   projectData,
   mapData,
-  handleMarkerClick,
+  handleActiveNote,
   activeInfoWindow,
-  handleMarkerClose,
+  handleInactivateNote,
 }) => {
   //https://www.ultimateakash.com/blog-details/Ii0jNGAKYAo=/How-To-Integrate-Google-Maps-in-React-2022
   const center = {
@@ -54,12 +54,12 @@ const MapModule: FC<Props> = ({
               // label={marker.label}
               // draggable={marker.draggable}
               onDragEnd={(event) => markerDragEnd(event, index)}
-              onClick={(e) => handleMarkerClick(marker, index)}
+              onClick={(e) => handleActiveNote(marker.locationID, index)}
             >
               {activeInfoWindow === index && (
                 <InfoWindow
                   position={marker.position}
-                  onCloseClick={() => handleMarkerClose()}
+                  onCloseClick={() => handleInactivateNote()}
                 >
                   <div className="text-black font-bold flex flex-col">
                     <div className="capitalize pb-2 text-lg">
