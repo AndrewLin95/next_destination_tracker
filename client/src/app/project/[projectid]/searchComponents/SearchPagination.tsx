@@ -13,7 +13,7 @@ const SearchPagination: FC<Props> = ({ paginationState, handlePageChange }) => {
   return (
     <div className="flex flex-row justify-center pb-4">
       <button
-        className="w-12 h-12 border"
+        className="w-12 h-12 border bg-Background_Lighter"
         onClick={() => handlePageChange("-")}
       >
         {"<"}
@@ -22,7 +22,7 @@ const SearchPagination: FC<Props> = ({ paginationState, handlePageChange }) => {
         return (
           <button
             key={index}
-            className="w-12 h-12 border"
+            className="w-12 h-12 border bg-Background_Lighter"
             onClick={() => handlePageChange(paginationValue)}
           >
             {paginationValue}
@@ -30,7 +30,7 @@ const SearchPagination: FC<Props> = ({ paginationState, handlePageChange }) => {
         );
       })}
       <button
-        className="w-12 h-12 border"
+        className="w-12 h-12 border bg-Background_Lighter"
         onClick={() => handlePageChange("+")}
       >
         {">"}

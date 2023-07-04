@@ -20,7 +20,7 @@ const ScheduleModule: FC<Props> = ({
 
   return (
     <div className="h-full w-full">
-      <div className="flex flex-row h-12 w-[calc(100%-1.4rem)] ml-2 border border-slate-500/30">
+      <div className="flex flex-row h-12 w-[calc(100%-1.4rem)] ml-2 border border-Background_Lighter">
         <CalendarColumnTimeHeader />
         {scheduleCalendarData.calendar.map((data, index) => {
           return (
@@ -32,7 +32,7 @@ const ScheduleModule: FC<Props> = ({
           );
         })}
       </div>
-      <div className="flex flex-row h-[calc(100vh-8rem)] w-[calc(100%-1.4rem)] ml-2 overflow-y-auto border border-slate-500/30">
+      <div className="flex flex-row h-[calc(100vh-8rem)] w-[calc(100%-1.4rem)] ml-2 overflow-y-auto border border-Background_Lighter">
         <CalendarTimeColumn
           timeMappingArray={scheduleCalendarData.config.mappingArray}
         />

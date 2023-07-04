@@ -494,7 +494,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
               scheduleCalendarData={scheduleCalendarData}
             />
           )}
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
             <button
               type="button"
               onClick={() => handleViewChange()}
