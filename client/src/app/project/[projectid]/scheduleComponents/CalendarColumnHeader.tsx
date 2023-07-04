@@ -13,7 +13,7 @@ const CalendarColumnHeader: FC<Props> = ({
 }) => {
   return (
     <div className="w-[calc((100vw-25rem)/7)] pr-1 justify-center items-center flex flex-col">
-      <div className={`text-sm`}>{dayOfWeek}</div>
+      <div className="text-sm font-bold">{dayOfWeek}</div>
       <div className="text-sm">{calendarDate}</div>
     </div>
   );

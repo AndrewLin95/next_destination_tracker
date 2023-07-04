@@ -9,7 +9,10 @@ const CalendarTimeColumn: FC<Props> = ({ timeMappingArray }) => {
     <div className="w-16 h-full pr-1">
       {timeMappingArray.map((time, index) => {
         return (
-          <div className="h-24 w-16 flex justify-center" key={index}>
+          <div
+            className="h-24 w-16 flex justify-center text-sm pt-1"
+            key={index}
+          >
             {time}
           </div>
         );
