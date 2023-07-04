@@ -1,4 +1,4 @@
-import { STATUS_CODES, ERROR_CAUSE, ERROR_DATA } from "./constants";
+import { STATUS_CODES, ERROR_CAUSE, ERROR_DATA, LABEL_COLOR } from "./constants";
 
 export interface DecodedJWT {
   exp: number,
@@ -47,11 +47,15 @@ export interface LocationData {
       lat: number,
       lng: number,
     },
+    label?: {
+      color: LABEL_COLOR,
+    }
   },
   noteData: {
     noteName: string,
     priority: string,
     formattedAddress: string,
+    color?: LABEL_COLOR,
     scheduleDate?: Date,
     customNote?: string,
     openHours?: string,
@@ -71,6 +75,9 @@ export interface MapData {
   position: {
     lat: number,
     lng: number,
+  },
+  label?: {
+    color: LABEL_COLOR,
   }
   locationID: string;
   formattedAddress: string;
@@ -89,6 +96,7 @@ export interface NoteData {
   openHours?: string,
   closeHours?: string,
   picture?: string,
+  color?: LABEL_COLOR,
 }
 
 export interface ScheduleData {

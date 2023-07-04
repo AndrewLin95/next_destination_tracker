@@ -16,3 +16,13 @@ export enum ERROR_DATA {
   SearchDuplicate = "Your query was not completed since it was a duplicate entry. Please try another location.",
   Server = "We could not complete your request due to a technical issue on our end. Please try again later."
 }
+
+export enum LABEL_COLOR {
+  Mon = "Monday",
+  Tues = "Tuesday",
+  Wed = "Wednesday",
+  Thurs = "Thursday",
+  Fri = "Friday",
+  Sat = "Saturday",
+  Sun = "Sunday",
+}

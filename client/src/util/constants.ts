@@ -22,6 +22,16 @@ export enum PRIORITY_STYLE {
 export const REMOVE_IMG_BTN_STYLE = "h-10 text-sm font-bold border-r-0 text-md p-0 bg-transparent hover:border-transparent focus:outline-none"
 export const UPLOAD_IMG_BTN_STYLE = "h-10 text-sm font-bold border-r-0 text-md p-0 hover:border-transparent focus:outline-none"
 
+export enum LABEL_COLOR {
+  Mon = "Monday",
+  Tues = "Tuesday",
+  Wed = "Wednesday",
+  Thurs = "Thursday",
+  Fri = "Friday",
+  Sat = "Saturday",
+  Sun = "Sunday",
+}
+
 // Server Responses
 export enum STATUS_CODES {
   SUCCESS = "200 Sucess",

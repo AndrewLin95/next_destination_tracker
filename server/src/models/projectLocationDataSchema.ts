@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { LABEL_COLOR } from "../utils/constants";
 
 const projectLocationDataSchema = new mongoose.Schema({
   userID: {
@@ -42,6 +43,16 @@ const projectLocationDataSchema = new mongoose.Schema({
       lng: {
         type: Number,
         required: true
+      }
+    },
+    label: {
+      color: {
+        type: String,
+        enum: {
+          values: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          message: `{VALUE} is not supported`
+        },
+        required: false,
       }
     }
   },

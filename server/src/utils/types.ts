@@ -1,4 +1,4 @@
-import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA } from "./constants"
+import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, LABEL_COLOR } from "./constants"
 
 export interface jwtToken {
   exp: number,
@@ -38,11 +38,15 @@ export interface LocationMongoResponse {
       lat: number,
       lng: number,
     },
+    label?: {
+      color: LABEL_COLOR,
+    }
   },
   noteData: {
     noteName: string,
     priority: string,
     formattedAddress: string,
+    color?: LABEL_COLOR,
     scheduleDate?: Date,
     customNote?: string,
     openHours?: string,
@@ -90,11 +94,15 @@ export interface LocationPayload {
       lat: number,
       lng: number,
     },
+    label?: {
+      color: LABEL_COLOR,
+    }
   },
   noteData: {
     noteName: string,
     priority: string,
     formattedAddress: string,
+    color?: LABEL_COLOR,
     scheduledDate?: Date,
     customNote?: string,
     openHours?: string,
@@ -120,6 +128,9 @@ export interface MapPayloadData {
     lat: number,
     lng: number,
   },
+  label?: {
+    color: LABEL_COLOR,
+  }
 }
 
 export interface NotePayloadData {
@@ -132,6 +143,7 @@ export interface NotePayloadData {
   openHours?: string,
   closeHours?: string,
   picture?: string,
+  color?: LABEL_COLOR,
 }
 
 export interface SchedulePayloadData {
