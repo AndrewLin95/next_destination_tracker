@@ -1,3 +1,4 @@
+import { AnyARecord } from "dns";
 import { STATUS_CODES, ERROR_CAUSE, ERROR_DATA, LABEL_COLOR } from "./constants";
 
 export interface DecodedJWT {
@@ -118,4 +119,11 @@ export interface NoteDataResponse {
   noteData: NoteData, 
   mapData: MapData, 
   status: StatusPayload 
+}
+
+export interface ScheduleInitData {
+  start: string,
+  startUnix: number,
+  end: string,
+  endUnix: number,
 }

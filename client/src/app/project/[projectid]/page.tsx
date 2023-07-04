@@ -14,6 +14,7 @@ import {
   ScheduleData,
   StatusPayload,
   NoteDataResponse,
+  ScheduleInitData,
 } from "@/util/models";
 import axios, { isAxiosError } from "axios";
 import SearchResults from "./searchComponents/SearchResults";
@@ -23,7 +24,7 @@ import {
   STATUS_CODES,
   VIEW_TYPES,
 } from "@/util/constants";
-import { handleValidatePagination } from "./util";
+import { handleScheduleInit, handleValidatePagination } from "./util";
 import EditNoteDialog from "./components/EditNoteDialog";
 import { useRouter } from "next/navigation";
 import ErrorDialog from "@/components/ErrorDialog";
@@ -67,6 +68,12 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   // Map Data
   const [activeInfoWindow, setActiveInfoWindow] = useState<number | null>(null);
   const [activeLocationID, setActiveLocationID] = useState<string | null>(null);
+
+  // Schedule Data
+  const [projectStartEnd, setProjectStartEnd] =
+    useState<ScheduleInitData | null>(null);
+  const [scheduleStartEnd, setScheduleStartEnd] =
+    useState<ScheduleInitData | null>(null);
 
   // Dialog Data
   const [noteDialogToggle, setNoteDialogToggle] = useState<Boolean>(false);
@@ -140,6 +147,12 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       // handle initial pagination state
       const totalPages = Math.ceil(responseData.locationData.length / 10);
       setNumberOfPages(totalPages);
+
+      // handle schedule init
+      const scheduleInitData = handleScheduleInit(responseData.projectData);
+      setProjectStartEnd(scheduleInitData.project);
+      setScheduleStartEnd(scheduleInitData.schedule);
+      console.log(scheduleInitData);
 
       setLoading(false);
     };
@@ -328,7 +341,6 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
           updateNoteResponse.data;
 
         if (noteResponseData.status.statusCode === STATUS_CODES.SUCCESS) {
-          debugger;
           const incomingLocationID = (noteResponseData as NoteDataResponse)
             .noteData.locationID;
 
@@ -436,10 +448,9 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   };
 
   useEffect(() => {
-    console.log(mapData);
-    console.log(noteData);
-    console.log(paginationState);
-    console.log(numberOfPages);
+    console.log("mapdata", mapData);
+    console.log("notedata", noteData);
+    console.log("proj data", projectData);
   }, [mapData]);
 
   return (
@@ -477,7 +488,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
               handleInactivateNote={handleInactivateNote}
             />
           ) : (
-            <ScheduleModule />
+            <ScheduleModule projectStartEnd={projectStartEnd} />
           )}
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
             <button
