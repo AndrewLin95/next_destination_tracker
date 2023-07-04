@@ -1,11 +1,12 @@
-import { ScheduleInitData } from "@/util/models";
+import { ScheduleDateData, ScheduleCalendarData } from "@/util/models";
 import { FC } from "react";
 
 interface Props {
-  projectStartEnd: ScheduleInitData | null;
+  projectStartEnd: ScheduleDateData | null;
+  scheduleStartEnd: ScheduleCalendarData | null;
 }
 
-const ScheduleModule: FC<Props> = ({ projectStartEnd }) => {
+const ScheduleModule: FC<Props> = ({ projectStartEnd, scheduleStartEnd }) => {
   return (
     <div className="h-full w-full">
       <div>Schedule</div>

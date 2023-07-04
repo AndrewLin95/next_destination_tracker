@@ -14,7 +14,8 @@ import {
   ScheduleData,
   StatusPayload,
   NoteDataResponse,
-  ScheduleInitData,
+  ScheduleDateData,
+  ScheduleCalendarData,
 } from "@/util/models";
 import axios, { isAxiosError } from "axios";
 import SearchResults from "./searchComponents/SearchResults";
@@ -71,9 +72,9 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
 
   // Schedule Data
   const [projectStartEnd, setProjectStartEnd] =
-    useState<ScheduleInitData | null>(null);
+    useState<ScheduleDateData | null>(null);
   const [scheduleStartEnd, setScheduleStartEnd] =
-    useState<ScheduleInitData | null>(null);
+    useState<ScheduleCalendarData | null>(null);
 
   // Dialog Data
   const [noteDialogToggle, setNoteDialogToggle] = useState<Boolean>(false);
@@ -488,7 +489,10 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
               handleInactivateNote={handleInactivateNote}
             />
           ) : (
-            <ScheduleModule projectStartEnd={projectStartEnd} />
+            <ScheduleModule
+              projectStartEnd={projectStartEnd}
+              scheduleStartEnd={scheduleStartEnd}
+            />
           )}
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
             <button

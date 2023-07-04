@@ -1,5 +1,6 @@
 export const MAX_NUM_OF_IMAGES: number = 1;
 export const NUM_RESULTS_PER_PAGE = 10;
+export const MS_IN_DAY = 86400000;
 
 export enum NOTE_PRIORITY {
   Low = "Low",
@@ -52,4 +53,11 @@ export enum ERROR_DATA {
 export enum VIEW_TYPES {
   Map = "Map",
   Schedule = "Schedule"
+}
+
+export enum SCHEDULE_SEGMENTS {
+  ThreeHours = 3,
+  OneHour = 1,
+  HalfHour = 0.5,
+  QuarterHour = 0.25,
 }

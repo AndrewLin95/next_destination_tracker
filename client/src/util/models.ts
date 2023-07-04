@@ -1,5 +1,4 @@
-import { AnyARecord } from "dns";
-import { STATUS_CODES, ERROR_CAUSE, ERROR_DATA, LABEL_COLOR } from "./constants";
+import { STATUS_CODES, ERROR_CAUSE, ERROR_DATA, LABEL_COLOR, SCHEDULE_SEGMENTS } from "./constants";
 
 export interface DecodedJWT {
   exp: number,
@@ -121,9 +120,25 @@ export interface NoteDataResponse {
   status: StatusPayload 
 }
 
-export interface ScheduleInitData {
+export interface ScheduleDateData {
   start: string,
   startUnix: number,
   end: string,
   endUnix: number,
+}
+
+export interface ScheduleCalendarData { 
+  calendar: {
+    enabled: boolean,
+    date: string,
+    startUnix: number,
+    endUnix: number,
+    dayOfWeek: string,
+  }[],
+  config: {
+    startingTime: string,
+    endingTime: string,
+    segments: SCHEDULE_SEGMENTS,
+  }
+  projectID: string,
 }
