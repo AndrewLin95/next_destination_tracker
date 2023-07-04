@@ -49,7 +49,7 @@ export const handleScheduleInit = (projectData: ProjectData) => {
   let i = scheduleStartUnixTime;
   while (i <= scheduleEndUnixTime + MS_IN_DAY) {
     let enabledStatus;
-    if (scheduleStartUnixTime >= startUnixTime) {
+    if (i >= startUnixTime && i <= (endUnixTime + MS_IN_DAY)) {
       enabledStatus = true;
     } else {
       enabledStatus = false;
