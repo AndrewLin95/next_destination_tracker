@@ -27,6 +27,7 @@ import { handleValidatePagination } from "./util";
 import EditNoteDialog from "./components/EditNoteDialog";
 import { useRouter } from "next/navigation";
 import ErrorDialog from "@/components/ErrorDialog";
+import ScheduleModule from "./ScheduleModule";
 
 interface InitResponseData {
   projectData: ProjectData;
@@ -467,20 +468,26 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
               handlePageChange={handlePageChange}
             />
           </div>
-          <MapModule
-            projectData={projectData}
-            mapData={mapData}
-            handleActiveNote={handleActiveNote}
-            activeInfoWindow={activeInfoWindow}
-            handleInactivateNote={handleInactivateNote}
-          />
+          {viewToggle === VIEW_TYPES.Map ? (
+            <MapModule
+              projectData={projectData}
+              mapData={mapData}
+              handleActiveNote={handleActiveNote}
+              activeInfoWindow={activeInfoWindow}
+              handleInactivateNote={handleInactivateNote}
+            />
+          ) : (
+            <ScheduleModule />
+          )}
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
             <button
               type="button"
               onClick={() => handleViewChange()}
               className="bg-Background_Lighter/70 h-10 px-4 py-0 rounded-3xl"
             >
-              Toggle Schedule View
+              {viewToggle === VIEW_TYPES.Map
+                ? `Toggle Schedule View`
+                : `Toggle Map View`}
             </button>
           </div>
         </div>
