@@ -48,6 +48,24 @@ const projectSetupSchema = new mongoose.Schema({
         required: true,
       } 
     }
+  },
+  scheduleConfig: {
+    startingTime: {
+      type: String,
+      required: true,
+    },
+    endingTime: {
+      type: String,
+      required: true,
+    }, 
+    segments: {
+      type: Number, 
+      enum: {
+        values: [3, 1, 0.5, 0.25],
+        message: `{VALUE} is not supported`,
+      },
+      required: true,
+    },
   }
 }, { versionKey: false })
 

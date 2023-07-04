@@ -1,4 +1,4 @@
-import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, LABEL_COLOR } from "./constants"
+import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, LABEL_COLOR, SCHEDULE_SEGMENTS } from "./constants"
 
 export interface jwtToken {
   exp: number,
@@ -74,6 +74,11 @@ export interface ProjectPayload {
     projectStartDate: number,
     projectEndDate: number,
     projectImage: string,
+  },
+  scheduleConfig: {
+    startingTime: string,
+    endingTime: string,
+    segments: SCHEDULE_SEGMENTS,
   },
   userID: string,
   projectID: string,

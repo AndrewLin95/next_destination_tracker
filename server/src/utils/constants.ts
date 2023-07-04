@@ -26,3 +26,10 @@ export enum LABEL_COLOR {
   Sat = "Saturday",
   Sun = "Sunday",
 }
+
+export enum SCHEDULE_SEGMENTS {
+  ThreeHours = 3,
+  OneHour = 1,
+  HalfHour = 0.5,
+  QuarterHour = 0.25,
+}

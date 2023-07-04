@@ -16,7 +16,7 @@ import {
   NoteDataResponse,
 } from "../utils/types";
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
-import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, msInDay, URL_REGEX } from '../utils/constants';
+import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, msInDay, URL_REGEX, SCHEDULE_SEGMENTS } from '../utils/constants';
 
 const createNewProject = async (payload: CreateProjectQuery) => {
   const startDate = Date.parse(payload.projectStartDate);
@@ -60,7 +60,12 @@ const createNewProject = async (payload: CreateProjectQuery) => {
             lat: queryResponse.data.results[0].geometry.location.lat,
             lng: queryResponse.data.results[0].geometry.location.lng,
           }
-        }
+        },
+        scheduleConfig: {
+          startingTime: "8:00",
+          endingTime: "20:00",
+          segments: SCHEDULE_SEGMENTS.OneHour,
+        },
       })
 
       const result = await projectSetupData.save();
