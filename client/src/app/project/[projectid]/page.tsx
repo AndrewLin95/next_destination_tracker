@@ -63,6 +63,10 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   const [noteData, setNoteData] = useState<NoteData[]>([]);
   const [scheduleData, setScheduleData] = useState<ScheduleData[]>([]);
 
+  // Map Data
+  const [activeInfoWindow, setActiveInfoWindow] = useState<number | null>(null);
+  const [activeLocationID, setActiveLocationID] = useState<string | null>(null);
+
   // Dialog Data
   const [noteDialogToggle, setNoteDialogToggle] = useState<Boolean>(false);
   const [noteDialogData, setNoteDialogData] = useState<NoteData>(
@@ -406,6 +410,21 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     deleteRequest();
   };
 
+  const handleMarkerClick = (marker: MapData, index: number) => {
+    setActiveInfoWindow(index);
+    setActiveLocationID(marker.locationID);
+    console.log(marker, index);
+  };
+
+  const handleMarkerClose = () => {
+    setActiveInfoWindow(null);
+    setActiveLocationID(null);
+  };
+
+  useEffect(() => {
+    console.log("active window", activeInfoWindow);
+  }, [activeInfoWindow]);
+
   const handleViewChange = () => {
     if (viewToggle === VIEW_TYPES.Map) {
       setViewToggle(VIEW_TYPES.Schedule);
@@ -439,13 +458,20 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
               noteData={noteData}
               handleEditNoteDialog={handleEditNoteDialog}
               handleDeleteNote={handleDeleteNote}
+              activeLocationID={activeLocationID}
             />
             <SearchPagination
               paginationState={paginationState}
               handlePageChange={handlePageChange}
             />
           </div>
-          <MapModule projectData={projectData} mapData={mapData} />
+          <MapModule
+            projectData={projectData}
+            mapData={mapData}
+            handleMarkerClick={handleMarkerClick}
+            activeInfoWindow={activeInfoWindow}
+            handleMarkerClose={handleMarkerClose}
+          />
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
             <button
               type="button"

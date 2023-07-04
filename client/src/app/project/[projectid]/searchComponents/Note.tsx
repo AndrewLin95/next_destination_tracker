@@ -10,13 +10,25 @@ interface Props {
   note: NoteData;
   handleEditNoteDialog: (note: NoteData) => void;
   handleDeleteNote: (locationID: string) => void;
+  activeLocationID: string | null;
 }
 
-const Note: FC<Props> = ({ note, handleEditNoteDialog, handleDeleteNote }) => {
+const Note: FC<Props> = ({
+  note,
+  handleEditNoteDialog,
+  handleDeleteNote,
+  activeLocationID,
+}) => {
   const [expandState, setExpandState] = useState(false);
   // TODO: https://lokeshdhakar.com/projects/color-thief/
   return (
-    <div className="mb-8 w-full flex flex-col justify-center items-center border border-Background_Lighter">
+    <div
+      className={`mb-8 w-full flex flex-col justify-center items-center border border-Background_Lighter ${
+        activeLocationID === note.locationID
+          ? "bg-gradient-to-b from-slate-500/60 to-transparent"
+          : "bg-transparent"
+      }`}
+    >
       <div className="flex justify-between w-full items-center p-1">
         <button
           type="button"

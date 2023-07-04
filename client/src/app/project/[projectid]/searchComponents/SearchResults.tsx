@@ -6,12 +6,14 @@ interface Props {
   noteData: NoteData[];
   handleEditNoteDialog: (note: NoteData) => void;
   handleDeleteNote: (locationID: string) => void;
+  activeLocationID: string | null;
 }
 
 const SearchResults: FC<Props> = ({
   noteData,
   handleEditNoteDialog,
   handleDeleteNote,
+  activeLocationID,
 }) => {
   if (noteData.length === 0) {
     return null;
@@ -30,6 +32,7 @@ const SearchResults: FC<Props> = ({
               note={note}
               handleEditNoteDialog={handleEditNoteDialog}
               handleDeleteNote={handleDeleteNote}
+              activeLocationID={activeLocationID}
             />
           );
         })}

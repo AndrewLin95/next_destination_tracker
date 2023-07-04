@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import {
   GoogleMap,
   InfoWindow,
@@ -11,25 +11,28 @@ import Image from "next/image";
 interface Props {
   projectData: ProjectData;
   mapData: MapData[];
+  handleMarkerClick: (marker: MapData, index: number) => void;
+  activeInfoWindow: number | null;
+  handleMarkerClose: () => void;
 }
 
-const MapModule: FC<Props> = ({ projectData, mapData }) => {
+const MapModule: FC<Props> = ({
+  projectData,
+  mapData,
+  handleMarkerClick,
+  activeInfoWindow,
+  handleMarkerClose,
+}) => {
   //https://www.ultimateakash.com/blog-details/Ii0jNGAKYAo=/How-To-Integrate-Google-Maps-in-React-2022
   const center = {
     lat: parseFloat(projectData!.project.projectCoords.lat),
     lng: parseFloat(projectData!.project.projectCoords.lng),
   };
 
-  const [activeInfoWindow, setActiveInfoWindow] = useState<number | null>(null);
   // const [markers, setMarkers] = useState(mapData);
 
   const mapClicked = (event: any) => {
     console.log(event.latLng.lat(), event.latLng.lng());
-  };
-
-  const markerClicked = (marker: any, index: number) => {
-    setActiveInfoWindow(index);
-    console.log(marker, index);
   };
 
   const markerDragEnd = (event: any, index: any) => {
@@ -53,10 +56,13 @@ const MapModule: FC<Props> = ({ projectData, mapData }) => {
               // label={marker.label}
               // draggable={marker.draggable}
               onDragEnd={(event) => markerDragEnd(event, index)}
-              onClick={(event) => markerClicked(marker, index)}
+              onClick={(e) => handleMarkerClick(marker, index)}
             >
               {activeInfoWindow === index && (
-                <InfoWindow position={marker.position}>
+                <InfoWindow
+                  position={marker.position}
+                  onCloseClick={() => handleMarkerClose()}
+                >
                   <div className="text-black font-bold flex flex-col">
                     <div className="capitalize pb-2 text-lg">
                       {marker.noteName !== undefined
