@@ -10,7 +10,12 @@ const CalendarColumns: FC<Props> = ({ calendarData }) => {
     <div className="w-[calc((100vw-25rem)/7)] h-full">
       {calendarData.mappingArray.map((segment, index) => {
         return (
-          <div className="h-12 border border-Background_Lighter/50" key={index}>
+          <div
+            className={`${
+              calendarData.enabled ? "bg-transparent" : "bg-slate-500/20"
+            } h-12 border border-Background_Lighter/50`}
+            key={index}
+          >
             {" "}
           </div>
         );

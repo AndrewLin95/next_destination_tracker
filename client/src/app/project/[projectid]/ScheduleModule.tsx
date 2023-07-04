@@ -28,6 +28,7 @@ const ScheduleModule: FC<Props> = ({
               key={index}
               calendarDate={data.date}
               dayOfWeek={data.dayOfWeek}
+              enabled={data.enabled}
             />
           );
         })}
