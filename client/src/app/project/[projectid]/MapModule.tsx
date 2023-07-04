@@ -29,8 +29,6 @@ const MapModule: FC<Props> = ({
     lng: parseFloat(projectData!.project.projectCoords.lng),
   };
 
-  // const [markers, setMarkers] = useState(mapData);
-
   const mapClicked = (event: any) => {
     console.log(event.latLng.lat(), event.latLng.lng());
   };

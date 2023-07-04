@@ -413,17 +413,12 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   const handleMarkerClick = (marker: MapData, index: number) => {
     setActiveInfoWindow(index);
     setActiveLocationID(marker.locationID);
-    console.log(marker, index);
   };
 
   const handleMarkerClose = () => {
     setActiveInfoWindow(null);
     setActiveLocationID(null);
   };
-
-  useEffect(() => {
-    console.log("active window", activeInfoWindow);
-  }, [activeInfoWindow]);
 
   const handleViewChange = () => {
     if (viewToggle === VIEW_TYPES.Map) {

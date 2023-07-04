@@ -76,7 +76,7 @@ button:focus-visible {
   }
 
   *::-webkit-scrollbar-track {
-    background: #1a0e1b;
+    background: transparent;
   }
 
   *::-webkit-scrollbar-thumb {
