@@ -28,6 +28,11 @@ export interface ProjectData {
     projectEndDate: number,
     projectImage: string,
   },
+  scheduleConfig: {
+    startingTime: string,
+    endingTime: string,
+    segments: SCHEDULE_SEGMENTS,
+  },
   userID: string,
   projectID: string,
   _id: string,
@@ -128,17 +133,21 @@ export interface ScheduleDateData {
 }
 
 export interface ScheduleCalendarData { 
-  calendar: {
-    enabled: boolean,
-    date: string,
-    startUnix: number,
-    endUnix: number,
-    dayOfWeek: string,
-  }[],
+  calendar: CalendarData[],
   config: {
     startingTime: string,
     endingTime: string,
     segments: SCHEDULE_SEGMENTS,
+    mappingArray: string[],
   }
   projectID: string,
+}
+
+export interface CalendarData {
+  enabled: boolean,
+  date: string,
+  startUnix: number,
+  endUnix: number,
+  dayOfWeek: string,
+  mappingArray: string[],
 }

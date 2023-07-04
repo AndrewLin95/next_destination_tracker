@@ -73,7 +73,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   // Schedule Data
   const [projectStartEnd, setProjectStartEnd] =
     useState<ScheduleDateData | null>(null);
-  const [scheduleStartEnd, setScheduleStartEnd] =
+  const [scheduleCalendarData, setScheduleCalendarData] =
     useState<ScheduleCalendarData | null>(null);
 
   // Dialog Data
@@ -152,7 +152,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       // handle schedule init
       const scheduleInitData = handleScheduleInit(responseData.projectData);
       setProjectStartEnd(scheduleInitData.project);
-      setScheduleStartEnd(scheduleInitData.schedule);
+      setScheduleCalendarData(scheduleInitData.schedule);
       console.log(scheduleInitData);
 
       setLoading(false);
@@ -491,7 +491,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
           ) : (
             <ScheduleModule
               projectStartEnd={projectStartEnd}
-              scheduleStartEnd={scheduleStartEnd}
+              scheduleCalendarData={scheduleCalendarData}
             />
           )}
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">

@@ -1,7 +1,7 @@
 import { LocationData, ProjectData, ScheduleDateData, ScheduleCalendarData } from "@/util/models";
 import { Dispatch, SetStateAction } from 'react';
 import { format, getUnixTime, isSaturday, isSunday, nextSaturday, previousSunday } from "date-fns";
-import { MS_IN_DAY, SCHEDULE_SEGMENTS } from "@/util/constants";
+import { MS_IN_DAY } from "@/util/constants";
 
 export const handleValidatePagination = (type: string, locationData: LocationData[], numberOfPages: number, setNumberOfPages: Dispatch<SetStateAction<number>> ) => {
   let newNumberOfPages;
@@ -55,24 +55,40 @@ export const handleScheduleInit = (projectData: ProjectData) => {
       enabledStatus = false;
     }
 
+    const tempMappingArray = [];
+    let j = 0;
+    while (j < ((24*2) / projectData.scheduleConfig.segments)) {
+      tempMappingArray.push(" ");
+      j++
+    }
+
     const calendarData = {
       enabled: enabledStatus,
       date: format(new Date(i), "PPP"),
       startUnix: i,
       endUnix: i + MS_IN_DAY - 1,
-      dayOfWeek: format( new Date(i), "EEEE")
+      dayOfWeek: format( new Date(i), "EEEE"),
+      mappingArray: tempMappingArray,
     }
 
     tempCalendarData.push(calendarData);
     i = i + MS_IN_DAY;
   }
 
+  const tempMappingArray = [];
+  i = 0;
+  while (i < (24 / projectData.scheduleConfig.segments)) {
+    tempMappingArray.push(`${i}:00`)
+    i++;
+  }
+
   const scheduleConfigData: ScheduleCalendarData = {
     calendar: tempCalendarData,
     config: {
-      startingTime: "8:00",
-      endingTime: "20:00",
-      segments: SCHEDULE_SEGMENTS.OneHour
+      startingTime: projectData.scheduleConfig.startingTime,
+      endingTime: projectData.scheduleConfig.endingTime,
+      segments: projectData.scheduleConfig.segments,
+      mappingArray: tempMappingArray
     },
     projectID: projectData.projectID
   }
