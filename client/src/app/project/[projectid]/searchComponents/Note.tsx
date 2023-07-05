@@ -1,6 +1,6 @@
 import { NoteData } from "@/util/models";
 import { FC, useState } from "react";
-import { SIMPLE_BUTTON_STYLE } from "@/util/constants";
+import { SIMPLE_BUTTON_STYLE, VIEW_TYPES } from "@/util/constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import RenderAllPriorityIcons from "../components/RenderPriorityIcons";
@@ -12,6 +12,8 @@ interface Props {
   handleDeleteNote: (locationID: string) => void;
   activeLocationID: string | null;
   handleActiveNote: (locationID: string) => void;
+  viewToggle: VIEW_TYPES;
+  handleDrag: (e: React.DragEvent<HTMLDivElement>, note: NoteData) => void;
 }
 
 const Note: FC<Props> = ({
@@ -20,6 +22,8 @@ const Note: FC<Props> = ({
   handleDeleteNote,
   activeLocationID,
   handleActiveNote,
+  viewToggle,
+  handleDrag,
 }) => {
   const [expandState, setExpandState] = useState(false);
   // TODO: https://lokeshdhakar.com/projects/color-thief/
@@ -31,6 +35,8 @@ const Note: FC<Props> = ({
           : "bg-transparent border border-Background_Lighter"
       }`}
       onClick={() => handleActiveNote(note.locationID)}
+      draggable={viewToggle === VIEW_TYPES.Schedule ? true : false}
+      onDragStart={(e) => handleDrag(e, note)}
     >
       <div className="flex justify-between w-full items-center p-1">
         <button

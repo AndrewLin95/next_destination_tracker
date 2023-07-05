@@ -446,6 +446,11 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     }
   };
 
+  const handleDrag = (e: React.DragEvent<HTMLDivElement>, note: NoteData) => {
+    console.log(e);
+    console.log(note);
+  };
+
   useEffect(() => {
     console.log("mapdata", mapData);
     console.log("notedata", noteData);
@@ -472,6 +477,8 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
               handleDeleteNote={handleDeleteNote}
               activeLocationID={activeLocationID}
               handleActiveNote={handleActiveNote}
+              viewToggle={viewToggle}
+              handleDrag={handleDrag}
             />
             <SearchPagination
               paginationState={paginationState}

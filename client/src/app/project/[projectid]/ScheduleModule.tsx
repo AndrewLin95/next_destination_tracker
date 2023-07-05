@@ -49,6 +49,7 @@ const ScheduleModule: FC<Props> = ({ scheduleCalendarData }) => {
         i++;
       }
     });
+    console.log(hashTable);
     setScheduleColumnData(hashTable);
     setLoading(false);
   }, []);

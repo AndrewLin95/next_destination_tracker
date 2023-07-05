@@ -1,6 +1,7 @@
 import { NoteData } from "@/util/models";
 import { FC } from "react";
 import Note from "./Note";
+import { VIEW_TYPES } from "@/util/constants";
 
 interface Props {
   noteData: NoteData[];
@@ -8,6 +9,8 @@ interface Props {
   handleDeleteNote: (locationID: string) => void;
   activeLocationID: string | null;
   handleActiveNote: (locationID: string) => void;
+  viewToggle: VIEW_TYPES;
+  handleDrag: (e: React.DragEvent<HTMLDivElement>, note: NoteData) => void;
 }
 
 const SearchResults: FC<Props> = ({
@@ -16,6 +19,8 @@ const SearchResults: FC<Props> = ({
   handleDeleteNote,
   activeLocationID,
   handleActiveNote,
+  viewToggle,
+  handleDrag,
 }) => {
   if (noteData.length === 0) {
     return null;
@@ -36,6 +41,8 @@ const SearchResults: FC<Props> = ({
               handleDeleteNote={handleDeleteNote}
               activeLocationID={activeLocationID}
               handleActiveNote={handleActiveNote}
+              viewToggle={viewToggle}
+              handleDrag={handleDrag}
             />
           );
         })}
