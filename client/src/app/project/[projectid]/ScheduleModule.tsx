@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { ScheduleCalendarData, ScheduleColumnData } from "@/util/models";
 import { FC, useEffect, useState } from "react";
 import CalendarColumns from "./scheduleComponents/CalendarColumns";
@@ -49,7 +50,6 @@ const ScheduleModule: FC<Props> = ({ scheduleCalendarData }) => {
       }
     });
     setScheduleColumnData(hashTable);
-    console.log("HERE", hashTable);
     setLoading(false);
   }, []);
 
