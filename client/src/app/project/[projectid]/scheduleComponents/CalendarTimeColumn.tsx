@@ -1,13 +1,13 @@
 import { FC } from "react";
 
 interface Props {
-  timeMappingArray: string[];
+  timeData: string[];
 }
 
-const CalendarTimeColumn: FC<Props> = ({ timeMappingArray }) => {
+const CalendarTimeColumn: FC<Props> = ({ timeData }) => {
   return (
     <div className="w-16 h-full pr-1">
-      {timeMappingArray.map((time, index) => {
+      {timeData.map((time: string, index: number) => {
         return (
           <div
             className="h-24 w-16 flex justify-center text-sm pt-1"

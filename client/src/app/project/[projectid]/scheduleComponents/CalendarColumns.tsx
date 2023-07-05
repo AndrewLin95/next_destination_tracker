@@ -1,20 +1,22 @@
 import { FC } from "react";
-import { CalendarData } from "@/util/models";
+import { EachScheduleColumnData } from "@/util/models";
 
 interface Props {
-  calendarData: CalendarData;
+  calendarData: EachScheduleColumnData;
 }
 
 const CalendarColumns: FC<Props> = ({ calendarData }) => {
   return (
     <div className="w-[calc((100vw-25rem)/7)] h-full">
-      {calendarData.mappingArray.map((segment, index) => {
+      {Object.entries(calendarData).map(([key, data]) => {
         return (
           <div
             className={`${
-              calendarData.enabled ? "bg-transparent" : "bg-slate-500/20"
+              calendarData.columnData.enabled
+                ? "bg-transparent"
+                : "bg-slate-500/20"
             } h-12 border border-Background_Lighter/50`}
-            key={index}
+            key={key}
           >
             {" "}
           </div>

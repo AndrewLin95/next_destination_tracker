@@ -134,13 +134,14 @@ export interface ScheduleDateData {
 
 export interface ScheduleCalendarData { 
   calendar: CalendarData[],
-  config: {
-    startingTime: string,
-    endingTime: string,
-    segments: SCHEDULE_SEGMENTS,
-    mappingArray: string[],
-  }
+  config: ScheduleConfig,
   projectID: string,
+}
+
+export interface ScheduleConfig {
+  startingTime: string,
+  endingTime: string,
+  segments: SCHEDULE_SEGMENTS,
 }
 
 export interface CalendarData {
@@ -149,5 +150,13 @@ export interface CalendarData {
   startUnix: number,
   endUnix: number,
   dayOfWeek: string,
-  mappingArray: string[],
+}
+
+export interface ScheduleColumnData {
+  [date: string]: EachScheduleColumnData
+}
+
+export interface EachScheduleColumnData {
+  columnData: CalendarData;
+  [time: string]: string | CalendarData;
 }

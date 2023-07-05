@@ -71,10 +71,8 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   const [activeLocationID, setActiveLocationID] = useState<string | null>(null);
 
   // Schedule Data
-  const [projectStartEnd, setProjectStartEnd] =
-    useState<ScheduleDateData | null>(null);
   const [scheduleCalendarData, setScheduleCalendarData] =
-    useState<ScheduleCalendarData | null>(null);
+    useState<ScheduleCalendarData>({} as ScheduleCalendarData);
 
   // Dialog Data
   const [noteDialogToggle, setNoteDialogToggle] = useState<Boolean>(false);
@@ -151,8 +149,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
 
       // handle schedule init
       const scheduleInitData = handleScheduleInit(responseData.projectData);
-      setProjectStartEnd(scheduleInitData.project);
-      setScheduleCalendarData(scheduleInitData.schedule);
+      setScheduleCalendarData(scheduleInitData);
       console.log(scheduleInitData);
 
       setLoading(false);
@@ -489,10 +486,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
               handleInactivateNote={handleInactivateNote}
             />
           ) : (
-            <ScheduleModule
-              projectStartEnd={projectStartEnd}
-              scheduleCalendarData={scheduleCalendarData}
-            />
+            <ScheduleModule scheduleCalendarData={scheduleCalendarData} />
           )}
           <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
             <button
