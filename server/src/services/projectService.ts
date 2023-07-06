@@ -140,6 +140,7 @@ const createNewProject = async (payload: CreateProjectQuery) => {
             rangeStart: thisRangeStart,
             rangeEnd: thisRangeEnd,
             page: i + 1,
+            totalPages: numOfWeeks,
             projectID: newProjectID
           },
           headerData: headerData,

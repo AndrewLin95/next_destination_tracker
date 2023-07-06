@@ -14,6 +14,10 @@ const scheduleDataSchema = new mongoose.Schema({
       type: Number,
       required: true,
     },
+    totalPages: {
+      type: Number,
+      required: true,
+    },
     projectID: {
       type: String,
       required: true,
