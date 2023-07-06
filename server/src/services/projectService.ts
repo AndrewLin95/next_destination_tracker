@@ -11,6 +11,7 @@ import {
   StatusPayload, 
   MapPayloadData,
   NoteDataResponse,
+  ScheduleMongoResponse,
 } from "../utils/types";
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
 import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, URL_REGEX, SCHEDULE_SEGMENTS, MS_IN_WEEK, MS_IN_DAY } from '../utils/constants';
@@ -115,21 +116,39 @@ const createNewProject = async (payload: CreateProjectQuery) => {
           j = j + MS_IN_DAY;
         }
 
+        const timeArray = [];
+        let t = 0;
+        while (t < ((24 * 2) / SCHEDULE_SEGMENTS.OneHour)) {
+          let time;
+          if (t === 0) {
+            time = "0:00";
+          } else if (t % 2 === 1) {
+            time = `${Math.floor(t / 2)}:30`;
+          } else {
+            time = `${Math.floor(t / 2)}:00`;
+          }
+  
+          timeArray.push({time: time})
+          t++;
+        }
+
         const scheduleSetupData = new ScheduleDataSchema({
           config: {
             rangeStart: thisRangeStart,
             rangeEnd: thisRangeEnd,
-            page: i,
+            page: i + 1,
             projectID: newProjectID
           },
-          headerData: headerData
+          headerData: headerData,
+          timeData: timeArray,
         })
 
         await scheduleSetupData.save();
+        rangeStartInUnix = rangeStartInUnix + MS_IN_WEEK
         i++;
       }
 
-      return result.projectID;
+      return result;
     }
   } catch (err) {
     console.log(err);
@@ -211,10 +230,12 @@ const getEachProject = async (projectID: string) => {
   try {
     const userProject: ProjectPayload = await ProjectSetupSchema.findOne({projectID: projectID});
     const projectDataPoints: LocationMongoResponse[] = await ProjectLocationDataSchema.find({projectID: projectID, deleteFlag: false});
+    const scheduleData: ScheduleMongoResponse = await ScheduleDataSchema.findOne({'config.projectID': projectID, 'config.page': 1});
 
     const responseData = {
       projectData: userProject,
       locationData: projectDataPoints,
+      scheduleData: scheduleData,
     }
 
     return responseData;

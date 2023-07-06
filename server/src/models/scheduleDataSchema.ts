@@ -39,6 +39,10 @@ const scheduleDataSchema = new mongoose.Schema({
       }
     }
   ],
+  timeData: {
+    type: [{ type: mongoose.Schema.Types.Mixed}],
+    required: true,
+  },
   scheduleData: {
     type: Map,
     of: [
@@ -69,7 +73,7 @@ const scheduleDataSchema = new mongoose.Schema({
             values: ["High", "Medium", "Low"],
             messsage: `{VALUE} is not supported`
           },
-          required: false,
+          required: true,
         }
       }
     ],

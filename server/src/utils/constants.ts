@@ -35,3 +35,9 @@ export enum SCHEDULE_SEGMENTS {
   HalfHour = 0.5,
   QuarterHour = 0.25,
 }
+
+export enum NOTE_PRIORITY {
+  Low = "Low",
+  Med = "Medium",
+  High = "High"
+}

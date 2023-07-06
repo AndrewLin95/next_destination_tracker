@@ -1,4 +1,4 @@
-import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, LABEL_COLOR, SCHEDULE_SEGMENTS } from "./constants"
+import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, LABEL_COLOR, SCHEDULE_SEGMENTS, NOTE_PRIORITY } from "./constants"
 
 export interface jwtToken {
   exp: number,
@@ -54,6 +54,35 @@ export interface LocationMongoResponse {
     closeHours?: string,
   },
   status: StatusPayload
+}
+
+export interface ScheduleMongoResponse {
+  config: {
+    rangeStart: number,
+    rangeEnd: number,
+    page: number,
+    projectID: number,
+  },
+  headerData: ScheduleHeaderData[],
+  scheduleData?: { 
+    [dateTime: string]: EachScheduleData[];
+  }
+}
+
+export interface ScheduleHeaderData {
+  date: string,
+  dateUnix: number,
+  dayOfWeek: string,
+  enabled: boolean,
+}
+
+export interface EachScheduleData {
+  noteName: string,
+  timeFrom: string,
+  timeTo: string,
+  duration: number,
+  noteMessage: string,
+  notePriority: NOTE_PRIORITY,
 }
 
 export interface ProjectPayload {
