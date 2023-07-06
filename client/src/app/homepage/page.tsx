@@ -82,7 +82,6 @@ const HomePage: NextPage = () => {
         newProjectData,
       ];
       setExistingProjectsList(tempProjectList);
-      console.log(newProjectData);
     } catch (err) {
       console.log(err);
     }
