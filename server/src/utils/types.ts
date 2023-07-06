@@ -16,6 +16,7 @@ export interface CreateProjectQuery {
   projectStartDate: string,
   projectEndDate: string,
   projectDestination: string,
+  projectImage: string,
 }
 
 export interface SearchQuery {
