@@ -97,9 +97,9 @@ const createNewProject = async (payload: CreateProjectQuery) => {
 
         const headerData = [];
         let j = thisRangeStart;
-        while (j <= thisRangeEnd + MS_IN_DAY) {
+        while (j <= thisRangeEnd) {
           let enabledStatus;
-          if (j >= startDate && j <= (endDate + MS_IN_DAY)) {
+          if (j > startDate && j <= (endDate + MS_IN_DAY)) {
             enabledStatus = true;
           } else {
             enabledStatus = false;
@@ -116,19 +116,22 @@ const createNewProject = async (payload: CreateProjectQuery) => {
           j = j + MS_IN_DAY;
         }
 
-        const timeArray = [];
+        const timeArray = new Map();
+        const timeValueArray = new Map();
         let t = 0;
         while (t < ((24 * 2) / SCHEDULE_SEGMENTS.OneHour)) {
           let time;
           if (t === 0) {
             time = "0:00";
+            timeValueArray.set(time, time);
           } else if (t % 2 === 1) {
             time = `${Math.floor(t / 2)}:30`;
           } else {
             time = `${Math.floor(t / 2)}:00`;
+            timeValueArray.set(time, time);
           }
   
-          timeArray.push({time: time})
+          timeArray.set(time, time);
           t++;
         }
 
@@ -141,6 +144,7 @@ const createNewProject = async (payload: CreateProjectQuery) => {
           },
           headerData: headerData,
           timeData: timeArray,
+          timeValueData: timeValueArray,
         })
 
         await scheduleSetupData.save();

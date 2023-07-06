@@ -40,7 +40,13 @@ const scheduleDataSchema = new mongoose.Schema({
     }
   ],
   timeData: {
-    type: [{ type: mongoose.Schema.Types.Mixed}],
+    type: Map,
+    of: String,
+    required: true,
+  },
+  timeValueData: {
+    type: Map,
+    of: String,
     required: true,
   },
   scheduleData: {
