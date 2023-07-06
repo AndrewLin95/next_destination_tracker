@@ -75,7 +75,14 @@ const HomePage: NextPage = () => {
         },
       };
       const response = await axios.post(url, body, authConfig);
-      console.log(response);
+      const newProjectData = response.data;
+
+      const tempProjectList: ProjectData[] = [
+        ...existingProjectsList,
+        newProjectData,
+      ];
+      setExistingProjectsList(tempProjectList);
+      console.log(newProjectData);
     } catch (err) {
       console.log(err);
     }

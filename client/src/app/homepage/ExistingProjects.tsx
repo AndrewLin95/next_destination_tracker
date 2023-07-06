@@ -37,7 +37,7 @@ const ExistingProjects: FC<Props> = ({
             );
             return (
               <div
-                className="h-60 w-72 flex flex-col p-2 border border-red-200"
+                className="h-60 w-72 flex flex-col p-2 border border-red-200 mr-8"
                 key={existingProject._id}
                 onClick={() =>
                   handleEachProjectClick(existingProject.projectID)
