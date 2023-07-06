@@ -1,19 +1,19 @@
 import { FC } from "react";
 
 interface Props {
-  timeData: string[];
+  timeData: Map<string, string>;
 }
 
 const CalendarTimeColumn: FC<Props> = ({ timeData }) => {
   return (
     <div className="w-16 h-full pr-1">
-      {timeData.map((time: string, index: number) => {
+      {Object.entries(timeData).map(([key, value]) => {
+        if (value.split(":")[1] === "30") {
+          return null;
+        }
         return (
-          <div
-            className="h-24 w-16 flex justify-center text-sm pt-1"
-            key={index}
-          >
-            {time}
+          <div className="h-24 w-16 flex justify-center text-sm pt-1" key={key}>
+            {value}
           </div>
         );
       })}

@@ -1,25 +1,22 @@
 import { FC } from "react";
-import { EachScheduleColumnData } from "@/util/models";
+import { ScheduleData, ScheduleHeaderData } from "@/util/models";
 
 interface Props {
-  calendarData: EachScheduleColumnData;
+  timeData: Map<string, string>;
+  headerData: ScheduleHeaderData;
 }
 
-const CalendarColumns: FC<Props> = ({ calendarData }) => {
+const CalendarColumns: FC<Props> = ({ timeData, headerData }) => {
   return (
     <div className="w-[calc((100vw-25rem)/7)] h-full">
-      {Object.entries(calendarData).map(([key, data]) => {
+      {Object.entries(timeData).map(([key, data]) => {
         return (
           <div
             className={`${
-              calendarData.columnData.enabled
-                ? "bg-transparent"
-                : "bg-slate-500/20"
+              headerData.enabled ? "bg-transparent" : "bg-slate-500/20"
             } h-12 border border-Background_Lighter/50`}
             key={key}
-          >
-            {" "}
-          </div>
+          ></div>
         );
       })}
     </div>

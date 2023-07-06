@@ -1,4 +1,4 @@
-import { STATUS_CODES, ERROR_CAUSE, ERROR_DATA, LABEL_COLOR, SCHEDULE_SEGMENTS } from "./constants";
+import { STATUS_CODES, ERROR_CAUSE, ERROR_DATA, LABEL_COLOR, SCHEDULE_SEGMENTS, NOTE_PRIORITY } from "./constants";
 
 export interface DecodedJWT {
   exp: number,
@@ -76,6 +76,36 @@ export interface LocationData {
   status: StatusPayload,
 }
 
+export interface ScheduleData {
+  config: {
+    rangeStart: number,
+    rangeEnd: number,
+    page: number,
+    projectID: number,
+  },
+  headerData: ScheduleHeaderData[],
+  scheduleData?: { 
+    [dateTime: string]: EachScheduleData[];
+  },
+  timeData: Map<string, string>
+}
+
+export interface ScheduleHeaderData {
+  date: string,
+  dateUnix: number,
+  dayOfWeek: string,
+  enabled: boolean,
+}
+
+export interface EachScheduleData {
+  noteName: string,
+  timeFrom: string,
+  timeTo: string,
+  duration: number,
+  noteMessage: string,
+  notePriority: NOTE_PRIORITY,
+}
+
 export interface MapData {
   position: {
     lat: number,
@@ -102,15 +132,6 @@ export interface NoteData {
   closeHours?: string,
   picture?: string,
   color?: LABEL_COLOR,
-}
-
-export interface ScheduleData {
-  scheduled: boolean,
-  noteName: string,
-  locationID: string,
-  scheduleDate: Date,
-  scheduleStart: Date,
-  scheduleEnd: Date,
 }
 
 export interface StatusPayload { 
@@ -158,5 +179,5 @@ export interface ScheduleColumnData {
 
 export interface EachScheduleColumnData {
   columnData: CalendarData;
-  [time: string]: string | CalendarData;
+  [time: string]: undefined | CalendarData;
 }

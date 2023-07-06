@@ -35,6 +35,7 @@ import ScheduleModule from "./ScheduleModule";
 interface InitResponseData {
   projectData: ProjectData;
   locationData: LocationData[];
+  scheduleData: ScheduleData;
 }
 
 interface Props {
@@ -65,15 +66,13 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   // Page Data
   const [mapData, setMapData] = useState<MapData[]>([]);
   const [noteData, setNoteData] = useState<NoteData[]>([]);
-  const [scheduleData, setScheduleData] = useState<ScheduleData[]>([]);
+  const [scheduleData, setScheduleData] = useState<ScheduleData>(
+    {} as ScheduleData
+  );
 
   // Map Data
   const [activeInfoWindow, setActiveInfoWindow] = useState<number | null>(null);
   const [activeLocationID, setActiveLocationID] = useState<string | null>(null);
-
-  // Schedule Data
-  const [scheduleCalendarData, setScheduleCalendarData] =
-    useState<ScheduleCalendarData>({} as ScheduleCalendarData);
 
   // Dialog Data
   const [noteDialogToggle, setNoteDialogToggle] = useState<Boolean>(false);
@@ -105,14 +104,14 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
 
       const response = await axios.get(url, authConfig);
       const responseData: InitResponseData = response.data;
-
+      console.log(responseData);
       setProjectData(responseData.projectData);
       setAllLocationData(responseData.locationData);
+      setScheduleData(responseData.scheduleData);
 
       // handle initial data mapping
       const tempMapData: MapData[] = [];
       const tempNoteData: NoteData[] = [];
-      const tempScheduleData: ScheduleData[] = [];
 
       let i = 0;
       responseData.locationData.forEach((eachLocationData) => {
@@ -130,28 +129,13 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
           locationID: eachLocationData.locationID,
         };
         tempNoteData.push(eachNoteData);
-
-        if (eachLocationData.scheduleData?.scheduleDate !== undefined) {
-          const eachScheduleData = {
-            ...eachLocationData.scheduleData,
-            locationID: eachLocationData.locationID,
-          };
-          tempScheduleData.push(eachScheduleData);
-        }
-        i++;
       });
       setMapData(tempMapData);
       setNoteData(tempNoteData);
-      setScheduleData(tempScheduleData);
 
       // handle initial pagination state
       const totalPages = Math.ceil(responseData.locationData.length / 10);
       setNumberOfPages(totalPages);
-
-      // handle schedule init
-      const scheduleInitData = handleScheduleInit(responseData.projectData);
-      setScheduleCalendarData(scheduleInitData);
-      console.log(scheduleInitData);
 
       setLoading(false);
     };
@@ -252,7 +236,6 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
 
     const tempMapData: MapData[] = [];
     const tempNoteData: NoteData[] = [];
-    const tempScheduleData: ScheduleData[] = [];
 
     filteredAllLocationData.forEach((eachLocationData) => {
       const eachMapData = {
@@ -266,18 +249,9 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
         locationID: eachLocationData.locationID,
       };
       tempNoteData.push(eachNoteData);
-
-      if (eachLocationData.scheduleData?.scheduleDate !== undefined) {
-        const eachScheduleData = {
-          ...eachLocationData.scheduleData,
-          locationID: eachLocationData.locationID,
-        };
-        tempScheduleData.push(eachScheduleData);
-      }
     });
     setMapData(tempMapData);
     setNoteData(tempNoteData);
-    setScheduleData(tempScheduleData);
     handleInactivateNote();
   };
 
@@ -397,7 +371,6 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
         if (deleteNoteData.status.statusCode === STATUS_CODES.SUCCESS) {
           const tempMapData: MapData[] = [...mapData];
           const tempNoteData: NoteData[] = [...noteData];
-          const tempScheduleData: ScheduleData[] = [...scheduleData];
 
           const newMapData = tempMapData.filter(
             (mapData) => mapData.locationID !== locationID
@@ -408,13 +381,6 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
             (noteData) => noteData.locationID !== locationID
           );
           setNoteData(newNoteData);
-
-          if (tempScheduleData.length !== 0) {
-            const newScheduleData = tempScheduleData.filter(
-              (scheduleData) => scheduleData.locationID !== locationID
-            );
-            setScheduleData(newScheduleData);
-          }
         }
       } catch (err) {
         console.log(err);
@@ -494,7 +460,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
               handleInactivateNote={handleInactivateNote}
             />
           ) : (
-            <ScheduleModule scheduleCalendarData={scheduleCalendarData} />
+            <ScheduleModule scheduleData={scheduleData} />
           )}
           <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
             <button
