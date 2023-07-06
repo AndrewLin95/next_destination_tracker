@@ -52,13 +52,6 @@ export interface LocationMongoResponse {
     openHours?: string,
     closeHours?: string,
   },
-  scheduleData?:{
-    scheduled: boolean,
-    noteName: string,
-    scheduleDate: Date,
-    scheduleStart: Date,
-    scheduleEnd: Date,
-  },
   status: StatusPayload
 }
 
@@ -113,13 +106,6 @@ export interface LocationPayload {
     openHours?: string,
     closeHours?: string,
     picture?: string,
-  },
-  scheduleData?:{
-    scheduled: boolean,
-    noteName: string,
-    scheduleDate: Date,
-    scheduleStart: Date,
-    scheduleEnd: Date,
   }
 }
 
@@ -151,14 +137,6 @@ export interface NotePayloadData {
   color?: LABEL_COLOR,
 }
 
-export interface SchedulePayloadData {
-  scheduled: boolean,
-  noteName: string,
-  locationID: string,
-  scheduleDate: Date,
-  scheduleStart: Date,
-  scheduleEnd: Date,
-}
 
 export interface StatusPayload { 
   statusCode: STATUS_CODES,

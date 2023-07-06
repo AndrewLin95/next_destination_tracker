@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { LABEL_COLOR } from "../utils/constants";
 
 const projectLocationDataSchema = new mongoose.Schema({
   userID: {
@@ -91,28 +90,6 @@ const projectLocationDataSchema = new mongoose.Schema({
         values: ["High", "Medium", "Low"],
         messsage: `{VALUE} is not supported`
       },
-      required: false,
-    }
-  },
-  scheduleData: {
-    scheduled : {
-      type: Boolean,
-      required: false,
-    },
-    noteName: {
-      type: String,
-      required: false,
-    },
-    scheduleDate: {
-      type: Date,
-      required: false,
-    },
-    scheduleStart: {
-      type: Date,
-      required: false,
-    },
-    scheduleEnd: {
-      type: Date,
       required: false,
     }
   }
