@@ -19,6 +19,26 @@ const scheduleDataSchema = new mongoose.Schema({
       required: true,
     },
   },
+  headerData: [
+    {
+      date: {
+        type: String,
+        required: true,
+      },
+      dateUnix: {
+        type: Number,
+        required: true,
+      },
+      dayOfWeek: {
+        type: String,
+        required: true,
+      },
+      enabled: {
+        type: Boolean,
+        required: true,
+      }
+    }
+  ],
   scheduleData: {
     type: Map,
     of: [
@@ -54,7 +74,7 @@ const scheduleDataSchema = new mongoose.Schema({
       }
     ],
     required: false,
-  },
+  }
 })
 
 const ScheduleDataSchema = mongoose.model('ScheduleDataSchema', scheduleDataSchema);

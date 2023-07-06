@@ -2,9 +2,6 @@ import axios from 'axios';
 import { s3Client } from '../utils/s3';
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from 'uuid';
-
-const ProjectSetupSchema = require('../models/projectSetupSchema');
-const ProjectLocationDataSchema = require('../models/projectLocationDataSchema');
 import { 
   CreateProjectQuery, 
   SearchQuery, 
@@ -16,11 +13,15 @@ import {
   NoteDataResponse,
 } from "../utils/types";
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
-import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, msInDay, URL_REGEX, SCHEDULE_SEGMENTS } from '../utils/constants';
+import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, URL_REGEX, SCHEDULE_SEGMENTS, MS_IN_WEEK, MS_IN_DAY } from '../utils/constants';
+import { format, getUnixTime, isSaturday, isSunday, nextSaturday, previousSunday } from 'date-fns';
+const ProjectSetupSchema = require('../models/projectSetupSchema');
+const ProjectLocationDataSchema = require('../models/projectLocationDataSchema');
+const ScheduleDataSchema = require('../models/scheduleDataSchema');
 
 const createNewProject = async (payload: CreateProjectQuery) => {
   const startDate = Date.parse(payload.projectStartDate);
-  const endDate = Date.parse(payload.projectEndDate) + msInDay - 1;
+  const endDate = Date.parse(payload.projectEndDate) + MS_IN_DAY - 1;
   const newProjectID = uuidv4();
 
   try {
@@ -70,10 +71,66 @@ const createNewProject = async (payload: CreateProjectQuery) => {
 
       const result = await projectSetupData.save();
 
+      // Generate skeleton schedule data
+      let scheduleUnixStart;
+      let scheduleUnixEnd;
+      if (isSunday(startDate)) {
+        scheduleUnixStart = startDate;
+      } else {
+        scheduleUnixStart = (getUnixTime(previousSunday(startDate)) * 1000);  // date-fns default is in s. we use ms
+      }
+
+      if (isSaturday(endDate)) {
+        scheduleUnixEnd = endDate
+      } else {
+        scheduleUnixEnd = (getUnixTime(nextSaturday(endDate)) * 1000);
+      }
+
+      const numOfWeeks = (Math.ceil((scheduleUnixStart - scheduleUnixEnd) / MS_IN_WEEK))
+    
+      let i = 0;
+      let rangeStartInUnix = scheduleUnixStart;
+      while (i < numOfWeeks) {
+        const thisRangeStart = rangeStartInUnix;
+        const thisRangeEnd = rangeStartInUnix + MS_IN_WEEK - 1
+
+        const headerData = [];
+        let j = thisRangeStart;
+        while (j <= thisRangeEnd + MS_IN_DAY) {
+          let enabledStatus;
+          if (j >= startDate && j <= (endDate + MS_IN_DAY)) {
+            enabledStatus = true;
+          } else {
+            enabledStatus = false;
+          }
+
+          const eachHeaderData = {
+            enabled: enabledStatus,
+            date: format(new Date(j), "PPP"),
+            dateUnix: j,
+            dayOfweek: format(new Date(j), "EEEE"),
+          }
+
+          headerData.push(eachHeaderData)
+          j++;
+        }
+
+        const scheduleSetupData = new ScheduleDataSchema({
+          config: {
+            rangeStart: thisRangeStart,
+            rangeEnd: thisRangeEnd,
+            page: i,
+            projectID: newProjectID
+          },
+          headerData: headerData
+        })
+
+        await scheduleSetupData.save();
+        i++;
+      }
+
       return result.projectID;
     }
-
-
   } catch (err) {
     console.log(err);
   }

@@ -1,4 +1,6 @@
 export const msInDay = 86400000
+export const MS_IN_DAY = 86400000
+export const MS_IN_WEEK = 604800000
 export const URL_REGEX = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/
 
 export enum STATUS_CODES {
