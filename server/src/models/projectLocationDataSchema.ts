@@ -93,7 +93,7 @@ const projectLocationDataSchema = new mongoose.Schema({
       required: false,
     }
   }
-}, { versionKey: false })
+})
 
 const ProjectLocationDataSchema = mongoose.model('ProjectLocationDataSchema', projectLocationDataSchema);
 

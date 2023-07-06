@@ -67,7 +67,7 @@ const projectSetupSchema = new mongoose.Schema({
       required: true,
     },
   }
-}, { versionKey: false })
+})
 
 const ProjectSetupSchema = mongoose.model('ProjectSetupSchema', projectSetupSchema);
 

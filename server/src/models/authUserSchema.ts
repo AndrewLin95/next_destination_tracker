@@ -21,7 +21,7 @@ const authUserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-}, { versionKey: false })
+})
 
 const AuthUserSchema = mongoose.model('AuthUserSchema', authUserSchema);
 
