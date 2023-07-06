@@ -68,6 +68,7 @@ export interface ScheduleMongoResponse {
     [dateTime: string]: EachScheduleData[];
   },
   timeData: Map<string, string>
+  timeValueData: Map<string, string>
 }
 
 export interface ScheduleHeaderData {

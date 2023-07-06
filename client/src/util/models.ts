@@ -87,7 +87,8 @@ export interface ScheduleData {
   scheduleData?: { 
     [dateTime: string]: EachScheduleData[];
   },
-  timeData: Map<string, string>
+  timeData: Map<string, string>,
+  timeValueData: Map<string, string>,
 }
 
 export interface ScheduleHeaderData {
@@ -144,19 +145,6 @@ export interface NoteDataResponse {
   noteData: NoteData, 
   mapData: MapData, 
   status: StatusPayload 
-}
-
-export interface ScheduleDateData {
-  start: string,
-  startUnix: number,
-  end: string,
-  endUnix: number,
-}
-
-export interface ScheduleCalendarData { 
-  calendar: CalendarData[],
-  config: ScheduleConfig,
-  projectID: string,
 }
 
 export interface ScheduleConfig {

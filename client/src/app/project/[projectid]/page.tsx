@@ -15,8 +15,6 @@ import {
   ScheduleData,
   StatusPayload,
   NoteDataResponse,
-  ScheduleDateData,
-  ScheduleCalendarData,
 } from "@/util/models";
 import axios, { isAxiosError } from "axios";
 import SearchResults from "./searchComponents/SearchResults";
@@ -26,7 +24,7 @@ import {
   STATUS_CODES,
   VIEW_TYPES,
 } from "@/util/constants";
-import { handleScheduleInit, handleValidatePagination } from "./util";
+import { handleValidatePagination } from "./util";
 import EditNoteDialog from "./components/EditNoteDialog";
 import { useRouter } from "next/navigation";
 import ErrorDialog from "@/components/ErrorDialog";

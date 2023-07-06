@@ -1,13 +1,13 @@
 import { FC } from "react";
 
 interface Props {
-  timeData: Map<string, string>;
+  timeValueData: Map<string, string>;
 }
 
-const CalendarTimeColumn: FC<Props> = ({ timeData }) => {
+const CalendarTimeColumn: FC<Props> = ({ timeValueData }) => {
   return (
     <div className="w-16 h-full pr-1">
-      {Object.entries(timeData).map(([key, value]) => {
+      {Object.entries(timeValueData).map(([key, value]) => {
         if (value.split(":")[1] === "30") {
           return null;
         }
