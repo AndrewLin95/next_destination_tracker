@@ -8,6 +8,7 @@ import {
   SearchQuery, 
   StatusPayload,
   NoteDataResponse,
+  SetSchedulePayload,
 } from "../utils/types";
 import { STATUS_CODES } from "../utils/constants";
 
@@ -83,6 +84,17 @@ export const deleteLocation = async (req: Request, res: Response) => {
     } else {
       res.status(200).send(JSON.stringify(response));
     }
+  } catch (err) {
+    res.status(500).send(err);
+  }
+}
+
+export const setScheduleData = async (req: Request, res: Response) => {
+  try {
+    const payload: SetSchedulePayload = req.body;
+
+    const response = await projectService.setScheduleData(payload);
+    res.status(200).send(JSON.stringify(response))
   } catch (err) {
     res.status(500).send(err);
   }

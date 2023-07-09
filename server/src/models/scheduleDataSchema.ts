@@ -22,6 +22,10 @@ const scheduleDataSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
+    segments: {
+      type: Number,
+      required: true,
+    },
   },
   headerData: [
     {
@@ -57,6 +61,10 @@ const scheduleDataSchema = new mongoose.Schema({
     type: Map,
     of: [
       {
+        scheduleID: {
+          type: String,
+          required: true,
+        },
         noteName: {
           type: String,
           required: true,
@@ -87,7 +95,7 @@ const scheduleDataSchema = new mongoose.Schema({
         }
       }
     ],
-    required: false,
+    required: true,
   }
 })
 

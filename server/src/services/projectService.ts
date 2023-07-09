@@ -12,6 +12,8 @@ import {
   MapPayloadData,
   NoteDataResponse,
   ScheduleMongoResponse,
+  SetSchedulePayload,
+  EachScheduleData,
 } from "../utils/types";
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
 import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, URL_REGEX, SCHEDULE_SEGMENTS, MS_IN_WEEK, MS_IN_DAY } from '../utils/constants';
@@ -141,11 +143,13 @@ const createNewProject = async (payload: CreateProjectQuery) => {
             rangeEnd: thisRangeEnd,
             page: i + 1,
             totalPages: numOfWeeks,
-            projectID: newProjectID
+            projectID: newProjectID,
+            segments: SCHEDULE_SEGMENTS.OneHour,
           },
           headerData: headerData,
           timeData: timeArray,
           timeValueData: timeValueArray,
+          scheduleData: new Map(),
         })
 
         await scheduleSetupData.save();
@@ -341,6 +345,62 @@ const deleteLocation = async (locationIDPayload: string) => {
   return statusPayload;
 }
 
+const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
+  try {
+    const filter = {
+      'config.projectID': schedulePayload.projectID,
+      'config.rangeStart': { $lte: schedulePayload.dateUnix },
+      'config.rangeEnd': { $gt: schedulePayload.dateUnix },
+    };
+    const scheduleData: ScheduleMongoResponse = await ScheduleDataSchema.findOne(filter);
+
+    const scheduleID = uuidv4();
+
+    const startingTimeInMinutes = (parseInt(schedulePayload.time.split(':')[0]) * 60) + parseInt(schedulePayload.time.split(':')[1])
+    const endTimeInMinutes = startingTimeInMinutes + schedulePayload.duration;
+    const formattedEndTime = `${Math.floor(endTimeInMinutes / 60)}:${endTimeInMinutes % 60}`
+
+    const newScheduleData = {
+      scheduleID: scheduleID,
+      noteName: schedulePayload.noteName,
+      timeFrom: schedulePayload.time,
+      timeTo: formattedEndTime,
+      duration: schedulePayload.duration,
+      noteMessage: schedulePayload.noteMessage,
+      notePriority: schedulePayload.notePriority,
+    }
+
+    const key = `${schedulePayload.date} ${schedulePayload.time}`;
+
+    const hasKey = scheduleData.scheduleData.has(key);
+    if (hasKey) {
+      const originalData = scheduleData.scheduleData.get(key) as EachScheduleData[];
+      if (originalData.length > 2) {
+        // error handling -> too many in time slot
+      } else {
+        scheduleData.scheduleData.set(key, [...originalData, newScheduleData]);
+      }
+    } else {
+      scheduleData.scheduleData.set(key, [newScheduleData]);
+    }
+
+    const update = await ScheduleDataSchema.findOneAndUpdate(filter, scheduleData, {returnOriginal: false});
+
+    return update;
+  } catch (err) {
+    console.log(err);
+  }
+
+  const statusPayload: {status: StatusPayload} = {
+    status: {
+      statusCode: STATUS_CODES.ServerError,
+      errorCause: ERROR_CAUSE.Server,
+      errorData: ERROR_DATA.Server
+    }
+  }
+  return statusPayload;
+}
+
 
 const projectService = {
   createNewProject,
@@ -349,6 +409,7 @@ const projectService = {
   getEachProject,
   updateNote,
   deleteLocation,
+  setScheduleData,
 }
 
 export default projectService;
