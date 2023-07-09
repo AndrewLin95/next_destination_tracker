@@ -189,6 +189,7 @@ const searchLocation = async (payload: SearchQuery) => {
         mapData: {
           formattedAddress: queryResponse.data.results[0].formatted_address,
           googleLocationID: queryResponse.data.results[0].place_id,
+          noteName: payload.query.split('+').join(' '),
           position: {
             lat: queryResponse.data.results[0].geometry.location.lat,
             lng: queryResponse.data.results[0].geometry.location.lng,

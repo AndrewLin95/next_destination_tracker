@@ -32,7 +32,7 @@ const projectLocationDataSchema = new mongoose.Schema({
     },
     noteName: {
       type: String,
-      required: false,
+      required: true,
     },
     position: {
       lat: {
@@ -58,11 +58,11 @@ const projectLocationDataSchema = new mongoose.Schema({
   noteData: {
     noteName: {
       type: String,
-      required: false,
+      required: true,
     },
     formattedAddress: {
       type: String,
-      required: false,
+      required: true,
     },
     customNote: {
       type: String,
@@ -90,7 +90,7 @@ const projectLocationDataSchema = new mongoose.Schema({
         values: ["High", "Medium", "Low"],
         messsage: `{VALUE} is not supported`
       },
-      required: false,
+      required: true,
     }
   }
 })

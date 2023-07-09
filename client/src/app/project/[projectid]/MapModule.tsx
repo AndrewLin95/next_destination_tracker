@@ -71,7 +71,8 @@ const MapModule: FC<Props> = ({
                       {marker.formattedAddress}
                     </div>
                     <div>
-                      {marker.picture !== undefined ? (
+                      {marker.picture === undefined ||
+                      marker.picture === "" ? null : (
                         <Image
                           src={marker.picture}
                           alt={`${marker.noteName} picture`}
@@ -79,7 +80,7 @@ const MapModule: FC<Props> = ({
                           width={144}
                           height={144}
                         />
-                      ) : null}
+                      )}
                     </div>
                   </div>
                 </InfoWindow>
