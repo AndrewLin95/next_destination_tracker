@@ -358,10 +358,12 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
 
     const startingTimeInMinutes = (parseInt(schedulePayload.time.split(':')[0]) * 60) + parseInt(schedulePayload.time.split(':')[1])
     const endTimeInMinutes = startingTimeInMinutes + schedulePayload.duration;
-    const formattedEndTime = `${Math.floor(endTimeInMinutes / 60)}:${endTimeInMinutes % 60}`
+    const formattedEndTime = `${Math.floor(endTimeInMinutes / 60)}:${endTimeInMinutes % 60 === 0 ? "00" : endTimeInMinutes % 60}`
 
     const newScheduleData = {
       scheduleID: scheduleID,
+      locationID: schedulePayload.locationID,
+      dataSegment: true,
       noteName: schedulePayload.noteName,
       timeFrom: schedulePayload.time,
       timeTo: formattedEndTime,
@@ -370,20 +372,44 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
       notePriority: schedulePayload.notePriority,
     }
 
-    const key = `${schedulePayload.date} ${schedulePayload.time}`;
-
-    const hasKey = scheduleData.scheduleData.has(key);
-    if (hasKey) {
-      const originalData = scheduleData.scheduleData.get(key) as EachScheduleData[];
-      if (originalData.length > 2) {
-        // error handling -> too many in time slot
-      } else {
-        scheduleData.scheduleData.set(key, [...originalData, newScheduleData]);
-      }
-    } else {
-      scheduleData.scheduleData.set(key, [newScheduleData]);
+    const nonDataScheduleSegment = {
+      scheduleID: scheduleID,
+      locationID: schedulePayload.locationID,
+      dataSegment: false,
     }
 
+    let alreadySetData = false;
+    let currTimeInMinutes = (parseInt(schedulePayload.time.split(':')[0]) * 60) + parseInt(schedulePayload.time.split(':')[1])
+    
+    let i = 0;
+    while (i < (schedulePayload.duration / 30)) {
+      const currFormattedTime = `${Math.floor(currTimeInMinutes / 60)}:${(currTimeInMinutes % 60 === 0 ? "00" : currTimeInMinutes % 60)}`
+      const key = `${schedulePayload.date} ${currFormattedTime}`;
+      const hasKey = scheduleData.scheduleData.has(key);
+      if (hasKey) {
+        const originalData = scheduleData.scheduleData.get(key) as EachScheduleData[];
+        if (originalData.length > 2) {
+          // error handling -> too many in time slot
+        } else {
+          if (alreadySetData) {
+            scheduleData.scheduleData.set(key, [...originalData, nonDataScheduleSegment])
+          } else {
+            scheduleData.scheduleData.set(key, [...originalData, newScheduleData]);
+            alreadySetData = true;
+          }
+        }
+      } else {
+        if (alreadySetData) {
+          scheduleData.scheduleData.set(key, [nonDataScheduleSegment])
+        } else {
+          scheduleData.scheduleData.set(key, [newScheduleData]);
+          alreadySetData = true;
+        }
+      }
+      currTimeInMinutes = currTimeInMinutes + 30;
+      i++;
+    }
+    
     const update = await ScheduleDataSchema.findOneAndUpdate(filter, scheduleData, {returnOriginal: false});
 
     return update;

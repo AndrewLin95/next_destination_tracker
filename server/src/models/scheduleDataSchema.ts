@@ -65,25 +65,33 @@ const scheduleDataSchema = new mongoose.Schema({
           type: String,
           required: true,
         },
-        noteName: {
+        locationID: {
           type: String,
           required: true,
+        },
+        dataSegment: {
+          type: Boolean,
+          required: true,
+        },
+        noteName: {
+          type: String,
+          required: false,
         },
         timeFrom: {
           type: String,
-          required: true,
+          required: false,
         },
         timeTo: {
           type: String,
-          required: true,
+          required: false,
         },
         duration: {
           type: Number,
-          required: true,
+          required: false,
         },
         noteMessage: {
           type: String,
-          required: true,
+          required: false,
         },
         notePriority: {
           type: String,
@@ -91,7 +99,7 @@ const scheduleDataSchema = new mongoose.Schema({
             values: ["High", "Medium", "Low"],
             messsage: `{VALUE} is not supported`
           },
-          required: true,
+          required: false,
         }
       }
     ],

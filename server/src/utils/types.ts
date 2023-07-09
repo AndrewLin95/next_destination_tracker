@@ -79,12 +79,14 @@ export interface ScheduleHeaderData {
 
 export interface EachScheduleData {
   scheduleID: string,
-  noteName: string,
-  timeFrom: string,
-  timeTo: string,
-  duration: number,
-  noteMessage: string,
-  notePriority: NOTE_PRIORITY,
+  locationID: string,
+  dataSegment: boolean,
+  noteName?: string,
+  timeFrom?: string,
+  timeTo?: string,
+  duration?: number,
+  noteMessage?: string,
+  notePriority?: NOTE_PRIORITY,
 }
 
 export interface ProjectPayload {
@@ -183,12 +185,13 @@ export interface NoteDataResponse {
 }
 
 export interface SetSchedulePayload {
-  time: string;
-  date: string;
-  dateUnix: number;
-  projectID: string;
-  noteMessage: string;
-  noteName: string;
-  notePriority: NOTE_PRIORITY;
+  time: string,
+  date: string,
+  dateUnix: number,
+  projectID: string,
+  locationID: string,
+  noteMessage: string,
+  noteName: string,
+  notePriority: NOTE_PRIORITY,
   duration: number,
 }
