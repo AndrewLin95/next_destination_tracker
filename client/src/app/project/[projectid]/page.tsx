@@ -16,10 +16,12 @@ import {
   StatusPayload,
   NoteDataResponse,
 } from "@/util/models";
+import authConfigData from "@/util/authConfig";
 import axios, { isAxiosError } from "axios";
 import SearchResults from "./searchComponents/SearchResults";
 import SearchPagination from "./searchComponents/SearchPagination";
 import {
+  NOTE_PRIORITY,
   NUM_RESULTS_PER_PAGE,
   STATUS_CODES,
   VIEW_TYPES,
@@ -411,14 +413,55 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   };
 
   const handleDrag = (e: React.DragEvent<HTMLDivElement>, note: NoteData) => {
-    console.log(e);
-    console.log(note);
+    const dropData = {
+      noteName: note.noteName,
+      noteMessage: note.customNote,
+      notePriority: note.priority,
+    };
+
+    e.dataTransfer.setData("application/json", JSON.stringify(dropData));
+  };
+
+  interface parsedData {
+    noteMessage: string;
+    noteName: string;
+    notePriority: NOTE_PRIORITY;
+  }
+
+  const handleDrop = (
+    e: React.DragEvent<HTMLDivElement>,
+    time: string,
+    date: string,
+    dateUnix: number
+  ) => {
+    e.preventDefault();
+    const data = e.dataTransfer.getData("application/json");
+    const parsedData: parsedData = JSON.parse(data);
+
+    const handlePostScheduleData = async () => {
+      const url = `/api/project/setscheduledata/`;
+      const body = {
+        ...parsedData,
+        time: time,
+        date: date,
+        dateUnix: dateUnix,
+        projectID: projectData.projectID,
+        duration: 120,
+      };
+      const authConfig = authConfigData(
+        (userProfileState as UserProfileState).token
+      );
+
+      const response = await axios.post(url, body, authConfig);
+    };
+    handlePostScheduleData();
   };
 
   useEffect(() => {
     console.log("mapdata", mapData);
     console.log("notedata", noteData);
     console.log("proj data", projectData);
+    console.log("schedule data", scheduleData);
   }, [mapData]);
 
   return (
@@ -458,7 +501,10 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
               handleInactivateNote={handleInactivateNote}
             />
           ) : (
-            <ScheduleModule scheduleData={scheduleData} />
+            <ScheduleModule
+              scheduleData={scheduleData}
+              handleDrop={handleDrop}
+            />
           )}
           <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
             <button
