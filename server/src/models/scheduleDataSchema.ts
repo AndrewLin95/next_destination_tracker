@@ -21,11 +21,7 @@ const scheduleDataSchema = new mongoose.Schema({
     projectID: {
       type: String,
       required: true,
-    },
-    segments: {
-      type: Number,
-      required: true,
-    },
+    }
   },
   headerData: [
     {
@@ -71,6 +67,14 @@ const scheduleDataSchema = new mongoose.Schema({
         },
         dataSegment: {
           type: Boolean,
+          required: true,
+        },
+        position: {
+          type: Number,
+          required: true,
+        },
+        numColumns: {
+          type: Number,
           required: true,
         },
         noteName: {
