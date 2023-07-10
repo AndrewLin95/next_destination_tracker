@@ -63,6 +63,7 @@ export interface ScheduleMongoResponse {
     page: number,
     projectID: number,
     segments: number,
+    minPerSegment: number,
   },
   headerData: ScheduleHeaderData[],
   scheduleData: Map<string, EachScheduleData[]>

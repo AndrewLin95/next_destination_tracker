@@ -69,6 +69,7 @@ const createNewProject = async (payload: CreateProjectQuery) => {
           startingTime: "8:00",
           endingTime: "20:00",
           segments: SCHEDULE_SEGMENTS.OneHour,
+          minPerSegment: 30,
         },
       })
 
@@ -409,7 +410,7 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
       currTimeInMinutes = currTimeInMinutes + 30;
       i++;
     }
-    
+
     const update = await ScheduleDataSchema.findOneAndUpdate(filter, scheduleData, {returnOriginal: false});
 
     return update;

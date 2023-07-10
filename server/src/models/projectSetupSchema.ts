@@ -66,6 +66,10 @@ const projectSetupSchema = new mongoose.Schema({
       },
       required: true,
     },
+    minPerSegment: {
+      type: Number,
+      required: true,
+    }
   }
 })
 
