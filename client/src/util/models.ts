@@ -32,6 +32,7 @@ export interface ProjectData {
     startingTime: string,
     endingTime: string,
     segments: SCHEDULE_SEGMENTS,
+    minPerSegment: number,
   },
   userID: string,
   projectID: string,
@@ -84,9 +85,9 @@ export interface ScheduleData {
     projectID: number,
   },
   headerData: ScheduleHeaderData[],
-  scheduleData?: { 
-    [dateTime: string]: EachScheduleData[];
-  },
+  scheduleData: {
+    [key: string]: EachScheduleData[];
+  };
   timeData: Map<string, string>,
   timeValueData: Map<string, string>,
 }
@@ -99,12 +100,15 @@ export interface ScheduleHeaderData {
 }
 
 export interface EachScheduleData {
-  noteName: string,
-  timeFrom: string,
-  timeTo: string,
-  duration: number,
-  noteMessage: string,
-  notePriority: NOTE_PRIORITY,
+  scheduleID: string,
+  locationID: string,
+  dataSegment: boolean,
+  noteName?: string,
+  timeFrom?: string,
+  timeTo?: string,
+  duration?: number,
+  noteMessage?: string,
+  notePriority?: NOTE_PRIORITY,
 }
 
 export interface MapData {
@@ -168,4 +172,10 @@ export interface ScheduleColumnData {
 export interface EachScheduleColumnData {
   columnData: CalendarData;
   [time: string]: undefined | CalendarData;
+}
+
+export interface DroppedParsedData {
+  noteMessage: string;
+  noteName: string;
+  notePriority: NOTE_PRIORITY;
 }

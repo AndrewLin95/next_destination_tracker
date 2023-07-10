@@ -1,5 +1,10 @@
 import { FC } from "react";
-import { ScheduleData, ScheduleHeaderData } from "@/util/models";
+import {
+  EachScheduleData,
+  ProjectData,
+  ScheduleHeaderData,
+} from "@/util/models";
+import EachScheduleItem from "./EachScheduleItem";
 
 interface Props {
   timeData: Map<string, string>;
@@ -10,12 +15,23 @@ interface Props {
     date: string,
     dateUnix: number
   ) => void;
+  scheduleInfoData: {
+    [key: string]: EachScheduleData[];
+  };
+  projectData: ProjectData;
 }
 
-const CalendarColumns: FC<Props> = ({ timeData, headerData, handleDrop }) => {
+const CalendarColumns: FC<Props> = ({
+  timeData,
+  headerData,
+  handleDrop,
+  scheduleInfoData,
+  projectData,
+}) => {
   return (
     <div className="w-[calc((100vw-25rem)/7)] h-full">
       {Object.entries(timeData).map(([key, time]) => {
+        const formattedKey = `${headerData.date} ${time}`;
         return (
           <div
             className={`${
@@ -26,7 +42,20 @@ const CalendarColumns: FC<Props> = ({ timeData, headerData, handleDrop }) => {
             onDrop={(e) =>
               handleDrop(e, time, headerData.date, headerData.dateUnix)
             }
-          ></div>
+          >
+            {formattedKey in scheduleInfoData
+              ? scheduleInfoData[formattedKey].map((data, index) => {
+                  return (
+                    <EachScheduleItem
+                      key={data.locationID}
+                      eachSchedule={data}
+                      configSegments={projectData.scheduleConfig.minPerSegment}
+                      index={index}
+                    />
+                  );
+                })
+              : null}
+          </div>
         );
       })}
     </div>

@@ -15,13 +15,13 @@ import {
   ScheduleData,
   StatusPayload,
   NoteDataResponse,
+  DroppedParsedData,
 } from "@/util/models";
 import authConfigData from "@/util/authConfig";
 import axios, { isAxiosError } from "axios";
 import SearchResults from "./searchComponents/SearchResults";
 import SearchPagination from "./searchComponents/SearchPagination";
 import {
-  NOTE_PRIORITY,
   NUM_RESULTS_PER_PAGE,
   STATUS_CODES,
   VIEW_TYPES,
@@ -417,16 +417,11 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       noteName: note.noteName,
       noteMessage: note.customNote,
       notePriority: note.priority,
+      locationID: note.locationID,
     };
 
     e.dataTransfer.setData("application/json", JSON.stringify(dropData));
   };
-
-  interface parsedData {
-    noteMessage: string;
-    noteName: string;
-    notePriority: NOTE_PRIORITY;
-  }
 
   const handleDrop = (
     e: React.DragEvent<HTMLDivElement>,
@@ -436,7 +431,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   ) => {
     e.preventDefault();
     const data = e.dataTransfer.getData("application/json");
-    const parsedData: parsedData = JSON.parse(data);
+    const parsedData: DroppedParsedData = JSON.parse(data);
 
     const handlePostScheduleData = async () => {
       const url = `/api/project/setscheduledata/`;
@@ -502,6 +497,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
             />
           ) : (
             <ScheduleModule
+              projectData={projectData}
               scheduleData={scheduleData}
               handleDrop={handleDrop}
             />
