@@ -64,9 +64,10 @@ export interface ScheduleMongoResponse {
     projectID: number,
   },
   headerData: ScheduleHeaderData[],
-  scheduleData: Map<string, EachScheduleData[]>
-  timeData: Map<string, string>
-  timeValueData: Map<string, string>
+  scheduleKeys: Map<string, ScheduleKeys>,
+  scheduleData: Map<string, EachScheduleData[]>,
+  timeData: Map<string, string>,
+  timeValueData: Map<string, string>,
 }
 
 export interface ScheduleHeaderData {
@@ -88,6 +89,11 @@ export interface EachScheduleData {
   duration?: number,
   noteMessage?: string,
   notePriority?: NOTE_PRIORITY,
+}
+
+export interface ScheduleKeys {
+  key: string,
+  duration: number,
 }
 
 export interface ProjectPayload {

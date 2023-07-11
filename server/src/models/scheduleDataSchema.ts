@@ -53,6 +53,20 @@ const scheduleDataSchema = new mongoose.Schema({
     of: String,
     required: true,
   },
+  scheduleKeys: {
+    type: Map,
+    of: {
+      key: {
+        type: String,
+        required: true,
+      },
+      duration: {
+        type: Number,
+        required: true,
+      }
+    },
+    required: true,
+  },
   scheduleData: {
     type: Map,
     of: [
