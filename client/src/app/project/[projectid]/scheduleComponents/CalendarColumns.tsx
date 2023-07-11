@@ -36,7 +36,7 @@ const CalendarColumns: FC<Props> = ({
           <div
             className={`${
               headerData.enabled ? "bg-transparent" : "bg-slate-500/20"
-            } h-12 border border-Background_Lighter/50`}
+            } h-12 border border-Background_Lighter/50 p-1`}
             key={key}
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) =>
@@ -47,7 +47,7 @@ const CalendarColumns: FC<Props> = ({
               ? scheduleInfoData[formattedKey].map((data, index) => {
                   return (
                     <EachScheduleItem
-                      key={data.locationID}
+                      key={index}
                       eachSchedule={data}
                       configSegments={projectData.scheduleConfig.minPerSegment}
                       index={index}

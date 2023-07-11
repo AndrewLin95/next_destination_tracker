@@ -103,6 +103,8 @@ export interface EachScheduleData {
   scheduleID: string,
   locationID: string,
   dataSegment: boolean,
+  position: number,
+  numColumns?: number,
   noteName?: string,
   timeFrom?: string,
   timeTo?: string,

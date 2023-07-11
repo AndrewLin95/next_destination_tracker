@@ -102,7 +102,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
         },
       };
 
-      const response = await axios.get(url, authConfig);
+      const response = await axios.get<InitResponseData>(url, authConfig);
       const responseData: InitResponseData = response.data;
       console.log(responseData);
       setProjectData(responseData.projectData);
@@ -448,6 +448,8 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       );
 
       const response = await axios.post(url, body, authConfig);
+      const scheduleData = response.data;
+      setScheduleData(response.data);
     };
     handlePostScheduleData();
   };

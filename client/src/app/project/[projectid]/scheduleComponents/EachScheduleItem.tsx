@@ -15,12 +15,18 @@ const EachScheduleItem: FC<Props> = ({
 }) => {
   if (eachSchedule.dataSegment && eachSchedule.duration !== undefined) {
     const segmentHeight =
-      (eachSchedule.duration / configSegments) * BASE_SCHEDULE_HEIGHT;
+      (eachSchedule.duration / configSegments) * BASE_SCHEDULE_HEIGHT - 0.75;
+    const segmentWidth = 90 / (eachSchedule.numColumns as number);
 
-    // TODO: identify how to display width based on the nubmer of conflicting ones
     return (
       <div
-        className={`w-[calc(80%)] h-[${segmentHeight}rem] m-1 flex flex-col border`}
+        className="flex flex-col border"
+        style={{
+          width: `${segmentWidth}%`,
+          height: `${segmentHeight}rem`,
+          position: eachSchedule.position === 0 ? "static" : "relative",
+          left: eachSchedule.position === 0 ? "" : "47%",
+        }}
       >
         <div>{eachSchedule.noteName}</div>
       </div>
