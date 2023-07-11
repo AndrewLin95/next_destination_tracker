@@ -153,6 +153,11 @@ export interface NoteDataResponse {
   status: StatusPayload 
 }
 
+export interface ScheduleDataResponse {
+  scheduleData: ScheduleData,
+  status: StatusPayload,
+}
+
 export interface ScheduleConfig {
   startingTime: string,
   endingTime: string,

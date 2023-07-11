@@ -16,6 +16,7 @@ import {
   StatusPayload,
   NoteDataResponse,
   DroppedParsedData,
+  ScheduleDataResponse,
 } from "@/util/models";
 import authConfigData from "@/util/authConfig";
 import axios, { isAxiosError } from "axios";
@@ -447,9 +448,29 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
         (userProfileState as UserProfileState).token
       );
 
-      const response = await axios.post(url, body, authConfig);
-      const scheduleData = response.data;
-      setScheduleData(response.data);
+      try {
+        const response = await axios.post<ScheduleDataResponse>(
+          url,
+          body,
+          authConfig
+        );
+        const scheduleResponseData = response.data;
+        if (scheduleResponseData.status.statusCode === STATUS_CODES.SUCCESS) {
+          setScheduleData(scheduleResponseData.scheduleData);
+        } else {
+          setErrorDialogData(scheduleResponseData.status);
+          setErrorDialogToggle(true);
+        }
+      } catch (err) {
+        if (isAxiosError(err)) {
+          const responseBody: { status: StatusPayload } =
+            err.response?.data.status;
+          if (responseBody.status.statusCode === STATUS_CODES.ServerError) {
+            setErrorDialogData(responseBody.status);
+            setErrorDialogToggle(true);
+          }
+        }
+      }
     };
     handlePostScheduleData();
   };
