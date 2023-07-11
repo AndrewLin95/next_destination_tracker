@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import RenderAllPriorityIcons from "../components/RenderPriorityIcons";
 import SelectivelyRenderPriorityIcons from "../components/SelectivelyRenderPriorityIcons";
+import { format } from "date-fns";
 
 interface Props {
   note: NoteData;
@@ -27,6 +28,11 @@ const Note: FC<Props> = ({
 }) => {
   const [expandState, setExpandState] = useState(false);
   // TODO: https://lokeshdhakar.com/projects/color-thief/
+  let formattedDate;
+  if (note.scheduleDate !== undefined) {
+    formattedDate = format(new Date(note.scheduleDate), "iii");
+  }
+
   return (
     <div
       className={`mb-8 w-full flex flex-col justify-center items-center ${
@@ -41,11 +47,16 @@ const Note: FC<Props> = ({
       <div className="flex justify-between w-full items-center p-1">
         <button
           type="button"
-          className={`${SIMPLE_BUTTON_STYLE} capitalize w-full flex justify-start px-1 truncate`}
+          className={`${SIMPLE_BUTTON_STYLE} capitalize w-full flex justify-start items-center px-1 truncate`}
           onClick={() => setExpandState(!expandState)}
         >
           <SelectivelyRenderPriorityIcons priority={note.priority} />
-          <div className="underline">{note.noteName}</div>
+          <div className="flex flex-row w-full justify-around items-center">
+            <div className="underline">{note.noteName}</div>
+            {note.scheduleDate === undefined ? null : (
+              <div className="text-xs pt-1">{formattedDate}</div>
+            )}
+          </div>
         </button>
         <button className={SIMPLE_BUTTON_STYLE}>
           <FontAwesomeIcon

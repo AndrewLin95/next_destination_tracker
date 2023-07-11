@@ -315,8 +315,8 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
           updateNoteResponse.data;
 
         if (noteResponseData.status.statusCode === STATUS_CODES.SUCCESS) {
-          const incomingLocationID = (noteResponseData as NoteDataResponse)
-            .noteData.locationID;
+          const incomingLocationID = (noteResponseData as NoteDataResponse).data
+            .locationID;
 
           const indexOfUpdate = noteData.findIndex(
             (note) => note.locationID === incomingLocationID
@@ -325,7 +325,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
           const tempNoteData = [...noteData];
           tempNoteData[indexOfUpdate] = (
             noteResponseData as NoteDataResponse
-          ).noteData;
+          ).data.noteData;
           setNoteData(tempNoteData);
 
           const indexOfMapUpdate = mapData.findIndex(
@@ -334,8 +334,17 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
           const tempMapData = [...mapData];
           tempMapData[indexOfMapUpdate] = (
             noteResponseData as NoteDataResponse
-          ).mapData;
+          ).data.mapData;
           setMapData(tempMapData);
+
+          const indexOfAllNoteDataUpdate = allLocationData.findIndex(
+            (note) => note.locationID === incomingLocationID
+          );
+          const tempAllLocationData = [...allLocationData];
+          tempAllLocationData[indexOfAllNoteDataUpdate] = (
+            noteResponseData as NoteDataResponse
+          ).data;
+          setAllLocationData(tempAllLocationData);
         }
       } catch (err) {
         if (isAxiosError(err)) {
@@ -456,6 +465,25 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
         );
         const scheduleResponseData = response.data;
         if (scheduleResponseData.status.statusCode === STATUS_CODES.SUCCESS) {
+          const incomingLocationID =
+            scheduleResponseData.locationData.locationID;
+          const indexOfUpdate = noteData.findIndex(
+            (note) => note.locationID === incomingLocationID
+          );
+
+          const tempNoteData = [...noteData];
+          tempNoteData[indexOfUpdate] =
+            scheduleResponseData.locationData.noteData;
+          setNoteData(tempNoteData);
+
+          const indexOfAllNoteDataUpdate = allLocationData.findIndex(
+            (note) => note.locationID === incomingLocationID
+          );
+          const tempAllLocationData = [...allLocationData];
+          tempAllLocationData[indexOfAllNoteDataUpdate] =
+            scheduleResponseData.locationData;
+          setAllLocationData(tempAllLocationData);
+
           setScheduleData(scheduleResponseData.scheduleData);
         } else {
           setErrorDialogData(scheduleResponseData.status);

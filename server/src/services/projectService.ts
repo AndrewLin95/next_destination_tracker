@@ -296,11 +296,13 @@ const updateNote = async (payload: {noteData: NotePayloadData, mapData: MapPaylo
   }
 
   try {
-    const update: LocationMongoResponse = await ProjectLocationDataSchema.findOneAndUpdate(filter, data, {returnOriginal: false});
+    const locationMongoResponse: LocationMongoResponse = await ProjectLocationDataSchema.findOneAndUpdate(filter, data, {returnOriginal: false});
 
-    const responseNoteData: NoteDataResponse = { 
-      noteData: {...update.noteData, locationID: update.locationID}, 
-      mapData:{...update.mapData, locationID: update.locationID},
+    locationMongoResponse.mapData.locationID = locationMongoResponse.locationID
+    locationMongoResponse.noteData.locationID = locationMongoResponse.locationID
+
+    const responseNoteData = { 
+      data: locationMongoResponse,
       status: {
         statusCode: STATUS_CODES.SUCCESS
       }
@@ -548,8 +550,15 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
       }
     }
 
+    const locationFilter = {'locationID': schedulePayload.locationID};
+    const scheduleLocationNote: LocationMongoResponse = await ProjectLocationDataSchema.findOne(locationFilter)
+    scheduleLocationNote.noteData.scheduleDate = schedulePayload.dateUnix;
+
+    await ProjectLocationDataSchema.findOneAndUpdate(locationFilter, scheduleLocationNote);
+
     const scheduleResponseObject = {
       scheduleData: returnScheduleObj, 
+      locationData: scheduleLocationNote,
       status: {
         statusCode: STATUS_CODES.SUCCESS
       }  

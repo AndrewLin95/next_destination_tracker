@@ -48,6 +48,7 @@ export interface LocationData {
     formattedAddress: string,
     googleLocationID: string,
     picture?: string,
+    locationID: string,
     noteName?: string,
     position: {
       lat: number,
@@ -62,18 +63,12 @@ export interface LocationData {
     priority: string,
     formattedAddress: string,
     color?: LABEL_COLOR,
+    locationID: string,
     scheduleDate?: Date,
     customNote?: string,
     openHours?: string,
     closeHours?: string,
-  },
-  scheduleData?:{
-    scheduled: boolean,
-    noteName: string,
-    scheduleDate: Date,
-    scheduleStart: Date,
-    scheduleEnd: Date,
-  },
+  }
   status: StatusPayload,
 }
 
@@ -148,13 +143,13 @@ export interface StatusPayload {
 }
 
 export interface NoteDataResponse {
-  noteData: NoteData, 
-  mapData: MapData, 
+  data: LocationData,
   status: StatusPayload 
 }
 
 export interface ScheduleDataResponse {
   scheduleData: ScheduleData,
+  locationData: LocationData,
   status: StatusPayload,
 }
 

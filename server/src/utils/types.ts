@@ -33,6 +33,7 @@ export interface LocationMongoResponse {
   mapData: {
     formattedAddress: string,
     googleLocationID: string,
+    locationID?: string,
     picture?: string,
     noteName?: string,
     position: {
@@ -48,7 +49,8 @@ export interface LocationMongoResponse {
     priority: string,
     formattedAddress: string,
     color?: LABEL_COLOR,
-    scheduleDate?: Date,
+    locationID?: string,
+    scheduleDate?: number,
     customNote?: string,
     openHours?: string,
     closeHours?: string,
@@ -187,8 +189,7 @@ export interface StatusPayload {
 }
 
 export interface NoteDataResponse {
-  noteData: NotePayloadData, 
-  mapData: MapPayloadData, 
+  data: LocationMongoResponse,
   status: StatusPayload 
 }
 
