@@ -17,7 +17,7 @@ import {
   ScheduleKeys,
 } from "../utils/types";
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
-import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, URL_REGEX, SCHEDULE_SEGMENTS, MS_IN_WEEK, MS_IN_DAY } from '../utils/constants';
+import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, URL_REGEX, SCHEDULE_SEGMENTS, MS_IN_WEEK, MS_IN_DAY, DEFAULT_SCHEDULE_COLORS } from '../utils/constants';
 import { format, getUnixTime, isSaturday, isSunday, nextSaturday, previousSunday } from 'date-fns';
 import { clearFromAndTo, handleScheduleSequence, identifyNumOfConflicts } from '../utils/scheduleUtils';
 const ProjectSetupSchema = require('../models/projectSetupSchema');
@@ -55,6 +55,15 @@ const createNewProject = async (payload: CreateProjectQuery) => {
       const projectSetupData = new ProjectSetupSchema({
         userID: payload.userID,
         projectID: newProjectID,
+        scheduleColors: {
+          Monday: DEFAULT_SCHEDULE_COLORS.Monday,
+          Tuesday: DEFAULT_SCHEDULE_COLORS.Tuesday,
+          Wednesday: DEFAULT_SCHEDULE_COLORS.Wednesday,
+          Thursday: DEFAULT_SCHEDULE_COLORS.Thursday,
+          Friday: DEFAULT_SCHEDULE_COLORS.Friday,
+          Saturday: DEFAULT_SCHEDULE_COLORS.Saturday,
+          Sunday: DEFAULT_SCHEDULE_COLORS.Sunday,
+        },
         project: {
           projectName: payload.projectName,
           projectDescription: payload.projectDescription,

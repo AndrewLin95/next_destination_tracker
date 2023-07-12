@@ -99,6 +99,19 @@ export interface ScheduleKeys {
 }
 
 export interface ProjectPayload {
+  userID: string,
+  projectID: string,
+  deleteFlag: boolean,
+  _id: string,
+  scheduleColors: {
+    Monday: string,
+    Tuesday: string,
+    Wednesday: string,
+    Thursday: string,
+    Friday: string,
+    Saturday: string,
+    Sunday: string,
+  },
   project: {
     projectCoords: {
       destination: string,
@@ -117,9 +130,6 @@ export interface ProjectPayload {
     segments: SCHEDULE_SEGMENTS,
     minPerSegment: number,
   },
-  userID: string,
-  projectID: string,
-  _id: string,
 }
 
 export interface LocationPayload {

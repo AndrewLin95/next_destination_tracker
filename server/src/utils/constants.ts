@@ -33,6 +33,16 @@ export enum LABEL_COLOR {
   Sun = "Sunday",
 }
 
+export enum DEFAULT_SCHEDULE_COLORS {
+  Monday = "#ffadad",
+  Tuesday = "#ffd6a5",
+  Wednesday = "#fdffb6",
+  Thursday = "#caffbf",
+  Friday = "#9bf6ff",
+  Saturday = "#a0c4ff",
+  Sunday = "#bdb2ff",
+}
+
 export enum SCHEDULE_SEGMENTS {
   ThreeHours = 3,
   OneHour = 1,

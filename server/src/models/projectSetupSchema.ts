@@ -13,6 +13,36 @@ const projectSetupSchema = new mongoose.Schema({
     type: Boolean,
     required: false,
   },
+  scheduleColors: {
+    Monday: {
+      type: String,
+      required: true,
+    },
+    Tuesday: {
+      type: String,
+      required: true,
+    },
+    Wednesday: {
+      type: String,
+      required: true,
+    },
+    Thursday: {
+      type: String,
+      required: true,
+    },
+    Friday: {
+      type: String,
+      required: true,
+    },
+    Saturday: {
+      type: String,
+      required: true,
+    },
+    Sunday: {
+      type: String,
+      required: true,
+    }
+  },
   project: {
     projectName: {
       type: String,
