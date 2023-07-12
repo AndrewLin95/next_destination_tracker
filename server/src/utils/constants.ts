@@ -33,6 +33,8 @@ export enum LABEL_COLOR {
   Sun = "Sunday",
 }
 
+export type DAYS_OF_WEEK = "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday";
+
 export enum DEFAULT_SCHEDULE_COLORS {
   Monday = "#ffadad",
   Tuesday = "#ffd6a5",
