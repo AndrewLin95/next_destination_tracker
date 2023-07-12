@@ -4,9 +4,12 @@ import {
   BASE_SCHEDULE_HEIGHT,
   DAYS_OF_WEEK,
   HEX_TRANSPARENCY,
+  SIMPLE_BUTTON_STYLE,
 } from "@/util/constants";
 import SelectivelyRenderPriorityIcons from "../components/SelectivelyRenderPriorityIcons";
 import { format } from "date-fns";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 
 interface Props {
   eachSchedule: EachScheduleData;
@@ -43,12 +46,19 @@ const EachScheduleItem: FC<Props> = ({
         }}
       >
         <div>
-          <div className="capitalize pb-1">{eachSchedule.noteName}</div>
+          <div className="flex flex-row relative">
+            <div className="capitalize pb-1 text-sm mr-4">
+              {eachSchedule.noteName}
+            </div>
+            <button className={`${SIMPLE_BUTTON_STYLE} absolute right-1 top-0`}>
+              <FontAwesomeIcon icon={faTrashCan} style={{ color: "#b070b2" }} />
+            </button>
+          </div>
           <div className="text-xs">
             {eachSchedule.timeFrom} - {eachSchedule.timeTo}
           </div>
         </div>
-        <div className="flex justify-end pr-1">
+        <div className="flex justify-end pr-1 pb-1">
           <SelectivelyRenderPriorityIcons
             priority={eachSchedule.notePriority}
           />

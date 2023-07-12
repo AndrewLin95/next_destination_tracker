@@ -40,9 +40,7 @@ export interface LocationMongoResponse {
       lat: number,
       lng: number,
     },
-    label?: {
-      color: LABEL_COLOR,
-    }
+    scheduleDate?: number,
   },
   noteData: {
     noteName: string,
@@ -146,9 +144,7 @@ export interface LocationPayload {
       lat: number,
       lng: number,
     },
-    label?: {
-      color: LABEL_COLOR,
-    }
+    scheduleDate?: number,
   },
   noteData: {
     noteName: string,
@@ -173,9 +169,7 @@ export interface MapPayloadData {
     lat: number,
     lng: number,
   },
-  label?: {
-    color: LABEL_COLOR,
-  }
+  scheduleDate?: number,
 }
 
 export interface NotePayloadData {

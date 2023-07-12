@@ -66,9 +66,7 @@ export interface LocationData {
       lat: number,
       lng: number,
     },
-    label?: {
-      color: LABEL_COLOR,
-    }
+    scheduleDate?: number,
   },
   noteData: {
     noteName: string,
@@ -125,9 +123,7 @@ export interface MapData {
     lat: number,
     lng: number,
   },
-  label?: {
-    color: LABEL_COLOR,
-  }
+  scheduleDate?: number,
   locationID: string;
   formattedAddress: string;
   googleLocationID: string;

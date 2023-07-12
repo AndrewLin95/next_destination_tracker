@@ -575,6 +575,7 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
     const locationFilter = {'locationID': schedulePayload.locationID};
     const scheduleLocationNote: LocationMongoResponse = await ProjectLocationDataSchema.findOne(locationFilter)
     scheduleLocationNote.noteData.scheduleDate = schedulePayload.dateUnix;
+    scheduleLocationNote.mapData.scheduleDate = schedulePayload.dateUnix;
 
     await ProjectLocationDataSchema.findOneAndUpdate(locationFilter, scheduleLocationNote);
 

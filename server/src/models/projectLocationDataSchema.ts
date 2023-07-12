@@ -44,16 +44,10 @@ const projectLocationDataSchema = new mongoose.Schema({
         required: true
       }
     },
-    label: {
-      color: {
-        type: String,
-        enum: {
-          values: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-          message: `{VALUE} is not supported`
-        },
-        required: false,
-      }
-    }
+    scheduleDate: {
+      type: Number,
+      required: false,
+    },
   },
   noteData: {
     noteName: {

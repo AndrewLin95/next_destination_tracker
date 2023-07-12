@@ -519,6 +519,10 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     handlePostScheduleData();
   };
 
+  const handleDeleteSchedule = () => {
+    // to update schedule + update Note + update map
+  };
+
   useEffect(() => {
     console.log("mapdata", mapData);
     console.log("notedata", noteData);
