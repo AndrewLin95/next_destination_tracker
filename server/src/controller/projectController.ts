@@ -99,3 +99,17 @@ export const setScheduleData = async (req: Request, res: Response) => {
     res.status(500).send(err);
   }
 }
+
+export const deleteSchedule = async (req: Request, res: Response) => {
+  try {
+    const locationID: string = req.params.locationID;
+    const projectID: string = req.params.projectID;
+
+    const respose = await projectService.deleteSchedule(locationID, projectID);
+
+  } catch (err) {
+    res.status(500).send(err)
+  }
+
+
+}

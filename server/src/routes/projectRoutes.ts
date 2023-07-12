@@ -7,6 +7,7 @@ import {
   updateNote, 
   deleteLocation, 
   setScheduleData,
+  deleteSchedule,
 } from '../controller/projectController';
 
 const router = express.Router();
@@ -18,5 +19,6 @@ router.get('/geteachproject/:projectID', getEachProject)
 router.put('/updatenote', updateNote)
 router.put('/deletelocation/:locationID', deleteLocation)
 router.post('/setscheduledata', setScheduleData)
+router.put('/deleteschedule/:projectID/:locationID', deleteSchedule)
 
 export default router

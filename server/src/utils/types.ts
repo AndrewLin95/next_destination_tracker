@@ -56,7 +56,7 @@ export interface LocationMongoResponse {
   status: StatusPayload
 }
 
-export interface ScheduleMongoResponse {
+export interface ScheduleConfigMongoResponse {
   config: {
     rangeStart: number,
     rangeEnd: number,
@@ -64,8 +64,6 @@ export interface ScheduleMongoResponse {
     projectID: number,
   },
   headerData: ScheduleHeaderData[],
-  scheduleKeys: Map<string, ScheduleKeys>,
-  scheduleData: Map<string, EachScheduleData[]>,
   timeData: Map<string, string>,
   timeValueData: Map<string, string>,
 }
@@ -75,6 +73,12 @@ export interface ScheduleHeaderData {
   dateUnix: number,
   dayOfWeek: string,
   enabled: boolean,
+}
+
+export interface ScheduleDataMongoResponse {
+  projectID: string,
+  scheduleKeys: Map<string, ScheduleKeys>,
+  scheduleData: Map<string, EachScheduleData[]>,
 }
 
 export interface EachScheduleData {

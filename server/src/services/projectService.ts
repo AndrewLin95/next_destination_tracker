@@ -11,10 +11,11 @@ import {
   StatusPayload, 
   MapPayloadData,
   NoteDataResponse,
-  ScheduleMongoResponse,
+  ScheduleConfigMongoResponse,
   SetSchedulePayload,
   EachScheduleData,
   ScheduleKeys,
+  ScheduleDataMongoResponse,
 } from "../utils/types";
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
 import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, URL_REGEX, SCHEDULE_SEGMENTS, MS_IN_WEEK, MS_IN_DAY, DEFAULT_SCHEDULE_COLORS } from '../utils/constants';
@@ -23,6 +24,7 @@ import { clearFromAndTo, handleScheduleSequence, identifyNumOfConflicts } from '
 const ProjectSetupSchema = require('../models/projectSetupSchema');
 const ProjectLocationDataSchema = require('../models/projectLocationDataSchema');
 const ScheduleDataSchema = require('../models/scheduleDataSchema');
+const ScheduleConfigSchema = require('../models/scheduleConfigSchema');
 
 const createNewProject = async (payload: CreateProjectQuery) => {
   const startDate = Date.parse(payload.projectStartDate);
@@ -149,7 +151,7 @@ const createNewProject = async (payload: CreateProjectQuery) => {
           t++;
         }
 
-        const scheduleSetupData = new ScheduleDataSchema({
+        const scheduleSetupData = new ScheduleConfigSchema({
           config: {
             rangeStart: thisRangeStart,
             rangeEnd: thisRangeEnd,
@@ -169,6 +171,13 @@ const createNewProject = async (payload: CreateProjectQuery) => {
         i++;
       }
 
+      const scheduleData = new ScheduleDataSchema({
+        projectID: newProjectID,
+        scheduleKeys: new Map(),
+        scheduleData: new Map(),
+      })
+      await scheduleData.save();
+      
       return result;
     }
   } catch (err) {
@@ -252,11 +261,13 @@ const getEachProject = async (projectID: string) => {
   try {
     const userProject: ProjectPayload = await ProjectSetupSchema.findOne({projectID: projectID});
     const projectDataPoints: LocationMongoResponse[] = await ProjectLocationDataSchema.find({projectID: projectID, deleteFlag: false});
-    const scheduleData: ScheduleMongoResponse = await ScheduleDataSchema.findOne({'config.projectID': projectID, 'config.page': 1});
+    const scheduleConfig: ScheduleConfigMongoResponse = await ScheduleConfigSchema.findOne({'config.projectID': projectID, 'config.page': 1});
+    const scheduleData: ScheduleDataMongoResponse = await ScheduleDataSchema.findOne({'projectID': projectID});
 
     const responseData = {
       projectData: userProject,
       locationData: projectDataPoints,
+      scheduleConfig: scheduleConfig,
       scheduleData: scheduleData,
     }
 
@@ -332,6 +343,7 @@ const updateNote = async (payload: {noteData: NotePayloadData, mapData: MapPaylo
 }
 
 const deleteLocation = async (locationIDPayload: string) => {
+  // TODO, delete schedule
   try {
     const filter = {"locationID": locationIDPayload};
     const data = { deleteFlag: true }
@@ -362,13 +374,11 @@ const deleteLocation = async (locationIDPayload: string) => {
 // TODO: documentation
 const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
   try {
-    let returnScheduleObj: ScheduleMongoResponse;
+    let returnScheduleObj: ScheduleDataMongoResponse;
     const filter = {
-      'config.projectID': schedulePayload.projectID,
-      'config.rangeStart': { $lte: schedulePayload.dateUnix },
-      'config.rangeEnd': { $gt: schedulePayload.dateUnix },
+      'projectID': schedulePayload.projectID,
     };
-    const scheduleData: ScheduleMongoResponse = await ScheduleDataSchema.findOne(filter);
+    const scheduleData: ScheduleDataMongoResponse = await ScheduleDataSchema.findOne(filter);
     let currTimeInMinutes = (parseInt(schedulePayload.time.split(':')[0]) * 60) + parseInt(schedulePayload.time.split(':')[1])
 
     if (scheduleData.scheduleKeys.has(schedulePayload.locationID)) {
@@ -482,7 +492,7 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
         }
 
         const unsetObj = keysToUnset.reduce((acc, key) => ({ ...acc, [`scheduleData.${key}`]: '' }), {});
-        const filteredScheduleData: ScheduleMongoResponse = await ScheduleDataSchema.findOneAndUpdate(filter, {$unset: unsetObj}, {returnOriginal: false});
+        const filteredScheduleData: ScheduleDataMongoResponse = await ScheduleDataSchema.findOneAndUpdate(filter, {$unset: unsetObj}, {returnOriginal: false});
         
         let timeToGenKey = (parseInt(schedulePayload.time.split(':')[0]) * 60) + parseInt(schedulePayload.time.split(':')[1])
         const keysFormattedtime = `${schedulePayload.date} ${Math.floor(timeToGenKey / 60)}:${(timeToGenKey % 60 === 0 ? "00" : timeToGenKey % 60)}`
@@ -602,6 +612,12 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
   return statusPayload;
 }
 
+const deleteSchedule = async (locationID: string, projectID: string) => {
+  const scheduleFilter = {"config.projectID": projectID}
+  
+  const scheduleData = await ScheduleDataSchema.findOne(scheduleFilter);
+
+}
 
 const projectService = {
   createNewProject,
@@ -611,6 +627,7 @@ const projectService = {
   updateNote,
   deleteLocation,
   setScheduleData,
+  deleteSchedule,
 }
 
 export default projectService;
