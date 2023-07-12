@@ -532,6 +532,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
               handleActiveNote={handleActiveNote}
               viewToggle={viewToggle}
               handleDrag={handleDrag}
+              scheduleColors={projectData.scheduleColors}
             />
             <SearchPagination
               paginationState={paginationState}

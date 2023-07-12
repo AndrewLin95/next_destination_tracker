@@ -1,6 +1,11 @@
-import { NoteData } from "@/util/models";
+import { NoteData, ScheduleColors } from "@/util/models";
 import { FC, useState } from "react";
-import { SIMPLE_BUTTON_STYLE, VIEW_TYPES } from "@/util/constants";
+import {
+  SIMPLE_BUTTON_STYLE,
+  VIEW_TYPES,
+  HEX_TRANSPARENCY,
+  DAYS_OF_WEEK,
+} from "@/util/constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import RenderAllPriorityIcons from "../components/RenderPriorityIcons";
@@ -15,6 +20,7 @@ interface Props {
   handleActiveNote: (locationID: string) => void;
   viewToggle: VIEW_TYPES;
   handleDrag: (e: React.DragEvent<HTMLDivElement>, note: NoteData) => void;
+  scheduleColors: ScheduleColors;
 }
 
 const Note: FC<Props> = ({
@@ -25,21 +31,28 @@ const Note: FC<Props> = ({
   handleActiveNote,
   viewToggle,
   handleDrag,
+  scheduleColors,
 }) => {
   const [expandState, setExpandState] = useState(false);
   // TODO: https://lokeshdhakar.com/projects/color-thief/
   let formattedDate;
+  let dayOfWeek: DAYS_OF_WEEK | null = null;
   if (note.scheduleDate !== undefined) {
     formattedDate = format(new Date(note.scheduleDate), "iii");
+    dayOfWeek = format(new Date(note.scheduleDate), "iiii") as DAYS_OF_WEEK;
   }
 
   return (
     <div
-      className={`mb-8 w-full flex flex-col justify-center items-center ${
-        activeLocationID === note.locationID
-          ? "bg-gradient-to-b from-slate-500/60 to-transparent"
-          : "bg-transparent border border-Background_Lighter"
-      }`}
+      className={`mb-8 w-full flex flex-col justify-center items-center border border-Background_Lighter`}
+      style={{
+        backgroundImage:
+          activeLocationID === note.locationID
+            ? `linear-gradient(#64748B${HEX_TRANSPARENCY.SixtyPercent}, transparent)`
+            : dayOfWeek === null
+            ? ""
+            : `linear-gradient(${scheduleColors[dayOfWeek]}${HEX_TRANSPARENCY.ThirtyPercent}, transparent)`,
+      }}
       onClick={() => handleActiveNote(note.locationID)}
       draggable={viewToggle === VIEW_TYPES.Schedule ? true : false}
       onDragStart={(e) => handleDrag(e, note)}

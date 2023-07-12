@@ -1,4 +1,4 @@
-import { NoteData } from "@/util/models";
+import { NoteData, ScheduleColors } from "@/util/models";
 import { FC } from "react";
 import Note from "./Note";
 import { VIEW_TYPES } from "@/util/constants";
@@ -11,6 +11,7 @@ interface Props {
   handleActiveNote: (locationID: string) => void;
   viewToggle: VIEW_TYPES;
   handleDrag: (e: React.DragEvent<HTMLDivElement>, note: NoteData) => void;
+  scheduleColors: ScheduleColors;
 }
 
 const SearchResults: FC<Props> = ({
@@ -21,6 +22,7 @@ const SearchResults: FC<Props> = ({
   handleActiveNote,
   viewToggle,
   handleDrag,
+  scheduleColors,
 }) => {
   if (noteData.length === 0) {
     return null;
@@ -43,6 +45,7 @@ const SearchResults: FC<Props> = ({
               handleActiveNote={handleActiveNote}
               viewToggle={viewToggle}
               handleDrag={handleDrag}
+              scheduleColors={scheduleColors}
             />
           );
         })}
