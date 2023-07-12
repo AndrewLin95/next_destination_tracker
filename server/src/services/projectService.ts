@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { all } from 'axios';
 import { s3Client } from '../utils/s3';
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from 'uuid';
@@ -414,7 +414,7 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
     // indentify conflicts
     const conflictingScheduleIDs = identifyNumOfConflicts(currTimeInMinutes, schedulePayload.date, scheduleData.scheduleData, schedulePayload.duration);
 
-    if (conflictingScheduleIDs.size >= 2) {
+    if (conflictingScheduleIDs.size > 4) {
       const statusPayload: {status: StatusPayload} = {
         status: {
           statusCode: STATUS_CODES.BadRequest,
@@ -452,6 +452,19 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
       returnScheduleObj = await ScheduleDataSchema.findOneAndUpdate(filter, scheduleData, {returnOriginal: false});
     } else {
       const { allScheduleDatas, skipClear } = handleScheduleSequence(conflictingScheduleIDs, newScheduleData, schedulePayload.date, scheduleData.scheduleData, currTimeInMinutes);
+      // scheduling conflict
+      if (allScheduleDatas === undefined) {
+        const statusPayload: {status: StatusPayload} = {
+          status: {
+            statusCode: STATUS_CODES.BadRequest,
+            errorCause: ERROR_CAUSE.Schedule,
+            errorData: ERROR_DATA.ScheduleConflict,
+          }
+        }
+  
+        return statusPayload;
+      } 
+
       if (!skipClear) {
         // clear existing data if any
         const { fromInMins, toInMins } = clearFromAndTo(allScheduleDatas);

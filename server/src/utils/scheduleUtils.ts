@@ -52,34 +52,73 @@ export const handleScheduleSequence = (conflictingScheduleIDs: Set<string>, newS
   recursivelyFindDataSegments(currTimeInMinutes, 0, 'increase');
   recursivelyFindDataSegments(currTimeInMinutes, 0, 'decrease');
 
-  // for a max of 2 scheduled conflicts, if the data is already in the second position, 
-  // it means that we can just slot the new one in the 1st position
-  if (allScheduleDatas[1].position === 1) {
-    allScheduleDatas[0].numColumns = 2;
-    return { allScheduleDatas: allScheduleDatas, skipClear: true };
-  }
+  // for 3 scheduling conflicts, check if they can be fit in two columns
+  if (allScheduleDatas.length === 3) {
+    allScheduleDatas.shift();
+    // array only contains the conflicts
+    allScheduleDatas.sort((a, b) => {
+      const aSplit = (a.timeFrom as string).split(":")
+      const bSplit = (b.timeFrom as string).split(":")
+      const aTimeInMins = (parseInt(aSplit[0]) * 60) + parseInt(aSplit[1]);
+      const bTimeInMins = (parseInt(bSplit[0]) * 60) + parseInt(bSplit[1]);
 
-  allScheduleDatas.sort((a, b) => {
-    const aSplit = (a.timeFrom as string).split(":")
-    const bSplit = (b.timeFrom as string).split(":")
-    const aTimeInMins = (parseInt(aSplit[0]) * 60) + parseInt(aSplit[1]);
-    const bTimeInMins = (parseInt(bSplit[0]) * 60) + parseInt(bSplit[1]);
+      if (aTimeInMins > bTimeInMins) {
+        return 1; 
+      } else if (aTimeInMins < bTimeInMins) {
+        return -1; 
+      } else {
+        return 0; 
+      }
+    })
 
-    if (aTimeInMins > bTimeInMins) {
-      return 1; 
-    } else if (aTimeInMins < bTimeInMins) {
-      return -1; 
+    const firstEndSplit = (allScheduleDatas[0].timeTo as string).split(":");
+    const lastStartSplit = (allScheduleDatas[1].timeFrom as string).split(":");
+    const firstInMins = (parseInt(firstEndSplit[0]) * 60) + parseInt(firstEndSplit[1]);
+    const lastInMins = (parseInt(lastStartSplit[0]) * 60) + parseInt(lastStartSplit[1]);
+
+    if (firstInMins <= lastInMins && allScheduleDatas[1].position === 0) {
+      newScheduleData.position = 1;
+      newScheduleData.numColumns = 2;
+      allScheduleDatas[0].numColumns = 2;
+      allScheduleDatas[1].numColumns = 2;
+      return { allScheduleDatas: [allScheduleDatas[0], newScheduleData, allScheduleDatas[1]], skipClear: false }
     } else {
-      return 0; 
+      return { allScheduleDatas: undefined, skipClear: true};
     }
-  })
-  
-  let i = 0;
-  while (i < allScheduleDatas.length) {
-    allScheduleDatas[i].position = i;
-    allScheduleDatas[i].numColumns = 2;
-    i++;
+
+  } else if (allScheduleDatas.length === 2) {
+    // for a max of 2 scheduled conflicts, if the data is already in the second position, 
+    // it means that we can just slot the new one in the 1st position
+    if (allScheduleDatas[1].position === 1) {
+      allScheduleDatas[0].numColumns = 2;
+      return { allScheduleDatas: allScheduleDatas, skipClear: true };
+    }
+
+    allScheduleDatas.sort((a, b) => {
+      const aSplit = (a.timeFrom as string).split(":")
+      const bSplit = (b.timeFrom as string).split(":")
+      const aTimeInMins = (parseInt(aSplit[0]) * 60) + parseInt(aSplit[1]);
+      const bTimeInMins = (parseInt(bSplit[0]) * 60) + parseInt(bSplit[1]);
+
+      if (aTimeInMins > bTimeInMins) {
+        return 1; 
+      } else if (aTimeInMins < bTimeInMins) {
+        return -1; 
+      } else {
+        return 0; 
+      }
+    })
+    
+    let i = 0;
+    while (i < allScheduleDatas.length) {
+      allScheduleDatas[i].position = i;
+      allScheduleDatas[i].numColumns = 2;
+      i++;
+    }
   }
+
+
+  
 
   return { allScheduleDatas: allScheduleDatas, skipClear: false}
 
