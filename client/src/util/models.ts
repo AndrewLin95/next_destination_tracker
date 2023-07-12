@@ -16,6 +16,11 @@ export interface UserProfileState {
 }
 
 export interface ProjectData {
+  userID: string,
+  projectID: string,
+  deleteFlag: boolean,
+  _id: string,
+  scheduleColors: ScheduleColors,
   project: {
     projectCoords: {
       destination: string,
@@ -34,9 +39,16 @@ export interface ProjectData {
     segments: SCHEDULE_SEGMENTS,
     minPerSegment: number,
   },
-  userID: string,
-  projectID: string,
-  _id: string,
+}
+
+export interface ScheduleColors {
+  Monday: string,
+  Tuesday: string,
+  Wednesday: string,
+  Thursday: string,
+  Friday: string,
+  Saturday: string,
+  Sunday: string,
 }
 
 export interface LocationData {
@@ -105,7 +117,7 @@ export interface EachScheduleData {
   timeTo?: string,
   duration?: number,
   noteMessage?: string,
-  notePriority?: NOTE_PRIORITY,
+  notePriority: NOTE_PRIORITY,
 }
 
 export interface MapData {

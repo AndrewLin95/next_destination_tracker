@@ -50,7 +50,8 @@ const CalendarColumns: FC<Props> = ({
                       key={index}
                       eachSchedule={data}
                       configSegments={projectData.scheduleConfig.minPerSegment}
-                      index={index}
+                      scheduleColors={projectData.scheduleColors}
+                      dateUnix={headerData.dateUnix}
                     />
                   );
                 })

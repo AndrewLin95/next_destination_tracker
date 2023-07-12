@@ -34,6 +34,21 @@ export enum LABEL_COLOR {
   Sun = "Sunday",
 }
 
+export type DAYS_OF_WEEK = "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday"
+
+export enum HEX_TRANSPARENCY {
+  NinetyPercent = "E6",
+  EighttyPercent = "CC",
+  SeventyPercent = "B3",
+  SixtyPercent = "99",
+  FiftyPercent = "80",
+  FourtyPercent = "66",
+  ThirtyPercent = "4D",
+  TwentyPercent = "33",
+  TenPercent = "1A",
+  ZeroPercent = "00",
+}
+
 // Server Responses
 export enum STATUS_CODES {
   SUCCESS = "200 Sucess",
