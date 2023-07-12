@@ -20,7 +20,8 @@ export enum ERROR_DATA {
   SearchDuplicate = "Your query was not completed since it was a duplicate entry. Please try another location.",
   Server = "We could not complete your request due to a technical issue on our end. Please try again later.",
   ScheduleConflict = "There are too many scheduling conflicts. Please try another time slot.",
-  ScheduleDuplicate = "You have already scheduled this item."
+  ScheduleDuplicate = "You have already scheduled this item.",
+  ScheduleDisabled = "This time slot has been disabled. If you intend to add data here, please enable it in the configuration."
 }
 
 export enum LABEL_COLOR {

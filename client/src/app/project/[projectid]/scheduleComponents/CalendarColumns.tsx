@@ -13,7 +13,8 @@ interface Props {
     e: React.DragEvent<HTMLDivElement>,
     time: string,
     date: string,
-    dateUnix: number
+    dateUnix: number,
+    enabledOrDisabled: boolean
   ) => void;
   scheduleInfoData: {
     [key: string]: EachScheduleData[];
@@ -40,7 +41,13 @@ const CalendarColumns: FC<Props> = ({
             key={key}
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) =>
-              handleDrop(e, time, headerData.date, headerData.dateUnix)
+              handleDrop(
+                e,
+                time,
+                headerData.date,
+                headerData.dateUnix,
+                headerData.enabled
+              )
             }
           >
             {formattedKey in scheduleInfoData

@@ -13,7 +13,8 @@ interface Props {
     e: React.DragEvent<HTMLDivElement>,
     time: string,
     date: string,
-    dateUnix: number
+    dateUnix: number,
+    enabledOrDisabled: boolean
   ) => void;
 }
 

@@ -23,6 +23,8 @@ import axios, { isAxiosError } from "axios";
 import SearchResults from "./searchComponents/SearchResults";
 import SearchPagination from "./searchComponents/SearchPagination";
 import {
+  ERROR_CAUSE,
+  ERROR_DATA,
   NUM_RESULTS_PER_PAGE,
   STATUS_CODES,
   VIEW_TYPES,
@@ -437,9 +439,23 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     e: React.DragEvent<HTMLDivElement>,
     time: string,
     date: string,
-    dateUnix: number
+    dateUnix: number,
+    enabledOrDisabled: boolean
   ) => {
     e.preventDefault();
+
+    if (!enabledOrDisabled) {
+      const status: StatusPayload = {
+        statusCode: STATUS_CODES.BadRequest,
+        errorCause: ERROR_CAUSE.Schedule,
+        errorData: ERROR_DATA.ScheduleDisabled,
+      };
+
+      setErrorDialogData(status);
+      setErrorDialogToggle(true);
+      return;
+    }
+
     const data = e.dataTransfer.getData("application/json");
     const parsedData: DroppedParsedData = JSON.parse(data);
 
