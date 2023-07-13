@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { ProjectData, ScheduleData } from "@/util/models";
+import { ProjectData, ScheduleConfigData, ScheduleData } from "@/util/models";
 import { FC } from "react";
 import CalendarColumns from "./scheduleComponents/CalendarColumns";
 import CalendarTimeColumn from "./scheduleComponents/CalendarTimeColumn";
@@ -9,6 +9,7 @@ import CalendarColumnHeader from "./scheduleComponents/CalendarColumnHeader";
 interface Props {
   projectData: ProjectData;
   scheduleData: ScheduleData;
+  scheduleConfig: ScheduleConfigData;
   handleDrop: (
     e: React.DragEvent<HTMLDivElement>,
     time: string,
@@ -21,13 +22,14 @@ interface Props {
 const ScheduleModule: FC<Props> = ({
   projectData,
   scheduleData,
+  scheduleConfig,
   handleDrop,
 }) => {
   return (
     <div className="h-full w-full">
       <div className="flex flex-row h-12 w-[calc(100%-1.4rem)] ml-2 border border-Background_Lighter">
         <CalendarColumnTimeHeader />
-        {scheduleData.headerData.map((data, index) => {
+        {scheduleConfig.headerData.map((data, index) => {
           return (
             <CalendarColumnHeader
               key={data.date}
@@ -39,12 +41,12 @@ const ScheduleModule: FC<Props> = ({
         })}
       </div>
       <div className="flex flex-row h-[calc(100vh-8rem)] w-[calc(100%-1.4rem)] ml-2 overflow-y-auto border border-Background_Lighter">
-        <CalendarTimeColumn timeValueData={scheduleData.timeValueData} />
-        {scheduleData.headerData.map((data, index) => {
+        <CalendarTimeColumn timeValueData={scheduleConfig.timeValueData} />
+        {scheduleConfig.headerData.map((data, index) => {
           return (
             <CalendarColumns
               key={data.date}
-              timeData={scheduleData.timeData}
+              timeData={scheduleConfig.timeData}
               headerData={data}
               handleDrop={handleDrop}
               scheduleInfoData={scheduleData.scheduleData}

@@ -82,7 +82,7 @@ export interface LocationData {
   status: StatusPayload,
 }
 
-export interface ScheduleData {
+export interface ScheduleConfigData {
   config: {
     rangeStart: number,
     rangeEnd: number,
@@ -90,9 +90,6 @@ export interface ScheduleData {
     projectID: number,
   },
   headerData: ScheduleHeaderData[],
-  scheduleData: {
-    [key: string]: EachScheduleData[];
-  };
   timeData: Map<string, string>,
   timeValueData: Map<string, string>,
 }
@@ -102,6 +99,16 @@ export interface ScheduleHeaderData {
   dateUnix: number,
   dayOfWeek: string,
   enabled: boolean,
+}
+
+export interface ScheduleData {
+  projectID: string,
+  scheduleData: {
+    [key: string]: EachScheduleData[];
+  },
+  scheduleKeys: {
+    [key: string]: ScheduleKeys,
+  },
 }
 
 export interface EachScheduleData {
@@ -116,6 +123,11 @@ export interface EachScheduleData {
   duration?: number,
   noteMessage?: string,
   notePriority: NOTE_PRIORITY,
+}
+
+export interface ScheduleKeys {
+  key: string,
+  duration: number,
 }
 
 export interface MapData {
@@ -153,6 +165,11 @@ export interface StatusPayload {
 export interface NoteDataResponse {
   data: LocationData,
   status: StatusPayload 
+}
+
+export interface DeleteNoteResponse {
+  status: StatusPayload,
+  scheduleData?: ScheduleData
 }
 
 export interface ScheduleDataResponse {

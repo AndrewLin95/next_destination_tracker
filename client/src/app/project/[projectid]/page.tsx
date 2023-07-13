@@ -17,6 +17,8 @@ import {
   NoteDataResponse,
   DroppedParsedData,
   ScheduleDataResponse,
+  ScheduleConfigData,
+  DeleteNoteResponse,
 } from "@/util/models";
 import authConfigData from "@/util/authConfig";
 import axios, { isAxiosError } from "axios";
@@ -39,6 +41,7 @@ interface InitResponseData {
   projectData: ProjectData;
   locationData: LocationData[];
   scheduleData: ScheduleData;
+  scheduleConfig: ScheduleConfigData;
 }
 
 interface Props {
@@ -71,6 +74,9 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   const [noteData, setNoteData] = useState<NoteData[]>([]);
   const [scheduleData, setScheduleData] = useState<ScheduleData>(
     {} as ScheduleData
+  );
+  const [scheduleConfig, setScheduleConfig] = useState<ScheduleConfigData>(
+    {} as ScheduleConfigData
   );
 
   // Map Data
@@ -111,6 +117,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       setProjectData(responseData.projectData);
       setAllLocationData(responseData.locationData);
       setScheduleData(responseData.scheduleData);
+      setScheduleConfig(responseData.scheduleConfig);
 
       // handle initial data mapping
       const tempMapData: MapData[] = [];
@@ -171,17 +178,11 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
 
         if (currPage === numberOfPages && noteData.length <= 9) {
           const tempMapData = [...mapData];
-          tempMapData.push({
-            ...responseData.mapData,
-            locationID: responseData.locationID,
-          });
+          tempMapData.push(responseData.mapData);
           setMapData(tempMapData);
 
           const tempNoteData = [...noteData];
-          tempNoteData.push({
-            ...responseData.noteData,
-            locationID: responseData.locationID,
-          });
+          tempNoteData.push(responseData.noteData);
           setNoteData(tempNoteData);
         }
 
@@ -364,8 +365,9 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   };
 
   const handleDeleteNote = (locationID: string) => {
+    debugger;
     const deleteRequest = async () => {
-      const url = `/api/project/deletelocation/${locationID}`;
+      const url = `/api/project/deletelocation/${projectData.projectID}/${locationID}`;
       const body = {};
       const authConfig = {
         headers: {
@@ -377,8 +379,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
 
       try {
         const deleteNoteResponse = await axios.put(url, body, authConfig);
-        const deleteNoteData: { status: StatusPayload } =
-          deleteNoteResponse.data;
+        const deleteNoteData: DeleteNoteResponse = deleteNoteResponse.data;
 
         if (deleteNoteData.status.statusCode === STATUS_CODES.SUCCESS) {
           const tempMapData: MapData[] = [...mapData];
@@ -393,6 +394,10 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
             (noteData) => noteData.locationID !== locationID
           );
           setNoteData(newNoteData);
+
+          if (deleteNoteData.scheduleData !== undefined) {
+            setScheduleData(deleteNoteData.scheduleData);
+          }
         }
       } catch (err) {
         console.log(err);
@@ -520,7 +525,16 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   };
 
   const handleDeleteSchedule = () => {
-    // to update schedule + update Note + update map
+    const handlePostScheduleData = async () => {
+      const url = `/api/project/setscheduledata/`;
+      const authConfig = authConfigData(
+        (userProfileState as UserProfileState).token
+      );
+
+      try {
+        // const response = await axios.put();
+      } catch (err) {}
+    };
   };
 
   useEffect(() => {
@@ -528,7 +542,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     console.log("notedata", noteData);
     console.log("proj data", projectData);
     console.log("schedule data", scheduleData);
-  }, [mapData]);
+  }, [mapData, noteData]);
 
   return (
     <div className="w-screen h-screen max-h-screen overflow-hidden flex flex-col justify-center items-center">
@@ -571,6 +585,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
             <ScheduleModule
               projectData={projectData}
               scheduleData={scheduleData}
+              scheduleConfig={scheduleConfig}
               handleDrop={handleDrop}
             />
           )}
