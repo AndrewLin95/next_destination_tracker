@@ -18,9 +18,9 @@ import {
   ScheduleDataMongoResponse,
 } from "../utils/types";
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
-import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, URL_REGEX, SCHEDULE_SEGMENTS, MS_IN_WEEK, MS_IN_DAY, DEFAULT_SCHEDULE_COLORS } from '../utils/constants';
+import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, URL_REGEX, SCHEDULE_SEGMENTS, MS_IN_WEEK, MS_IN_DAY, DEFAULT_SCHEDULE_COLORS, DELETE_RESPONSE } from '../utils/constants';
 import { format, getUnixTime, isSaturday, isSunday, nextSaturday, previousSunday } from 'date-fns';
-import { clearFromAndTo, handleScheduleSequence, identifyNumOfConflicts } from '../utils/scheduleUtils';
+import { clearFromAndTo, findDataSegments, handleDeleteSchedule, handleScheduleSequence, identifyNumOfConflicts } from '../utils/scheduleUtils';
 const ProjectSetupSchema = require('../models/projectSetupSchema');
 const ProjectLocationDataSchema = require('../models/projectLocationDataSchema');
 const ScheduleDataSchema = require('../models/scheduleDataSchema');
@@ -193,7 +193,8 @@ const searchLocation = async (payload: SearchQuery) => {
     
     // TODO: error handling
     if (queryResponse.statusText === "OK") {
-      const findItem = await ProjectLocationDataSchema.findOne({"mapData.googleLocationID": `${queryResponse.data.results[0].place_id}`, "projectID": `${payload.projectID}`})
+      const searchFilter = {"mapData.googleLocationID": `${queryResponse.data.results[0].place_id}`, "deleteFlag": false}
+      const findItem = await ProjectLocationDataSchema.findOne({searchFilter, "projectID": `${payload.projectID}`})
       
       if (findItem) {
         const statusPayload: {status: StatusPayload} = {
@@ -206,15 +207,18 @@ const searchLocation = async (payload: SearchQuery) => {
         return statusPayload;
       }
 
+      const locationID = uuidv4();
+
       const projectLocationDataSchema = new ProjectLocationDataSchema({
         userID: payload.userID,
         projectID: payload.projectID,
-        locationID: uuidv4(),
+        locationID: locationID,
         deleteFlag: false,
         mapData: {
           formattedAddress: queryResponse.data.results[0].formatted_address,
           googleLocationID: queryResponse.data.results[0].place_id,
           noteName: payload.query.split('+').join(' '),
+          locationID: locationID,
           position: {
             lat: queryResponse.data.results[0].geometry.location.lat,
             lng: queryResponse.data.results[0].geometry.location.lng,
@@ -224,6 +228,7 @@ const searchLocation = async (payload: SearchQuery) => {
           noteName: payload.query.split('+').join(' '),
           priority: "Medium", 
           formattedAddress: queryResponse.data.results[0].formatted_address,
+          locationID: locationID,
         }
       })
 
@@ -278,6 +283,7 @@ const getEachProject = async (projectID: string) => {
   }
 }
 
+// if update priority or name or message, need to update schedule as well
 const updateNote = async (payload: {noteData: NotePayloadData, mapData: MapPayloadData} ) => {
   const filter = {"locationID": payload.noteData.locationID as string};
   const data = { 
@@ -342,13 +348,53 @@ const updateNote = async (payload: {noteData: NotePayloadData, mapData: MapPaylo
   return statusPayload;
 }
 
-const deleteLocation = async (locationIDPayload: string) => {
+interface DeleteResponse {
+  status: DELETE_RESPONSE,
+  scheduleData?: ScheduleDataMongoResponse,
+  targetData?: EachScheduleData
+} 
+
+const deleteLocation = async (locationID: string, projectID: string) => {
   // TODO, delete schedule
   try {
-    const filter = {"locationID": locationIDPayload};
+    const filter = {"locationID": locationID};
     const data = { deleteFlag: true }
+    const projectLocationData: LocationMongoResponse = await ProjectLocationDataSchema.findOneAndUpdate(filter, data, {returnOriginal: false});
 
-    await ProjectLocationDataSchema.findOneAndUpdate(filter, data, {returnOriginal: false});
+    // delete schedule.
+    const scheduleFilter = {"projectID": projectID};
+    const scheduleData: ScheduleDataMongoResponse = await ScheduleDataSchema.findOne(scheduleFilter);
+
+    if (projectLocationData.noteData?.scheduleDate !== undefined) {
+      const deleteResponse: DeleteResponse = await handleDeleteSchedule(scheduleData, locationID, projectLocationData.noteData.scheduleDate, projectID);
+
+      if (deleteResponse.status === DELETE_RESPONSE.Success) {
+        if (deleteResponse.scheduleData !== undefined && deleteResponse.targetData !== undefined) {
+
+          const updateData = {
+            $set: {scheduleData: deleteResponse.scheduleData.scheduleData},
+            $unset: {[`scheduleKeys.${deleteResponse.targetData.locationID}`]: ""},
+          }
+
+          const newScheduleData: ScheduleDataMongoResponse = await ScheduleDataSchema.findOneAndUpdate(scheduleFilter, updateData, {returnOriginal: false});
+
+          const response = {
+            status: {
+              statusCode: STATUS_CODES.SUCCESS,
+            },
+            scheduleData: newScheduleData,
+          }
+          return response;
+        } else {
+          const response = {
+            status: {
+              statusCode: STATUS_CODES.SUCCESS,
+            }
+          }
+          return response;
+        }
+      }
+    }
 
     const response: {status: StatusPayload} = {
       status: {
@@ -422,9 +468,18 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
     }
 
     // indentify conflicts
-    const conflictingScheduleIDs = identifyNumOfConflicts(currTimeInMinutes, schedulePayload.date, scheduleData.scheduleData, schedulePayload.duration);
+    const conflictingLocationIDs = identifyNumOfConflicts(schedulePayload.locationID, currTimeInMinutes, schedulePayload.date, scheduleData.scheduleData, schedulePayload.duration);
 
-    if (conflictingScheduleIDs.size > 4) {
+    const conflictingData: EachScheduleData[] = [];
+    conflictingLocationIDs.forEach(eachLocationID => {
+      const dataSegment = findDataSegments(eachLocationID, scheduleData.scheduleData, scheduleData.scheduleKeys)
+      if (dataSegment !== null) {
+        conflictingData.push(dataSegment);
+      }
+    });
+
+    // Look at why this is 4
+    if (conflictingLocationIDs.size > 4) {
       const statusPayload: {status: StatusPayload} = {
         status: {
           statusCode: STATUS_CODES.BadRequest,
@@ -434,7 +489,7 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
       }
 
       return statusPayload;
-    } else if (conflictingScheduleIDs.size === 0) {
+    } else if (conflictingLocationIDs.size === 0) {
       let alreadySetData = false;
       currTimeInMinutes = (parseInt(schedulePayload.time.split(':')[0]) * 60) + parseInt(schedulePayload.time.split(':')[1]);
       const startTime = JSON.parse(JSON.stringify(currTimeInMinutes));
@@ -461,7 +516,7 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
 
       returnScheduleObj = await ScheduleDataSchema.findOneAndUpdate(filter, scheduleData, {returnOriginal: false});
     } else {
-      const { allScheduleDatas, skipClear } = handleScheduleSequence(conflictingScheduleIDs, newScheduleData, schedulePayload.date, scheduleData.scheduleData, currTimeInMinutes);
+      const { allScheduleDatas, skipClear } = handleScheduleSequence(newScheduleData, conflictingData, scheduleData, scheduleData);
       // scheduling conflict
       if (allScheduleDatas === undefined) {
         const statusPayload: {status: StatusPayload} = {
@@ -510,7 +565,7 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
 
           const nonDataScheduleSegment = {
             scheduleID: eachScheduleData.scheduleID,
-            locationID: schedulePayload.locationID,
+            locationID: eachScheduleData.locationID,
             dataSegment: false,
             position: eachScheduleData.position,
           }
@@ -587,11 +642,11 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
     scheduleLocationNote.noteData.scheduleDate = schedulePayload.dateUnix;
     scheduleLocationNote.mapData.scheduleDate = schedulePayload.dateUnix;
 
-    await ProjectLocationDataSchema.findOneAndUpdate(locationFilter, scheduleLocationNote);
+    const returnLocationData: LocationMongoResponse = await ProjectLocationDataSchema.findOneAndUpdate(locationFilter, scheduleLocationNote, {returnOriginal: false});
 
     const scheduleResponseObject = {
       scheduleData: returnScheduleObj, 
-      locationData: scheduleLocationNote,
+      locationData: returnLocationData,
       status: {
         statusCode: STATUS_CODES.SUCCESS
       }  

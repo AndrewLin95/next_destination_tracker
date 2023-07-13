@@ -76,9 +76,10 @@ export const updateNote = async (req: Request, res: Response) => {
 
 export const deleteLocation = async (req: Request, res: Response) => {
   try {
-    const locationIDPayload: string = req.params.locationID;
+    const locationID: string = req.params.locationID;
+    const projectID: string = req.params.projectID;
 
-    const response: {status: StatusPayload} = await projectService.deleteLocation(locationIDPayload);
+    const response: {status: StatusPayload} = await projectService.deleteLocation(locationID, projectID);
     if (response.status.statusCode === STATUS_CODES.ServerError) {
       res.status(500).send(JSON.stringify(response));
     } else {

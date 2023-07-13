@@ -365,7 +365,6 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   };
 
   const handleDeleteNote = (locationID: string) => {
-    debugger;
     const deleteRequest = async () => {
       const url = `/api/project/deletelocation/${projectData.projectID}/${locationID}`;
       const body = {};

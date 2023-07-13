@@ -34,6 +34,10 @@ const projectLocationDataSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
+    locationID: {
+      type: String,
+      required: true,
+    },
     position: {
       lat: {
         type: Number,
@@ -51,6 +55,10 @@ const projectLocationDataSchema = new mongoose.Schema({
   },
   noteData: {
     noteName: {
+      type: String,
+      required: true,
+    },
+    locationID: {
       type: String,
       required: true,
     },

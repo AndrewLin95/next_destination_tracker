@@ -33,7 +33,7 @@ export interface LocationMongoResponse {
   mapData: {
     formattedAddress: string,
     googleLocationID: string,
-    locationID?: string,
+    locationID: string,
     picture?: string,
     noteName?: string,
     position: {
@@ -41,14 +41,15 @@ export interface LocationMongoResponse {
       lng: number,
     },
     scheduleDate?: number,
+    // Epoch time. Use scheduleDate which is in unix + the minutes in miliseconds.
   },
   noteData: {
     noteName: string,
     priority: string,
     formattedAddress: string,
-    color?: LABEL_COLOR,
-    locationID?: string,
+    locationID: string,
     scheduleDate?: number,
+    // Epoch time. Use scheduleDate which is in unix + the minutes in miliseconds.
     customNote?: string,
     openHours?: string,
     closeHours?: string,
