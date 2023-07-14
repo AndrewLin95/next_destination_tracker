@@ -20,7 +20,7 @@ import {
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
 import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, URL_REGEX, SCHEDULE_SEGMENTS, MS_IN_WEEK, MS_IN_DAY, DEFAULT_SCHEDULE_COLORS, DELETE_RESPONSE } from '../utils/constants';
 import { format, getUnixTime, isSaturday, isSunday, nextSaturday, previousSunday } from 'date-fns';
-import { generateFinalScheduleData, handleScheduleSequenceAdd, clearFromAndTo, findDataSegments, handleDeleteSchedule, handleScheduleSequence, identifyNumOfConflicts, clearScheduleData } from '../utils/scheduleUtils';
+import { generateFinalScheduleData, handleScheduleSequenceAdd, findDataSegments, handleDeleteSchedule, identifyNumOfConflicts, clearScheduleData } from '../utils/scheduleUtils';
 const ProjectSetupSchema = require('../models/projectSetupSchema');
 const ProjectLocationDataSchema = require('../models/projectLocationDataSchema');
 const ScheduleDataSchema = require('../models/scheduleDataSchema');
@@ -350,7 +350,7 @@ const updateNote = async (payload: {noteData: NotePayloadData, mapData: MapPaylo
 
 interface DeleteResponse {
   status: DELETE_RESPONSE,
-  scheduleData?: ScheduleDataMongoResponse,
+  finalScheduleData?: ScheduleDataMongoResponse,
   targetData?: EachScheduleData
 } 
 
@@ -366,13 +366,13 @@ const deleteLocation = async (locationID: string, projectID: string) => {
     const scheduleData: ScheduleDataMongoResponse = await ScheduleDataSchema.findOne(scheduleFilter);
 
     if (projectLocationData.noteData?.scheduleDate !== undefined) {
-      const deleteResponse: DeleteResponse = await handleDeleteSchedule(scheduleData, locationID, projectLocationData.noteData.scheduleDate, projectID);
+      const deleteResponse: DeleteResponse = await handleDeleteSchedule(scheduleData, locationID, projectLocationData.noteData.scheduleDate);
 
       if (deleteResponse.status === DELETE_RESPONSE.Success) {
-        if (deleteResponse.scheduleData !== undefined && deleteResponse.targetData !== undefined) {
+        if (deleteResponse.finalScheduleData !== undefined && deleteResponse.targetData !== undefined) {
 
           const updateData = {
-            $set: {scheduleData: deleteResponse.scheduleData.scheduleData},
+            $set: {scheduleData: deleteResponse.finalScheduleData.scheduleData},
             $unset: {[`scheduleKeys.${deleteResponse.targetData.locationID}`]: ""},
           }
 
@@ -417,7 +417,6 @@ const deleteLocation = async (locationID: string, projectID: string) => {
   return statusPayload;
 }
 
-// TODO: documentation
 const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
   try {
     let returnScheduleObj: ScheduleDataMongoResponse = {} as ScheduleDataMongoResponse;
@@ -523,7 +522,7 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
       } else {
         finalScheduleData = await generateFinalScheduleData(sequencedData, scheduleData, formattedDate);
       }
-      
+
       const scheduleKeyObj: ScheduleKeys = {
         key: `${formattedDate} ${Math.floor(currTimeInMinutes / 60)}:${(currTimeInMinutes % 60 === 0 ? "00" : currTimeInMinutes % 60)}`,
         duration: schedulePayload.duration,
