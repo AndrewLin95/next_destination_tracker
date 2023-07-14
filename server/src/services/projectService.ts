@@ -20,7 +20,7 @@ import {
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
 import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, URL_REGEX, SCHEDULE_SEGMENTS, MS_IN_WEEK, MS_IN_DAY, DEFAULT_SCHEDULE_COLORS, DELETE_RESPONSE } from '../utils/constants';
 import { format, getUnixTime, isSaturday, isSunday, nextSaturday, previousSunday } from 'date-fns';
-import { clearFromAndTo, findDataSegments, handleDeleteSchedule, handleScheduleSequence, identifyNumOfConflicts } from '../utils/scheduleUtils';
+import { generateFinalScheduleData, handleScheduleSequenceAdd, clearFromAndTo, findDataSegments, handleDeleteSchedule, handleScheduleSequence, identifyNumOfConflicts, clearScheduleData } from '../utils/scheduleUtils';
 const ProjectSetupSchema = require('../models/projectSetupSchema');
 const ProjectLocationDataSchema = require('../models/projectLocationDataSchema');
 const ScheduleDataSchema = require('../models/scheduleDataSchema');
@@ -420,7 +420,7 @@ const deleteLocation = async (locationID: string, projectID: string) => {
 // TODO: documentation
 const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
   try {
-    let returnScheduleObj: ScheduleDataMongoResponse;
+    let returnScheduleObj: ScheduleDataMongoResponse = {} as ScheduleDataMongoResponse;
     const filter = {
       'projectID': schedulePayload.projectID,
     };
@@ -438,9 +438,9 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
 
       return statusPayload;
     } else {
-      const formattedTime = `${schedulePayload.date} ${Math.floor(currTimeInMinutes / 60)}:${(currTimeInMinutes % 60 === 0 ? "00" : currTimeInMinutes % 60)}`
+      const formattedDate = `${schedulePayload.date} ${Math.floor(currTimeInMinutes / 60)}:${(currTimeInMinutes % 60 === 0 ? "00" : currTimeInMinutes % 60)}`
       const scheduleKeyObj: ScheduleKeys = {
-        key: formattedTime,
+        key: formattedDate,
         duration: schedulePayload.duration,
       }
       
@@ -452,6 +452,7 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
     const startingTimeInMinutes = (parseInt(schedulePayload.time.split(':')[0]) * 60) + parseInt(schedulePayload.time.split(':')[1])
     const endTimeInMinutes = startingTimeInMinutes + schedulePayload.duration;
     const formattedEndTime = `${Math.floor(endTimeInMinutes / 60)}:${endTimeInMinutes % 60 === 0 ? "00" : endTimeInMinutes % 60}`
+    const formattedDate = format(new Date(schedulePayload.dateUnix), "PPP"); 
 
     const newScheduleData = {
       scheduleID: scheduleID,
@@ -470,6 +471,7 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
     // indentify conflicts
     const conflictingLocationIDs = identifyNumOfConflicts(schedulePayload.locationID, currTimeInMinutes, schedulePayload.date, scheduleData.scheduleData, schedulePayload.duration);
 
+    // TODO: Decide if I want to move this into the identifyNumOfConflicts function
     const conflictingData: EachScheduleData[] = [];
     conflictingLocationIDs.forEach(eachLocationID => {
       const dataSegment = findDataSegments(eachLocationID, scheduleData.scheduleData, scheduleData.scheduleKeys)
@@ -478,8 +480,8 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
       }
     });
 
-    // Look at why this is 4
-    if (conflictingLocationIDs.size > 4) {
+    // too many conflicts
+    if (conflictingLocationIDs.size > 3) {
       const statusPayload: {status: StatusPayload} = {
         status: {
           statusCode: STATUS_CODES.BadRequest,
@@ -489,36 +491,20 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
       }
 
       return statusPayload;
-    } else if (conflictingLocationIDs.size === 0) {
-      let alreadySetData = false;
-      currTimeInMinutes = (parseInt(schedulePayload.time.split(':')[0]) * 60) + parseInt(schedulePayload.time.split(':')[1]);
-      const startTime = JSON.parse(JSON.stringify(currTimeInMinutes));
+    } 
 
-      const nonDataScheduleSegment = {
-        scheduleID: scheduleID,
-        locationID: schedulePayload.locationID,
-        dataSegment: false,
-        position: newScheduleData.position
-      }
+    // no conflicts
+    if (conflictingLocationIDs.size === 0) {
+      const finalScheduleData = await generateFinalScheduleData([newScheduleData], scheduleData, formattedDate)
 
-      while (currTimeInMinutes < (startTime + schedulePayload.duration)) {
-        const currFormattedTime = `${Math.floor(currTimeInMinutes / 60)}:${(currTimeInMinutes % 60 === 0 ? "00" : currTimeInMinutes % 60)}`
-        const key = `${schedulePayload.date} ${currFormattedTime}`;
-
-        if (alreadySetData) {
-          scheduleData.scheduleData.set(key, [nonDataScheduleSegment])
-        } else {
-          scheduleData.scheduleData.set(key, [newScheduleData]);
-          alreadySetData = true;
-        }
-        currTimeInMinutes = currTimeInMinutes + 30;
-      }
-
-      returnScheduleObj = await ScheduleDataSchema.findOneAndUpdate(filter, scheduleData, {returnOriginal: false});
-    } else {
-      const { allScheduleDatas, skipClear } = handleScheduleSequence(newScheduleData, conflictingData, scheduleData, scheduleData);
+      returnScheduleObj = await ScheduleDataSchema.findOneAndUpdate(filter, finalScheduleData, {returnOriginal: false});
+    }
+    
+    // everything else
+    if (conflictingLocationIDs.size >= 1) { 
+      const { sequencedData, clear }  = handleScheduleSequenceAdd(newScheduleData, conflictingData, scheduleData);
       // scheduling conflict
-      if (allScheduleDatas === undefined) {
+      if (sequencedData === undefined) {
         const statusPayload: {status: StatusPayload} = {
           status: {
             statusCode: STATUS_CODES.BadRequest,
@@ -530,113 +516,24 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
         return statusPayload;
       } 
 
-      if (!skipClear) {
-        // clear existing data if any
-        const { fromInMins, toInMins } = clearFromAndTo(allScheduleDatas);
-        let clearFrom = fromInMins;
-        const clearTo = toInMins
-
-        const keysToUnset = [];
-
-        while (clearFrom < clearTo) {
-          const currFormattedTime = `${Math.floor(clearFrom / 60)}:${((clearFrom % 60 === 0) ? "00" : clearFrom % 60)}`
-          const key = `${schedulePayload.date} ${currFormattedTime}`;
-
-          keysToUnset.push(key);
-          clearFrom = clearFrom + 30;
-        }
-
-        const unsetObj = keysToUnset.reduce((acc, key) => ({ ...acc, [`scheduleData.${key}`]: '' }), {});
-        const filteredScheduleData: ScheduleDataMongoResponse = await ScheduleDataSchema.findOneAndUpdate(filter, {$unset: unsetObj}, {returnOriginal: false});
-        
-        let timeToGenKey = (parseInt(schedulePayload.time.split(':')[0]) * 60) + parseInt(schedulePayload.time.split(':')[1])
-        const keysFormattedtime = `${schedulePayload.date} ${Math.floor(timeToGenKey / 60)}:${(timeToGenKey % 60 === 0 ? "00" : timeToGenKey % 60)}`
-        const scheduleKeyObj: ScheduleKeys = {
-          key: keysFormattedtime,
-          duration: schedulePayload.duration,
-        }
-        filteredScheduleData.scheduleKeys.set(schedulePayload.locationID, scheduleKeyObj)
-
-        // add new data
-        allScheduleDatas.forEach(eachScheduleData => {
-          let alreadySetData = false;
-          currTimeInMinutes = (parseInt((eachScheduleData.timeFrom as String).split(':')[0]) * 60) + parseInt((eachScheduleData.timeFrom as String).split(':')[1]);
-          const startTime = JSON.parse(JSON.stringify(currTimeInMinutes));
-
-          const nonDataScheduleSegment = {
-            scheduleID: eachScheduleData.scheduleID,
-            locationID: eachScheduleData.locationID,
-            dataSegment: false,
-            position: eachScheduleData.position,
-          }
-          
-          while (currTimeInMinutes < (startTime + (eachScheduleData.duration as number))) {
-            const currFormattedTime = `${Math.floor(currTimeInMinutes / 60)}:${(currTimeInMinutes % 60 === 0 ? "00" : currTimeInMinutes % 60)}`
-            const key = `${schedulePayload.date} ${currFormattedTime}`;
-  
-            const hasKey = filteredScheduleData.scheduleData.has(key);
-  
-            if (hasKey) {
-              const originalData = filteredScheduleData.scheduleData.get(key) as EachScheduleData[];
-              if (alreadySetData) {
-                filteredScheduleData.scheduleData.set(key, [...originalData, nonDataScheduleSegment])
-              } else {
-                filteredScheduleData.scheduleData.set(key, [...originalData, eachScheduleData]);
-                alreadySetData = true;
-              }
-            } else {
-              if (alreadySetData) {
-                filteredScheduleData.scheduleData.set(key, [nonDataScheduleSegment])
-              } else {
-                filteredScheduleData.scheduleData.set(key, [eachScheduleData]);
-                alreadySetData = true;
-              }
-            }
-            currTimeInMinutes = currTimeInMinutes + 30;
-          }
-        });
-        returnScheduleObj = await ScheduleDataSchema.findOneAndUpdate(filter, filteredScheduleData, {returnOriginal: false});
+      let finalScheduleData
+      if (clear) {
+        const filteredScheduleData = await clearScheduleData(sequencedData, formattedDate, schedulePayload.projectID);
+        finalScheduleData = await generateFinalScheduleData(sequencedData, filteredScheduleData, formattedDate);
       } else {
-        let alreadySetData = false;
-        currTimeInMinutes = (parseInt(schedulePayload.time.split(':')[0]) * 60) + parseInt(schedulePayload.time.split(':')[1]);
-        const startTime = JSON.parse(JSON.stringify(currTimeInMinutes));
-
-        const nonDataScheduleSegment = {
-          scheduleID: scheduleID,
-          locationID: schedulePayload.locationID,
-          dataSegment: false,
-          position: newScheduleData.position
-        }
-
-        while (currTimeInMinutes < (startTime + schedulePayload.duration)) {
-          const currFormattedTime = `${Math.floor(currTimeInMinutes / 60)}:${(currTimeInMinutes % 60 === 0 ? "00" : currTimeInMinutes % 60)}`
-          const key = `${schedulePayload.date} ${currFormattedTime}`;
-
-          const hasKey = scheduleData.scheduleData.has(key);
-
-          if (hasKey) {
-            const originalData = scheduleData.scheduleData.get(key) as EachScheduleData[];
-            if (alreadySetData) {
-              scheduleData.scheduleData.set(key, [...originalData, nonDataScheduleSegment])
-            } else {
-              scheduleData.scheduleData.set(key, [...originalData, newScheduleData]);
-              alreadySetData = true;
-            }
-          } else {
-            if (alreadySetData) {
-              scheduleData.scheduleData.set(key, [nonDataScheduleSegment])
-            } else {
-              scheduleData.scheduleData.set(key, [newScheduleData]);
-              alreadySetData = true;
-            }
-          }
-          currTimeInMinutes = currTimeInMinutes + 30;
-        }
-
-        returnScheduleObj = await ScheduleDataSchema.findOneAndUpdate(filter, scheduleData, {returnOriginal: false});
+        finalScheduleData = await generateFinalScheduleData(sequencedData, scheduleData, formattedDate);
       }
+      
+      const scheduleKeyObj: ScheduleKeys = {
+        key: `${formattedDate} ${Math.floor(currTimeInMinutes / 60)}:${(currTimeInMinutes % 60 === 0 ? "00" : currTimeInMinutes % 60)}`,
+        duration: schedulePayload.duration,
+      }
+      
+      finalScheduleData.scheduleKeys.set(schedulePayload.locationID, scheduleKeyObj)
+      
+      returnScheduleObj = await ScheduleDataSchema.findOneAndUpdate(filter, finalScheduleData, {returnOriginal: false});
     }
-
+    
     const locationFilter = {'locationID': schedulePayload.locationID};
     const scheduleLocationNote: LocationMongoResponse = await ProjectLocationDataSchema.findOne(locationFilter)
     scheduleLocationNote.noteData.scheduleDate = schedulePayload.dateUnix;
