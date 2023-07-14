@@ -37,25 +37,13 @@ export const handleScheduleSequenceAdd = (newScheduleData: EachScheduleData, con
       const conflicts = identifyNumOfConflicts(targetLocationID, startTimeInMins, date, originalScheduleData.scheduleData, duration)
   
       if (conflicts.size === 0) {
-        allScheduleDatas.sort((a, b) => {
-          const aSplit = (a.timeFrom as string).split(":")
-          const bSplit = (b.timeFrom as string).split(":")
-          const aTimeInMins = (parseInt(aSplit[0]) * 60) + parseInt(aSplit[1]);
-          const bTimeInMins = (parseInt(bSplit[0]) * 60) + parseInt(bSplit[1]);
-    
-          if (aTimeInMins > bTimeInMins) {
-            return 1; 
-          } else if (aTimeInMins < bTimeInMins) {
-            return -1; 
-          } else {
-            return 0; 
-          }
-        })
-        allScheduleDatas[0].position = 0;
-        allScheduleDatas[0].numColumns = 2;
-        allScheduleDatas[1].position = 1;
-        allScheduleDatas[1].numColumns = 2;
-        sequencedData = allScheduleDatas;
+        const sortedScheduleData = sortScheduleData(allScheduleDatas);
+
+        sortedScheduleData[0].position = 0;
+        sortedScheduleData[0].numColumns = 2;
+        sortedScheduleData[1].position = 1;
+        sortedScheduleData[1].numColumns = 2;
+        sequencedData = sortedScheduleData;
         return { sequencedData: sequencedData, clear: true };
       } else {
         const conflictingDataPosition = conflictingData[0].position;
@@ -74,33 +62,20 @@ export const handleScheduleSequenceAdd = (newScheduleData: EachScheduleData, con
   if (allScheduleDatas.length === 3) {
     allScheduleDatas.shift();
     // array only contains the conflicts
-    allScheduleDatas.sort((a, b) => {
-      const aSplit = (a.timeFrom as string).split(":")
-      const bSplit = (b.timeFrom as string).split(":")
-      const aTimeInMins = (parseInt(aSplit[0]) * 60) + parseInt(aSplit[1]);
-      const bTimeInMins = (parseInt(bSplit[0]) * 60) + parseInt(bSplit[1]);
+    const sortedScheduleData = sortScheduleData(allScheduleDatas);
 
-      if (aTimeInMins > bTimeInMins) {
-        return 1; 
-      } else if (aTimeInMins < bTimeInMins) {
-        return -1; 
-      } else {
-        return 0; 
-      }
-    })
-
-    const firstEndSplit = (allScheduleDatas[0].timeTo as string).split(":");
-    const lastStartSplit = (allScheduleDatas[1].timeFrom as string).split(":");
+    const firstEndSplit = (sortedScheduleData[0].timeTo as string).split(":");
+    const lastStartSplit = (sortedScheduleData[1].timeFrom as string).split(":");
     const firstInMins = (parseInt(firstEndSplit[0]) * 60) + parseInt(firstEndSplit[1]);
     const lastInMins = (parseInt(lastStartSplit[0]) * 60) + parseInt(lastStartSplit[1]);
 
-    if (firstInMins <= lastInMins && allScheduleDatas[1].position === 0) {
+    if (firstInMins <= lastInMins && sortedScheduleData[1].position === 0) {
       newScheduleData.position = 1;
       newScheduleData.numColumns = 2;
-      allScheduleDatas[0].numColumns = 2;
-      allScheduleDatas[1].numColumns = 2;
+      sortedScheduleData[0].numColumns = 2;
+      sortedScheduleData[1].numColumns = 2;
       
-      sequencedData = [allScheduleDatas[0], newScheduleData, allScheduleDatas[1]]
+      sequencedData = [sortedScheduleData[0], newScheduleData, sortedScheduleData[1]]
       return { sequencedData: sequencedData, clear: true }
     } else {
       return { sequencedData: undefined, clear: true }
@@ -145,28 +120,15 @@ export const handleScheduleSequenceDelete = async (conflictingData : EachSchedul
           const otherConflictingDataSegment = findDataSegments(targetID, originalScheduleData.scheduleData, originalScheduleData.scheduleKeys)
           if (otherConflictingDataSegment !== null) {
             conflictingData.push(otherConflictingDataSegment);
-            conflictingData.sort((a, b) => {
-              const aSplit = (a.timeFrom as string).split(":")
-              const bSplit = (b.timeFrom as string).split(":")
-              const aTimeInMins = (parseInt(aSplit[0]) * 60) + parseInt(aSplit[1]);
-              const bTimeInMins = (parseInt(bSplit[0]) * 60) + parseInt(bSplit[1]);
-        
-              if (aTimeInMins > bTimeInMins) {
-                return 1; 
-              } else if (aTimeInMins < bTimeInMins) {
-                return -1; 
-              } else {
-                return 0; 
-              }
-            })
+            const sortedScheduleData = sortScheduleData(conflictingData);
 
-            filteredScheduleData = await clearScheduleData([...conflictingData, targetData], date, originalScheduleData.projectID);
+            filteredScheduleData = await clearScheduleData([...sortedScheduleData, targetData], date, originalScheduleData.projectID);
 
-            conflictingData[0].position = 0;
-            conflictingData[0].numColumns = 2;
-            conflictingData[1].position = 1;
-            conflictingData[1].numColumns = 2;
-            sequencedData = conflictingData
+            sortedScheduleData[0].position = 0;
+            sortedScheduleData[0].numColumns = 2;
+            sortedScheduleData[1].position = 1;
+            sortedScheduleData[1].numColumns = 2;
+            sequencedData = sortedScheduleData
           }
         }
       } 
@@ -179,31 +141,35 @@ export const handleScheduleSequenceDelete = async (conflictingData : EachSchedul
         const date = tempDate.join(" ");
   
         filteredScheduleData = await clearScheduleData([...conflictingData, targetData], date, originalScheduleData.projectID);
-        conflictingData.sort((a, b) => {
-          const aSplit = (a.timeFrom as string).split(":")
-          const bSplit = (b.timeFrom as string).split(":")
-          const aTimeInMins = (parseInt(aSplit[0]) * 60) + parseInt(aSplit[1]);
-          const bTimeInMins = (parseInt(bSplit[0]) * 60) + parseInt(bSplit[1]);
-  
-          if (aTimeInMins > bTimeInMins) {
-            return 1; 
-          } else if (aTimeInMins < bTimeInMins) {
-            return -1; 
-          } else {
-            return 0; 
-          }
-        })
-  
-        conflictingData[0].position = 0;
-        conflictingData[0].numColumns = 1;
-        conflictingData[1].position = 0;
-        conflictingData[1].numColumns = 1;
-        sequencedData = conflictingData
+        const sortedScheduleData = sortScheduleData(conflictingData);
+
+        sortedScheduleData[0].position = 0;
+        sortedScheduleData[0].numColumns = 1;
+        sortedScheduleData[1].position = 0;
+        sortedScheduleData[1].numColumns = 1;
+        sequencedData = sortedScheduleData
       }
     }
   }
 
   return { sequencedData: sequencedData, filteredScheduleData: filteredScheduleData }
+}
+
+export const sortScheduleData = (unsortedScheduleData: EachScheduleData[]) => {
+  return unsortedScheduleData.sort((a, b) => {
+    const aSplit = (a.timeFrom as string).split(":")
+    const bSplit = (b.timeFrom as string).split(":")
+    const aTimeInMins = (parseInt(aSplit[0]) * 60) + parseInt(aSplit[1]);
+    const bTimeInMins = (parseInt(bSplit[0]) * 60) + parseInt(bSplit[1]);
+
+    if (aTimeInMins > bTimeInMins) {
+      return 1; 
+    } else if (aTimeInMins < bTimeInMins) {
+      return -1; 
+    } else {
+      return 0; 
+    }
+  })
 }
 
 export const findDataSegments = (targetLocationID: string, scheduleData: Map<string, EachScheduleData[]>, scheduleKeys: Map<string, ScheduleKeys>) => {
