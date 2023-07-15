@@ -95,10 +95,11 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   );
 
   useEffect(() => {
-    if (params.projectid === undefined) {
+    if (
+      params.projectid === undefined ||
+      (userProfileState as UserProfileState).token === undefined
+    ) {
       router.push("/homepage");
-    } else if ((userProfileState as UserProfileState).token === undefined) {
-      router.push("/");
     }
 
     const fetchInitPageData = async () => {

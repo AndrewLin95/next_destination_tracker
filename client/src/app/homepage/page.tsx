@@ -11,6 +11,8 @@ import NewProject from "./NewProject";
 import ExistingProjects from "./ExistingProjects";
 import axios from "axios";
 import { UserProfileState, ProjectData } from "@/util/models";
+import { setUserProfile } from "@/util/authUtil";
+import { VERIFY_TOKEN_RESPONSE } from "@/util/constants";
 
 const HomePage: NextPage = () => {
   const router = useRouter();
@@ -23,8 +25,30 @@ const HomePage: NextPage = () => {
 
   useEffect(() => {
     if ((userProfileState as UserProfileState).token === undefined) {
-      router.push("/");
-    } else {
+      const userToken: string = JSON.parse(
+        localStorage.getItem("token") as string
+      );
+
+      if (userToken === null) {
+        router.push("/");
+        return;
+      }
+
+      const verifyToken = async () => {
+        const response: VERIFY_TOKEN_RESPONSE = await setUserProfile(
+          userToken,
+          setUserProfileState
+        );
+        if (response === VERIFY_TOKEN_RESPONSE.NoToken) {
+          router.push("/");
+        }
+      };
+      verifyToken();
+    }
+  }, []);
+
+  useEffect(() => {
+    if ((userProfileState as UserProfileState).token !== undefined) {
       const url = `/api/project/getprojects/${
         (userProfileState as UserProfileState).userID
       }`;
@@ -45,7 +69,7 @@ const HomePage: NextPage = () => {
       };
       getProjectData();
     }
-  }, []);
+  }, [userProfileState]);
 
   const submitNewProject = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

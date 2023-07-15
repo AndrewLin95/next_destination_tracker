@@ -10,6 +10,8 @@ import jwtDecode from "jwt-decode";
 import InLineTextButton from "@/components/InLineTextButton";
 import UserContext from "./context/UserProfileContext";
 import { DecodedJWT } from "@/util/models";
+import { setUserProfile } from "@/util/authUtil";
+import { VERIFY_TOKEN_RESPONSE } from "@/util/constants";
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -18,37 +20,23 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     const userToken: string = JSON.parse(
-      localStorage.getItem("user") as string
+      localStorage.getItem("token") as string
     );
 
     if (userToken === null) {
       return;
     }
 
-    const validateJWT = async () => {
-      const body = {
-        token: userToken,
-      };
-
-      const response = await axios.post("api/auth/verifytoken", body);
-
-      if (response.data === "Invalid token") {
-        localStorage.removeItem("user");
-        return;
-      } else {
-        localStorage.setItem("user", JSON.stringify(response.data));
-        const decodedJWT: DecodedJWT = jwtDecode(response.data);
-
-        setUserProfileState({
-          userID: decodedJWT.user._id,
-          userEmail: decodedJWT.user.email,
-          token: response.data,
-        });
-
+    const verifyToken = async () => {
+      const response: VERIFY_TOKEN_RESPONSE = await setUserProfile(
+        userToken,
+        setUserProfileState
+      );
+      if (response === VERIFY_TOKEN_RESPONSE.TokenFound) {
         router.push("/homepage");
       }
     };
-    validateJWT();
+    verifyToken();
   }, []);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
