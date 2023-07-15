@@ -28,6 +28,7 @@ const ScheduleDataSchema = require('../models/scheduleDataSchema');
 const ScheduleConfigSchema = require('../models/scheduleConfigSchema');
 
 const createNewProject = async (payload: CreateProjectQuery) => {
+  // to design the project around a global unified time irrespective of timezone
   const startDate = Date.parse(payload.projectStartDate);
   const endDate = Date.parse(payload.projectEndDate) + MS_IN_DAY - 1;
   const newProjectID = uuidv4();
