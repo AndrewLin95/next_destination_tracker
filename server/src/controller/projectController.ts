@@ -9,6 +9,7 @@ import {
   StatusPayload,
   NoteDataResponse,
   SetSchedulePayload,
+  ScheduleDataMongoResponse,
 } from "../utils/types";
 import { STATUS_CODES } from "../utils/constants";
 
@@ -79,7 +80,7 @@ export const deleteLocation = async (req: Request, res: Response) => {
     const locationID: string = req.params.locationID;
     const projectID: string = req.params.projectID;
 
-    const response: {status: StatusPayload} = await projectService.deleteLocation(locationID, projectID);
+    const response: {status: StatusPayload, scheduleData?: ScheduleDataMongoResponse} = await projectService.deleteLocation(locationID, projectID);
     if (response.status.statusCode === STATUS_CODES.ServerError) {
       res.status(500).send(JSON.stringify(response));
     } else {

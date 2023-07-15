@@ -19,7 +19,7 @@ import {
   DeleteScheduleResponse,
 } from "../utils/types";
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
-import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, URL_REGEX, SCHEDULE_SEGMENTS, MS_IN_WEEK, MS_IN_DAY, DEFAULT_SCHEDULE_COLORS, DELETE_RESPONSE } from '../utils/constants';
+import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, URL_REGEX, SCHEDULE_SEGMENTS, MS_IN_WEEK, MS_IN_DAY, DEFAULT_SCHEDULE_COLORS, DELETE_RESPONSE, MS_IN_MINUTE } from '../utils/constants';
 import { format, getUnixTime, isSaturday, isSunday, nextSaturday, previousSunday } from 'date-fns';
 import { generateFinalScheduleData, handleScheduleSequenceAdd, findDataSegments, handleDeleteSchedule, identifyNumOfConflicts, clearScheduleData } from '../utils/scheduleUtils';
 const ProjectSetupSchema = require('../models/projectSetupSchema');
@@ -350,13 +350,11 @@ const updateNote = async (payload: {noteData: NotePayloadData, mapData: MapPaylo
 }
 
 const deleteLocation = async (locationID: string, projectID: string) => {
-  // TODO, delete schedule
   try {
     const filter = {"locationID": locationID};
     const data = { deleteFlag: true }
     const projectLocationData: LocationMongoResponse = await ProjectLocationDataSchema.findOneAndUpdate(filter, data, {returnOriginal: false});
 
-    // delete schedule.
     const scheduleFilter = {"projectID": projectID};
     const scheduleData: ScheduleDataMongoResponse = await ScheduleDataSchema.findOne(scheduleFilter);
 
@@ -559,9 +557,10 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
 }
 
 const deleteSchedule = async (locationID: string, projectID: string) => {
-  const scheduleFilter = {"config.projectID": projectID}
+  const scheduleFilter = {"projectID": projectID};
   
   const scheduleData = await ScheduleDataSchema.findOne(scheduleFilter);
+
 
 }
 

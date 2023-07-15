@@ -1,3 +1,4 @@
+export const MS_IN_MINUTE = 60000
 export const msInDay = 86400000
 export const MS_IN_DAY = 86400000
 export const MS_IN_WEEK = 604800000

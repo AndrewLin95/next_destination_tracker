@@ -52,11 +52,19 @@ const NewProject: FC<Props> = ({
             {({ imageList, onImageUpload, onImageRemoveAll }) => (
               <div className="upload__image-wrapper">
                 {imageList[0] ? (
-                  <button className="mb-2" onClick={onImageRemoveAll}>
+                  <button
+                    type="button"
+                    className="mb-2"
+                    onClick={onImageRemoveAll}
+                  >
                     Remove Banner
                   </button>
                 ) : (
-                  <button className="mb-2" onClick={onImageUpload}>
+                  <button
+                    type="button"
+                    className="mb-2"
+                    onClick={onImageUpload}
+                  >
                     Upload Banner
                   </button>
                 )}

@@ -55,6 +55,10 @@ const scheduleDataSchema = new mongoose.Schema({
           type: String,
           required: false,
         },
+        scheduledTimeUnix: {
+          type: Number,
+          required: false,
+        },
         duration: {
           type: Number,
           required: false,
