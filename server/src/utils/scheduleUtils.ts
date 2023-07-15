@@ -1,11 +1,18 @@
 import { DELETE_RESPONSE } from "./constants";
-import { EachScheduleData, ScheduleDataMongoResponse, ScheduleKeys } from "./types";
+import { DeleteScheduleResponse, EachScheduleData, HandleScheduleSequenceDeleteResponse, ScheduleDataMongoResponse, ScheduleKeys, HandleScheduleSequenceAddResponse } from "./types";
 import { format } from "date-fns";
 const ScheduleDataSchema = require('../models/scheduleDataSchema')
 
-// Clear data is NOT required if there are 2 data to schedule AND there is a conflict.
-// in this scenario, we only need to add the new data in the non conflicting position
-export const handleScheduleSequenceAdd = (newScheduleData: EachScheduleData, conflictingData: EachScheduleData[], originalScheduleData: ScheduleDataMongoResponse) => {
+/**
+ * For ADDING data to the scheduling ONLY. If a conflicting data is of length 1, just add it in with default positions. If the conflicting data is length 2, 
+ * check if the conflicting data has any additional conflicts. If there is additional conflicts, the conflicts need to remain. If not, sort then resassign.
+ * If there are 3 conflicts, sort them, then return.
+ * @param {EachScheduleData} newScheduleData - The new schedule Data to add
+ * @param {EachScheduleData[]} conflictingData - The other conflicting data
+ * @param {ScheduleDataMongoResponse} originalScheduleData - The original schedule data
+ * @returns {HandleScheduleSequenceAddResponse} - A promise that resolves to the HandleScheduleSequenceAdd response.
+ */
+export const handleScheduleSequenceAdd = (newScheduleData: EachScheduleData, conflictingData: EachScheduleData[], originalScheduleData: ScheduleDataMongoResponse): HandleScheduleSequenceAddResponse => {
   const allScheduleDatas: EachScheduleData[] = [newScheduleData];
   let sequencedData;
 
@@ -20,9 +27,6 @@ export const handleScheduleSequenceAdd = (newScheduleData: EachScheduleData, con
     return { sequencedData: sequencedData, clear: true };
   }
 
-  // Identify additional conflicts originating from the conflictingData.
-  // If conflict, conflict position needs to remain. new = opposite of conflict
-  // If no conflict, sort then reassign position
   if (allScheduleDatas.length === 2) {
     const startTimeInMins = (parseInt((conflictingData[0].timeFrom as string).split(':')[0]) * 60) + parseInt((conflictingData[0].timeFrom as string).split(':')[1])
     const duration = conflictingData[0].duration as number
@@ -60,7 +64,7 @@ export const handleScheduleSequenceAdd = (newScheduleData: EachScheduleData, con
   }
 
   if (allScheduleDatas.length === 3) {
-    allScheduleDatas.shift();
+    allScheduleDatas.shift(); 
     // array only contains the conflicts
     const sortedScheduleData = sortScheduleData(allScheduleDatas);
 
@@ -85,8 +89,15 @@ export const handleScheduleSequenceAdd = (newScheduleData: EachScheduleData, con
   return { sequencedData: undefined, clear: false }
 }
 
-// for re-scheduling data after a scheduled location needs to be deleted
-export const handleScheduleSequenceDelete = async (conflictingData : EachScheduleData[], targetData: EachScheduleData, originalScheduleData: ScheduleDataMongoResponse) => {
+/**
+ * For re-scheduling the sequence on DELETE only. If a conflicting data is of length 1, check if the conflicting data has any additional conflicts. If it does, 
+ * reschedule all conflicting data. If it does not, update the confict to the default position. If the conflicting data is length === 2 , reset their positions.
+ * @param {EachScheduleData[]} conflictingData - The data that conflicts with the target to delete. Should NOT include the target data.
+ * @param {EachScheduleData} targetData - The target data to delete only.
+ * @param {ScheduleDataMongoResponse} originalScheduleData - The original schedule data.
+ * @returns {Promise<HandleScheduleSequenceDeleteResponse>} - A promise that resolves to the HandleScheduleSequenceDelete response.
+ */
+export const handleScheduleSequenceDelete = async (conflictingData : EachScheduleData[], targetData: EachScheduleData, originalScheduleData: ScheduleDataMongoResponse): Promise<HandleScheduleSequenceDeleteResponse> => {
   let sequencedData: EachScheduleData[] = [];
   let filteredScheduleData: ScheduleDataMongoResponse = originalScheduleData;
 
@@ -155,6 +166,11 @@ export const handleScheduleSequenceDelete = async (conflictingData : EachSchedul
   return { sequencedData: sequencedData, filteredScheduleData: filteredScheduleData }
 }
 
+/**
+ * Sorts the given schedule data array
+ * @param {EachScheduleData[]} unsortedScheduleData - The unsorted schedule data array
+ * @returns {EachScheduleData[]} Returns the sorted schedule data array
+ */
 export const sortScheduleData = (unsortedScheduleData: EachScheduleData[]) => {
   return unsortedScheduleData.sort((a, b) => {
     const aSplit = (a.timeFrom as string).split(":")
@@ -172,7 +188,14 @@ export const sortScheduleData = (unsortedScheduleData: EachScheduleData[]) => {
   })
 }
 
-export const findDataSegments = (targetLocationID: string, scheduleData: Map<string, EachScheduleData[]>, scheduleKeys: Map<string, ScheduleKeys>) => {
+/**
+ * Retrieves the data segment ONLY based on the associated target location ID
+ * @param {string} targetLocationID 
+ * @param {Map<string, EachScheduleData[]>} scheduleData The entire schedule data
+ * @param {Map<string, ScheduleKeys>} scheduleKeys The entire schedule keys
+ * @returns {EachScheduleData | null} Returns the target schedule data segment ONLY.
+ */
+export const findDataSegments = (targetLocationID: string, scheduleData: Map<string, EachScheduleData[]>, scheduleKeys: Map<string, ScheduleKeys>): EachScheduleData | null => {
   const targetKey = scheduleKeys.get(targetLocationID) ?? null;
 
   if (targetKey === null) {
@@ -193,7 +216,16 @@ export const findDataSegments = (targetLocationID: string, scheduleData: Map<str
   }
 }
 
-export const identifyNumOfConflicts = (targetLocationID: string, startTimeInMins: number, date: string, scheduleData: Map<string, EachScheduleData[]>, duration: number) => {
+/**
+ * Identifies the number of conflicts given a target locationID
+ * @param {string} targetLocationID - The target location ID 
+ * @param {number} startTimeInMins - The target start time in minutes
+ * @param {string} date - The target date
+ * @param {Map<string, EachScheduleData[]>} scheduleData - The entire schedule data map
+ * @param {number} duration - The target duration
+ * @returns {Set<string>} The set of locationIDs that conflict with the target location ID
+ */
+export const identifyNumOfConflicts = (targetLocationID: string, startTimeInMins: number, date: string, scheduleData: Map<string, EachScheduleData[]>, duration: number): Set<string> => {
   let i = 0;
   const conflictingLocationIDs: Set<string> = new Set();
   let currTime = startTimeInMins;
@@ -215,59 +247,54 @@ export const identifyNumOfConflicts = (targetLocationID: string, startTimeInMins
   return conflictingLocationIDs 
 }
 
-export const retrieveDataSegmentFromKey = (targetKey: ScheduleKeys, scheduleData: Map<string, EachScheduleData[]>, targetLocationID: string) => {
-  const targetSegment = scheduleData.get(targetKey.key) as EachScheduleData[];
-  let targetData: EachScheduleData = targetSegment[0];
-  targetSegment.forEach(eachScheduleData => {
-    if (eachScheduleData.locationID === targetLocationID) {
-      targetData = eachScheduleData;
-    }
-  });
-
-  return targetData;
-}
-
-// delete all existing scheduleData in the current time slot. 
-export const handleDeleteSchedule = async (originalScheduleData: ScheduleDataMongoResponse, locationIDToDelete: string, scheduleDateUnix: number) => {
-  // need to unset scheduleKeys
+/**
+ * Delete a specific schedule point
+ * @param {ScheduleDataMongoResponse} originalScheduleData - The Original Schedule Data
+ * @param {string} locationIDToDelete - The delete target locationID
+ * @param {number} scheduleDateUnix - The delete target unixtime
+ * @returns {Promise<DeleteScheduleResponse>} A promise that resolves to the delete schedule response.
+ */
+export const handleDeleteSchedule = async (originalScheduleData: ScheduleDataMongoResponse, locationIDToDelete: string, scheduleDateUnix: number): Promise<DeleteScheduleResponse> => {
   if (originalScheduleData.scheduleKeys.has(locationIDToDelete)) {
     const targetKey = originalScheduleData.scheduleKeys.get(locationIDToDelete) as ScheduleKeys;
     if (originalScheduleData.scheduleData.has(targetKey.key)){
-      const targetData: EachScheduleData = retrieveDataSegmentFromKey(targetKey, originalScheduleData.scheduleData, locationIDToDelete)
-
-      let currTimeInMinutes = (parseInt((targetData.timeFrom as string).split(':')[0]) * 60) + parseInt((targetData.timeFrom as string).split(':')[1])
+      const targetData: EachScheduleData | null = findDataSegments(locationIDToDelete, originalScheduleData.scheduleData, originalScheduleData.scheduleKeys)
       
-      const date = format(new Date(scheduleDateUnix), "PPP");
-      // need to delete, and update position + num columns
-      const conflictingLocationIDs = identifyNumOfConflicts(locationIDToDelete, currTimeInMinutes, date, originalScheduleData.scheduleData, targetData.duration as number)
-
-      const conflictingData: EachScheduleData[] = [];
-      conflictingLocationIDs.forEach(eachLocationID => {
-        const dataSegment = findDataSegments(eachLocationID, originalScheduleData.scheduleData, originalScheduleData.scheduleKeys)
-        if (dataSegment !== null) {
-          conflictingData.push(dataSegment);
-        }
-      });
-
-      // if there is no conflicts, just return the filteredScheduleData
-      if (conflictingLocationIDs.size === 0) {
-        const filteredScheduleData: ScheduleDataMongoResponse = await clearScheduleData([targetData], date, originalScheduleData.projectID);
-
-        return {
-          status: DELETE_RESPONSE.Success,
-          finalScheduleData: filteredScheduleData,
-          targetData: targetData,
-        }
-      } else {
-        // get the datas and return after modifying their numColumns and position /LOOK AT THIS
-        const { sequencedData, filteredScheduleData } = await handleScheduleSequenceDelete(conflictingData, targetData, originalScheduleData);
-        if (sequencedData.length !== 0) {
-          const returnScheduleData = await generateFinalScheduleData(sequencedData, filteredScheduleData, date);
-          return { 
+      if (targetData !== null) {
+        let currTimeInMinutes = (parseInt((targetData.timeFrom as string).split(':')[0]) * 60) + parseInt((targetData.timeFrom as string).split(':')[1])
+      
+        const date = format(new Date(scheduleDateUnix), "PPP");
+        // need to delete, and update position + num columns
+        const conflictingLocationIDs = identifyNumOfConflicts(locationIDToDelete, currTimeInMinutes, date, originalScheduleData.scheduleData, targetData.duration as number)
+  
+        const conflictingData: EachScheduleData[] = [];
+        conflictingLocationIDs.forEach(eachLocationID => {
+          const dataSegment = findDataSegments(eachLocationID, originalScheduleData.scheduleData, originalScheduleData.scheduleKeys)
+          if (dataSegment !== null) {
+            conflictingData.push(dataSegment);
+          }
+        });
+  
+        // if there is no conflicts, just return the filteredScheduleData
+        if (conflictingLocationIDs.size === 0) {
+          const filteredScheduleData: ScheduleDataMongoResponse = await clearScheduleData([targetData], date, originalScheduleData.projectID);
+  
+          return {
             status: DELETE_RESPONSE.Success,
-            finalScheduleData: returnScheduleData,
+            finalScheduleData: filteredScheduleData,
             targetData: targetData,
-          };
+          }
+        } else {
+          // get the datas and return after modifying their numColumns and position /LOOK AT THIS
+          const { sequencedData, filteredScheduleData } = await handleScheduleSequenceDelete(conflictingData, targetData, originalScheduleData);
+          if (sequencedData.length !== 0) {
+            const returnScheduleData = await generateFinalScheduleData(sequencedData, filteredScheduleData, date);
+            return { 
+              status: DELETE_RESPONSE.Success,
+              finalScheduleData: returnScheduleData,
+              targetData: targetData,
+            };
+          }
         }
       }
     }
@@ -278,6 +305,13 @@ export const handleDeleteSchedule = async (originalScheduleData: ScheduleDataMon
   }
 }
 
+/**
+ * Identify time range of the Data
+ * @param {EachScheduleData[]} allScheduleDatas A list of Schedule Datas that you want to parse the initial time and the end time of the range.
+ * @returns {object} An object containing the initial and end times of the range
+ * @property {number} fromInMins - The initial time of the computed range in minutes
+ * @property {number} toInMins - The end time of the computed range in minutes
+ */
 export const clearFromAndTo = (allScheduleDatas: EachScheduleData[]) => {
   const fromArray: number[] = [];
   const toArray: number[] = [];
@@ -298,7 +332,14 @@ export const clearFromAndTo = (allScheduleDatas: EachScheduleData[]) => {
   return { fromInMins, toInMins }
 }
 
-export const clearScheduleData = async (scheduleData: EachScheduleData[], formattedDate: string, projectID: string) => {
+/**
+ * Clear Schedule Data for a specific date range.
+ * @param {EachScheduleData[]} scheduleData - The entire schedule data
+ * @param {string} formattedDate - The date formatted to 'Jan 21st, 2023 2:30'
+ * @param {string} projectID - The projectID used to update the project
+ * @returns {Promise<ScheduleDataMongoResponse>} A promise that resolves to the filtered schedule data.
+ */
+export const clearScheduleData = async (scheduleData: EachScheduleData[], formattedDate: string, projectID: string): Promise<ScheduleDataMongoResponse> => {
   const { fromInMins, toInMins } = clearFromAndTo(scheduleData);
   let clearFrom = fromInMins;
   const clearTo = toInMins
@@ -319,7 +360,14 @@ export const clearScheduleData = async (scheduleData: EachScheduleData[], format
   return filteredScheduleData;
 }
 
-export const generateFinalScheduleData = async (sequencedData:EachScheduleData[], scheduleDataToAddTo: ScheduleDataMongoResponse, formattedDate: string) => {
+/**
+ * Generate Final Schedule Data. Including all non data segments
+ * @param {EachScheduleData[]} sequencedData - New Scheduled Data that has been sequenced.
+ * @param {ScheduleDataMongoResponse} scheduleDataToAddTo - The final full Schedule Data to add the data to.
+ * @param {string} formattedDate - The date formatted to 'Jan 21st, 2023 2:30'
+ * @returns {Promise<ScheduleDataMongoResponse>} A promise that resolves to the filtered schedule data.
+ */
+export const generateFinalScheduleData = async (sequencedData:EachScheduleData[], scheduleDataToAddTo: ScheduleDataMongoResponse, formattedDate: string): Promise<ScheduleDataMongoResponse> => {
   sequencedData.forEach(eachScheduleData => {
     let alreadySetData = false;
     let currTimeInMinutes = (parseInt((eachScheduleData.timeFrom as String).split(':')[0]) * 60) + parseInt((eachScheduleData.timeFrom as String).split(':')[1]);

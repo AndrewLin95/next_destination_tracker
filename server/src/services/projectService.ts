@@ -1,4 +1,4 @@
-import axios, { all } from 'axios';
+import axios from 'axios';
 import { s3Client } from '../utils/s3';
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from 'uuid';
@@ -16,6 +16,7 @@ import {
   EachScheduleData,
   ScheduleKeys,
   ScheduleDataMongoResponse,
+  DeleteScheduleResponse,
 } from "../utils/types";
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
 import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, URL_REGEX, SCHEDULE_SEGMENTS, MS_IN_WEEK, MS_IN_DAY, DEFAULT_SCHEDULE_COLORS, DELETE_RESPONSE } from '../utils/constants';
@@ -348,12 +349,6 @@ const updateNote = async (payload: {noteData: NotePayloadData, mapData: MapPaylo
   return statusPayload;
 }
 
-interface DeleteResponse {
-  status: DELETE_RESPONSE,
-  finalScheduleData?: ScheduleDataMongoResponse,
-  targetData?: EachScheduleData
-} 
-
 const deleteLocation = async (locationID: string, projectID: string) => {
   // TODO, delete schedule
   try {
@@ -366,7 +361,7 @@ const deleteLocation = async (locationID: string, projectID: string) => {
     const scheduleData: ScheduleDataMongoResponse = await ScheduleDataSchema.findOne(scheduleFilter);
 
     if (projectLocationData.noteData?.scheduleDate !== undefined) {
-      const deleteResponse: DeleteResponse = await handleDeleteSchedule(scheduleData, locationID, projectLocationData.noteData.scheduleDate);
+      const deleteResponse: DeleteScheduleResponse = await handleDeleteSchedule(scheduleData, locationID, projectLocationData.noteData.scheduleDate);
 
       if (deleteResponse.status === DELETE_RESPONSE.Success) {
         if (deleteResponse.finalScheduleData !== undefined && deleteResponse.targetData !== undefined) {

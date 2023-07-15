@@ -1,4 +1,4 @@
-import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, LABEL_COLOR, SCHEDULE_SEGMENTS, NOTE_PRIORITY } from "./constants"
+import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, LABEL_COLOR, SCHEDULE_SEGMENTS, NOTE_PRIORITY, DELETE_RESPONSE } from "./constants"
 
 export interface jwtToken {
   exp: number,
@@ -212,4 +212,20 @@ export interface SetSchedulePayload {
   noteName: string,
   notePriority: NOTE_PRIORITY,
   duration: number,
+}
+
+export interface DeleteScheduleResponse {
+  status: DELETE_RESPONSE,
+  finalScheduleData?: ScheduleDataMongoResponse,
+  targetData?: EachScheduleData
+}
+
+export interface HandleScheduleSequenceDeleteResponse {
+  sequencedData: EachScheduleData[];
+  filteredScheduleData: ScheduleDataMongoResponse;
+}
+
+export interface HandleScheduleSequenceAddResponse {
+  sequencedData: EachScheduleData[] | undefined;
+  clear: boolean;
 }
