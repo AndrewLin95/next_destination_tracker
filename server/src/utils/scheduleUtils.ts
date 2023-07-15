@@ -1,3 +1,4 @@
+import { formatInTimeZone } from "date-fns-tz";
 import { DELETE_RESPONSE } from "./constants";
 import { DeleteScheduleResponse, EachScheduleData, HandleScheduleSequenceDeleteResponse, ScheduleDataMongoResponse, ScheduleKeys, HandleScheduleSequenceAddResponse } from "./types";
 import { format } from "date-fns";
@@ -263,7 +264,7 @@ export const handleDeleteSchedule = async (originalScheduleData: ScheduleDataMon
       if (targetData !== null) {
         let currTimeInMinutes = (parseInt((targetData.timeFrom as string).split(':')[0]) * 60) + parseInt((targetData.timeFrom as string).split(':')[1])
       
-        const date = format(new Date(scheduleDateUnix), "PPP");
+        const date = formatInTimeZone(scheduleDateUnix, 'GMT', "PPP");
         // need to delete, and update position + num columns
         const conflictingLocationIDs = identifyNumOfConflicts(locationIDToDelete, currTimeInMinutes, date, originalScheduleData.scheduleData, targetData.duration as number)
   
