@@ -20,7 +20,8 @@ import {
 } from "../utils/types";
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
 import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, URL_REGEX, SCHEDULE_SEGMENTS, MS_IN_WEEK, MS_IN_DAY, DEFAULT_SCHEDULE_COLORS, DELETE_RESPONSE, MS_IN_MINUTE } from '../utils/constants';
-import { format, getUnixTime, isSaturday, isSunday, nextSaturday, previousSunday } from 'date-fns';
+import { getUnixTime, isSaturday, isSunday, nextSaturday, parse, previousSunday, startOfDay } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz'
 import { generateFinalScheduleData, handleScheduleSequenceAdd, findDataSegments, handleDeleteSchedule, identifyNumOfConflicts, clearScheduleData } from '../utils/scheduleUtils';
 const ProjectSetupSchema = require('../models/projectSetupSchema');
 const ProjectLocationDataSchema = require('../models/projectLocationDataSchema');
@@ -28,6 +29,7 @@ const ScheduleDataSchema = require('../models/scheduleDataSchema');
 const ScheduleConfigSchema = require('../models/scheduleConfigSchema');
 
 const createNewProject = async (payload: CreateProjectQuery) => {
+  // to design the project around a global unified time irrespective of timezone
   const startDate = Date.parse(payload.projectStartDate);
   const endDate = Date.parse(payload.projectEndDate) + MS_IN_DAY - 1;
   const newProjectID = uuidv4();
@@ -124,9 +126,9 @@ const createNewProject = async (payload: CreateProjectQuery) => {
 
           const eachHeaderData = {
             enabled: enabledStatus,
-            date: format(new Date(j), "PPP"),
+            date: formatInTimeZone(j, 'GMT', "PPP"),
             dateUnix: j,
-            dayOfWeek: format(new Date(j), "EEEE"),
+            dayOfWeek: formatInTimeZone(j, 'GMT', "EEEE"),
           }
 
           headerData.push(eachHeaderData)
@@ -444,7 +446,8 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
     const startingTimeInMinutes = (parseInt(schedulePayload.time.split(':')[0]) * 60) + parseInt(schedulePayload.time.split(':')[1])
     const endTimeInMinutes = startingTimeInMinutes + schedulePayload.duration;
     const formattedEndTime = `${Math.floor(endTimeInMinutes / 60)}:${endTimeInMinutes % 60 === 0 ? "00" : endTimeInMinutes % 60}`
-    const formattedDate = format(new Date(schedulePayload.dateUnix), "PPP"); 
+    const formattedDate = formatInTimeZone(schedulePayload.dateUnix, 'GMT', "PPP");
+    const scheduledDateTime = schedulePayload.dateUnix + (startingTimeInMinutes * MS_IN_MINUTE);
 
     const newScheduleData = {
       scheduleID: scheduleID,
@@ -456,6 +459,7 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
       duration: schedulePayload.duration,
       noteMessage: schedulePayload.noteMessage,
       notePriority: schedulePayload.notePriority,
+      scheduledTimeUnix: scheduledDateTime,
       position: 0,
       numColumns: 1,
     }
@@ -528,8 +532,8 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
     
     const locationFilter = {'locationID': schedulePayload.locationID};
     const scheduleLocationNote: LocationMongoResponse = await ProjectLocationDataSchema.findOne(locationFilter)
-    scheduleLocationNote.noteData.scheduleDate = schedulePayload.dateUnix;
-    scheduleLocationNote.mapData.scheduleDate = schedulePayload.dateUnix;
+    scheduleLocationNote.noteData.scheduleDate = scheduledDateTime;
+    scheduleLocationNote.mapData.scheduleDate = scheduledDateTime;
 
     const returnLocationData: LocationMongoResponse = await ProjectLocationDataSchema.findOneAndUpdate(locationFilter, scheduleLocationNote, {returnOriginal: false});
 
