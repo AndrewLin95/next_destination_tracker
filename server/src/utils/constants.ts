@@ -28,6 +28,7 @@ export enum ERROR_DATA {
   Server = "We could not complete your request due to a technical issue on our end. Please try again later.",
   ScheduleConflict = "There are too many scheduling conflicts. Please try another time slot.",
   ScheduleDuplicate = "You have already scheduled this item.",
+  ScheduleOutOfBounds = "You scheduled this out of bounds. Please try a different schedule time.",
   ScheduleDisabled = "This time slot has been disabled. If you intend to add data here, please enable it in the configuration."
 }
 

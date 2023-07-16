@@ -20,7 +20,7 @@ import {
 } from "../utils/types";
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
 import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, URL_REGEX, SCHEDULE_SEGMENTS, MS_IN_WEEK, MS_IN_DAY, DEFAULT_SCHEDULE_COLORS, DELETE_RESPONSE, MS_IN_MINUTE } from '../utils/constants';
-import { getUnixTime, isSaturday, isSunday, nextSaturday, parse, previousSunday, startOfDay } from 'date-fns';
+import { getUnixTime, isSaturday, isSunday, nextSaturday, previousSunday } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz'
 import { generateFinalScheduleData, handleScheduleSequenceAdd, findDataSegments, handleDeleteSchedule, identifyNumOfConflicts, clearScheduleData } from '../utils/scheduleUtils';
 const ProjectSetupSchema = require('../models/projectSetupSchema');
@@ -29,7 +29,6 @@ const ScheduleDataSchema = require('../models/scheduleDataSchema');
 const ScheduleConfigSchema = require('../models/scheduleConfigSchema');
 
 const createNewProject = async (payload: CreateProjectQuery) => {
-  // to design the project around a global unified time irrespective of timezone
   const startDate = Date.parse(payload.projectStartDate);
   const endDate = Date.parse(payload.projectEndDate) + MS_IN_DAY - 1;
   const newProjectID = uuidv4();
@@ -429,7 +428,15 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
           errorData: ERROR_DATA.ScheduleDuplicate,
         }
       }
-
+      return statusPayload;
+    } else if ((currTimeInMinutes + schedulePayload.duration) > 1440) {
+      const statusPayload: {status: StatusPayload} = {
+        status: {
+          statusCode: STATUS_CODES.BadRequest,
+          errorCause: ERROR_CAUSE.Schedule,
+          errorData: ERROR_DATA.ScheduleOutOfBounds,
+        }
+      }
       return statusPayload;
     } else {
       const formattedDate = `${schedulePayload.date} ${Math.floor(currTimeInMinutes / 60)}:${(currTimeInMinutes % 60 === 0 ? "00" : currTimeInMinutes % 60)}`
