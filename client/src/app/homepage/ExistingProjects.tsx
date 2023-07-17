@@ -3,7 +3,7 @@ import { ProjectData } from "@/util/models";
 import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import { format } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
 
 interface Props {
   existingProjectsList: ProjectData[];
@@ -27,12 +27,14 @@ const ExistingProjects: FC<Props> = ({
       <div className="overflow-hidden w-full" ref={emblaRef}>
         <div className="flex select-none cursor-grab active:cusor-grabbing">
           {existingProjectsList.map((existingProject) => {
-            const startDate = format(
-              new Date(existingProject.project.projectStartDate),
+            const startDate = formatInTimeZone(
+              existingProject.project.projectStartDate,
+              "GMT",
               "PP"
             );
-            const endDate = format(
-              new Date(existingProject.project.projectEndDate),
+            const endDate = formatInTimeZone(
+              existingProject.project.projectEndDate,
+              "GMT",
               "PP"
             );
             return (

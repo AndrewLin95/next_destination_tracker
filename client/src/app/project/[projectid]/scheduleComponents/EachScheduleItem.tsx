@@ -7,9 +7,9 @@ import {
   SIMPLE_BUTTON_STYLE,
 } from "@/util/constants";
 import SelectivelyRenderPriorityIcons from "../components/SelectivelyRenderPriorityIcons";
-import { format } from "date-fns";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { formatInTimeZone } from "date-fns-tz";
 
 interface Props {
   eachSchedule: EachScheduleData;
@@ -28,8 +28,9 @@ const EachScheduleItem: FC<Props> = ({
     const segmentHeight =
       (eachSchedule.duration / configSegments) * BASE_SCHEDULE_HEIGHT - 0.75;
     const segmentWidth = 90 / (eachSchedule.numColumns as number);
-    const dayOfWeek: DAYS_OF_WEEK = format(
-      new Date(dateUnix),
+    const dayOfWeek: DAYS_OF_WEEK = formatInTimeZone(
+      dateUnix,
+      "GMT",
       "iiii"
     ) as DAYS_OF_WEEK;
 

@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import RenderAllPriorityIcons from "../components/RenderPriorityIcons";
 import SelectivelyRenderPriorityIcons from "../components/SelectivelyRenderPriorityIcons";
-import { format } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
 
 interface Props {
   note: NoteData;
@@ -38,8 +38,12 @@ const Note: FC<Props> = ({
   let formattedDate;
   let dayOfWeek: DAYS_OF_WEEK | null = null;
   if (note.scheduleDate !== undefined) {
-    formattedDate = format(new Date(note.scheduleDate), "iii");
-    dayOfWeek = format(new Date(note.scheduleDate), "iiii") as DAYS_OF_WEEK;
+    formattedDate = formatInTimeZone(note.scheduleDate, "GMT", "iii");
+    dayOfWeek = formatInTimeZone(
+      note.scheduleDate,
+      "GMT",
+      "iiii"
+    ) as DAYS_OF_WEEK;
   }
 
   return (
