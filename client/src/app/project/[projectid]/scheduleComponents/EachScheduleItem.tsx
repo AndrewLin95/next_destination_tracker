@@ -17,6 +17,7 @@ interface Props {
   scheduleColors: ScheduleColors;
   dateUnix: number;
   handleDeleteSchedule: (locationID: string) => void;
+  stackedSegment: boolean;
 }
 
 const EachScheduleItem: FC<Props> = ({
@@ -25,6 +26,7 @@ const EachScheduleItem: FC<Props> = ({
   scheduleColors,
   dateUnix,
   handleDeleteSchedule,
+  stackedSegment,
 }) => {
   if (eachSchedule.dataSegment && eachSchedule.duration !== undefined) {
     const segmentHeight =
@@ -42,7 +44,11 @@ const EachScheduleItem: FC<Props> = ({
         style={{
           width: `${segmentWidth}%`,
           height: `${segmentHeight}rem`,
-          position: eachSchedule.position === 0 ? "static" : "relative",
+          position: stackedSegment
+            ? "static"
+            : eachSchedule.position === 0
+            ? "static"
+            : "relative",
           left: eachSchedule.position === 0 ? "" : "47%",
           backgroundImage: `linear-gradient(${scheduleColors[dayOfWeek]}${HEX_TRANSPARENCY.SeventyPercent}, transparent)`,
           textShadow: "1px 1px 2px black",

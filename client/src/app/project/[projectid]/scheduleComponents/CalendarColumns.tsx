@@ -35,11 +35,28 @@ const CalendarColumns: FC<Props> = ({
     <div className="w-[calc((100vw-25rem)/7)] h-full">
       {Object.entries(timeData).map(([key, time]) => {
         const formattedKey = `${headerData.date} ${time}`;
+        let stackedSegment = false;
+        if (formattedKey in scheduleInfoData) {
+          let numSegments = 0;
+          scheduleInfoData[formattedKey].forEach((infoData) => {
+            if (infoData.dataSegment) {
+              numSegments++;
+            }
+          });
+          if (numSegments === 2) {
+            stackedSegment = true;
+          }
+        }
+
         return (
           <div
             className={`${
               headerData.enabled ? "bg-transparent" : "bg-slate-500/20"
             } h-12 border border-Background_Lighter/50 p-1`}
+            style={{
+              display: "flex",
+              gap: stackedSegment ? "2px" : "",
+            }}
             key={key}
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) =>
@@ -62,6 +79,7 @@ const CalendarColumns: FC<Props> = ({
                       scheduleColors={projectData.scheduleColors}
                       dateUnix={headerData.dateUnix}
                       handleDeleteSchedule={handleDeleteSchedule}
+                      stackedSegment={stackedSegment}
                     />
                   );
                 })
