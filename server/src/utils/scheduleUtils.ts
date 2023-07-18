@@ -120,6 +120,10 @@ export const handleScheduleSequenceDelete = async (conflictingData : EachSchedul
 
       // since we are using the original scheduled data, conflicts 1 means that it only conflicts with the one that we removed
       if (conflicts.size === 1) {
+        const dataArrayToClear = [targetData, ...conflictingData];
+        const sortedDataToClear = sortScheduleData(dataArrayToClear);
+        filteredScheduleData = await clearScheduleData(sortedDataToClear, date, originalScheduleData.projectID);
+
         conflictingData[0].position = 0;
         conflictingData[0].numColumns = 1;
         sequencedData = conflictingData;
@@ -175,7 +179,7 @@ export const handleScheduleSequenceDelete = async (conflictingData : EachSchedul
  * @param {EachScheduleData[]} unsortedScheduleData - The unsorted schedule data array
  * @returns {EachScheduleData[]} Returns the sorted schedule data array
  */
-export const sortScheduleData = (unsortedScheduleData: EachScheduleData[]) => {
+export const sortScheduleData = (unsortedScheduleData: EachScheduleData[]): EachScheduleData[] => {
   return unsortedScheduleData.sort((a, b) => {
     const aSplit = (a.timeFrom as string).split(":")
     const bSplit = (b.timeFrom as string).split(":")
@@ -338,7 +342,7 @@ export const clearFromAndTo = (allScheduleDatas: EachScheduleData[]) => {
 
 /**
  * Clear Schedule Data for a specific date range.
- * @param {EachScheduleData[]} scheduleData - The entire schedule data
+ * @param {EachScheduleData[]} scheduleData - The entire SORTED schedule data
  * @param {string} formattedDate - The date formatted to 'Jan 21st, 2023 2:30'
  * @param {string} projectID - The projectID used to update the project
  * @returns {Promise<ScheduleDataMongoResponse>} A promise that resolves to the filtered schedule data.
