@@ -17,6 +17,7 @@ interface Props {
     dateUnix: number,
     enabledOrDisabled: boolean
   ) => void;
+  handleDeleteSchedule: (locationID: string) => void;
 }
 
 const ScheduleModule: FC<Props> = ({
@@ -24,6 +25,7 @@ const ScheduleModule: FC<Props> = ({
   scheduleData,
   scheduleConfig,
   handleDrop,
+  handleDeleteSchedule,
 }) => {
   return (
     <div className="h-full w-full">
@@ -51,6 +53,7 @@ const ScheduleModule: FC<Props> = ({
               handleDrop={handleDrop}
               scheduleInfoData={scheduleData.scheduleData}
               projectData={projectData}
+              handleDeleteSchedule={handleDeleteSchedule}
             />
           );
         })}

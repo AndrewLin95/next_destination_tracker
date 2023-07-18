@@ -107,8 +107,8 @@ export const deleteSchedule = async (req: Request, res: Response) => {
     const locationID: string = req.params.locationID;
     const projectID: string = req.params.projectID;
 
-    const respose = await projectService.deleteSchedule(locationID, projectID);
-
+    const response = await projectService.deleteSchedule(locationID, projectID);
+    res.status(200).send(JSON.stringify(response))
   } catch (err) {
     res.status(500).send(err)
   }

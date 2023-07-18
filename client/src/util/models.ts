@@ -121,6 +121,7 @@ export interface EachScheduleData {
   timeFrom?: string,
   timeTo?: string,
   duration?: number,
+  scheduledTimeUnix?: number,
   noteMessage?: string,
   notePriority: NOTE_PRIORITY,
 }
@@ -205,4 +206,12 @@ export interface DroppedParsedData {
   noteMessage: string;
   noteName: string;
   notePriority: NOTE_PRIORITY;
+}
+
+export interface DeleteScheduleResponse {
+  scheduleData:  ScheduleData;
+  locationData: LocationData;
+  status: {
+    statusCode: StatusPayload
+  }
 }

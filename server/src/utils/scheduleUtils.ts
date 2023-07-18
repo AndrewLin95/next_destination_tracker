@@ -1,7 +1,6 @@
 import { formatInTimeZone } from "date-fns-tz";
 import { DELETE_RESPONSE } from "./constants";
 import { DeleteScheduleResponse, EachScheduleData, HandleScheduleSequenceDeleteResponse, ScheduleDataMongoResponse, ScheduleKeys, HandleScheduleSequenceAddResponse } from "./types";
-import { format } from "date-fns";
 const ScheduleDataSchema = require('../models/scheduleDataSchema')
 
 /**
@@ -14,6 +13,10 @@ const ScheduleDataSchema = require('../models/scheduleDataSchema')
  * @returns {HandleScheduleSequenceAddResponse} - A promise that resolves to the HandleScheduleSequenceAdd response.
  */
 export const handleScheduleSequenceAdd = (newScheduleData: EachScheduleData, conflictingData: EachScheduleData[], originalScheduleData: ScheduleDataMongoResponse): HandleScheduleSequenceAddResponse => {
+  // update this for scnearios where greater than length = 2. sort, then reassign alternating.
+  // to check for furthur conflicts. recusrively scan upwards, to find a clear break. then 
+  // loop over to re-sort everything from clean break to the next clean break.
+  
   const allScheduleDatas: EachScheduleData[] = [newScheduleData];
   let sequencedData;
 

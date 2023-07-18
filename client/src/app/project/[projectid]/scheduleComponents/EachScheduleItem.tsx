@@ -16,6 +16,7 @@ interface Props {
   configSegments: number;
   scheduleColors: ScheduleColors;
   dateUnix: number;
+  handleDeleteSchedule: (locationID: string) => void;
 }
 
 const EachScheduleItem: FC<Props> = ({
@@ -23,6 +24,7 @@ const EachScheduleItem: FC<Props> = ({
   configSegments,
   scheduleColors,
   dateUnix,
+  handleDeleteSchedule,
 }) => {
   if (eachSchedule.dataSegment && eachSchedule.duration !== undefined) {
     const segmentHeight =
@@ -52,7 +54,11 @@ const EachScheduleItem: FC<Props> = ({
               {eachSchedule.noteName}
             </div>
             <button className={`${SIMPLE_BUTTON_STYLE} absolute right-1 top-0`}>
-              <FontAwesomeIcon icon={faTrashCan} style={{ color: "#b070b2" }} />
+              <FontAwesomeIcon
+                icon={faTrashCan}
+                style={{ color: "#b070b2" }}
+                onClick={() => handleDeleteSchedule(eachSchedule.locationID)}
+              />
             </button>
           </div>
           <div className="text-xs">

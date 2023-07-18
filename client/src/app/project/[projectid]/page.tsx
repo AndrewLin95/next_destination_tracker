@@ -19,6 +19,7 @@ import {
   ScheduleDataResponse,
   ScheduleConfigData,
   DeleteNoteResponse,
+  DeleteScheduleResponse,
 } from "@/util/models";
 import authConfigData from "@/util/authConfig";
 import axios, { isAxiosError } from "axios";
@@ -524,17 +525,36 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     handlePostScheduleData();
   };
 
-  const handleDeleteSchedule = () => {
-    const handlePostScheduleData = async () => {
-      const url = `/api/project/setscheduledata/`;
+  const handleDeleteSchedule = (locationID: string) => {
+    const handleDeleteScheduleData = async () => {
+      const url = `/api/project/deleteschedule/${projectData.projectID}/${locationID}`;
+      const body = {};
       const authConfig = authConfigData(
         (userProfileState as UserProfileState).token
       );
 
       try {
-        // const response = await axios.put();
+        const response = await axios.put(url, body, authConfig);
+        const responseData: DeleteScheduleResponse = response.data;
+
+        const tempMapData: MapData[] = [...mapData];
+        const mapIndex = tempMapData.findIndex(
+          (value) => value.locationID === locationID
+        );
+        tempMapData[mapIndex] = responseData.locationData.mapData;
+
+        const tempNoteData: NoteData[] = [...noteData];
+        const noteIndex = tempNoteData.findIndex(
+          (value) => value.locationID === locationID
+        );
+        tempNoteData[noteIndex] = responseData.locationData.noteData;
+
+        setScheduleData(responseData.scheduleData);
+        setNoteData(tempNoteData);
+        setMapData(tempMapData);
       } catch (err) {}
     };
+    handleDeleteScheduleData();
   };
 
   useEffect(() => {
@@ -587,6 +607,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
               scheduleData={scheduleData}
               scheduleConfig={scheduleConfig}
               handleDrop={handleDrop}
+              handleDeleteSchedule={handleDeleteSchedule}
             />
           )}
           <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">

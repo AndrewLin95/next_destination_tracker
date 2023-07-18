@@ -20,6 +20,7 @@ interface Props {
     [key: string]: EachScheduleData[];
   };
   projectData: ProjectData;
+  handleDeleteSchedule: (locationID: string) => void;
 }
 
 const CalendarColumns: FC<Props> = ({
@@ -28,6 +29,7 @@ const CalendarColumns: FC<Props> = ({
   handleDrop,
   scheduleInfoData,
   projectData,
+  handleDeleteSchedule,
 }) => {
   return (
     <div className="w-[calc((100vw-25rem)/7)] h-full">
@@ -59,6 +61,7 @@ const CalendarColumns: FC<Props> = ({
                       configSegments={projectData.scheduleConfig.minPerSegment}
                       scheduleColors={projectData.scheduleColors}
                       dateUnix={headerData.dateUnix}
+                      handleDeleteSchedule={handleDeleteSchedule}
                     />
                   );
                 })

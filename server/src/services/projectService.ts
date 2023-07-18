@@ -412,6 +412,7 @@ const deleteLocation = async (locationID: string, projectID: string) => {
 }
 
 const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
+  // https://mongoosejs.com/docs/transactions.html
   try {
     let returnScheduleObj: ScheduleDataMongoResponse = {} as ScheduleDataMongoResponse;
     const filter = {
@@ -568,10 +569,64 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
 }
 
 const deleteSchedule = async (locationID: string, projectID: string) => {
-  const scheduleFilter = {"projectID": projectID};
-  
-  const scheduleData = await ScheduleDataSchema.findOne(scheduleFilter);
+  const filter = {"locationID": locationID};
+  const update = { $unset: { "mapData.scheduleDate": "", "noteData.scheduleDate": "" } };
+  const projectLocationData: LocationMongoResponse = await ProjectLocationDataSchema.findOneAndUpdate(filter, update, {returnOriginal: false});
 
+  const scheduleFilter = {"projectID": projectID};
+  const scheduleData: ScheduleDataMongoResponse = await ScheduleDataSchema.findOne(scheduleFilter);
+
+  const targetKey = scheduleData.scheduleKeys.get(locationID) ?? null;
+  if (targetKey !== null) {
+    const targetData = scheduleData.scheduleData.get(targetKey.key) ?? null;
+    if (targetData !== null) {
+      let scheduleDateUnix = 1;
+      targetData.forEach(eachData => {
+        if (eachData.locationID === locationID) {
+          scheduleDateUnix = eachData.scheduledTimeUnix as number;
+        }
+      });
+
+      const deleteResponse: DeleteScheduleResponse = await handleDeleteSchedule(scheduleData, locationID, scheduleDateUnix);
+
+      if (deleteResponse.status === DELETE_RESPONSE.Success) {
+        if (deleteResponse.finalScheduleData !== undefined && deleteResponse.targetData !== undefined) {
+    
+          const updateData = {
+            $set: {scheduleData: deleteResponse.finalScheduleData.scheduleData},
+            $unset: {[`scheduleKeys.${deleteResponse.targetData.locationID}`]: ""},
+          }
+    
+          const newScheduleData: ScheduleDataMongoResponse = await ScheduleDataSchema.findOneAndUpdate(scheduleFilter, updateData, {returnOriginal: false});
+    
+          const response = {
+            status: {
+              statusCode: STATUS_CODES.SUCCESS,
+            },
+            scheduleData: newScheduleData,
+            locationData: projectLocationData,
+          }
+          return response;
+        } else {
+          const response = {
+            status: {
+              statusCode: STATUS_CODES.SUCCESS,
+            }
+          }
+          return response;
+        }
+      }
+    }
+  }
+  const response: {status: StatusPayload} = {
+    status: {
+      statusCode: STATUS_CODES.ServerError,
+      errorCause: ERROR_CAUSE.Server,
+      errorData: ERROR_DATA.Server
+    }
+  }
+
+  return response;
 
 }
 

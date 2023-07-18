@@ -41,7 +41,6 @@ export interface LocationMongoResponse {
       lng: number,
     },
     scheduleDate?: number,
-    // Epoch time. Use scheduleDate which is in unix + the minutes in miliseconds.
   },
   noteData: {
     noteName: string,
@@ -49,7 +48,6 @@ export interface LocationMongoResponse {
     formattedAddress: string,
     locationID: string,
     scheduleDate?: number,
-    // Epoch time. Use scheduleDate which is in unix + the minutes in miliseconds.
     customNote?: string,
     openHours?: string,
     closeHours?: string,
@@ -92,6 +90,7 @@ export interface EachScheduleData {
   timeFrom?: string,
   timeTo?: string,
   duration?: number,
+  scheduledTimeUnix?: number,
   noteMessage?: string,
   notePriority?: NOTE_PRIORITY,
 }
