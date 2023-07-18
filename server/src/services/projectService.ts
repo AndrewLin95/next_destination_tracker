@@ -507,17 +507,29 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
     // everything else
     if (conflictingLocationIDs.size >= 1) { 
       const sequencedData = handleScheduleSequenceAdd(newScheduleData, conflictingData, scheduleData);
-      const filteredScheduleData = await clearScheduleData(sequencedData, formattedDate, schedulePayload.projectID);
-      const finalScheduleData = await generateFinalScheduleData(sequencedData, filteredScheduleData, formattedDate);
-
-      const scheduleKeyObj: ScheduleKeys = {
-        key: `${formattedDate} ${Math.floor(currTimeInMinutes / 60)}:${(currTimeInMinutes % 60 === 0 ? "00" : currTimeInMinutes % 60)}`,
-        duration: schedulePayload.duration,
+      if (sequencedData === undefined) {
+        const statusPayload: {status: StatusPayload} = {
+          status: {
+            statusCode: STATUS_CODES.BadRequest,
+            errorCause: ERROR_CAUSE.Schedule,
+            errorData: ERROR_DATA.ScheduleConflict,
+          }
+        }
+  
+        return statusPayload;
+      } else {
+        const filteredScheduleData = await clearScheduleData(sequencedData, formattedDate, schedulePayload.projectID);
+        const finalScheduleData = await generateFinalScheduleData(sequencedData, filteredScheduleData, formattedDate);
+  
+        const scheduleKeyObj: ScheduleKeys = {
+          key: `${formattedDate} ${Math.floor(currTimeInMinutes / 60)}:${(currTimeInMinutes % 60 === 0 ? "00" : currTimeInMinutes % 60)}`,
+          duration: schedulePayload.duration,
+        }
+        
+        finalScheduleData.scheduleKeys.set(schedulePayload.locationID, scheduleKeyObj)
+        
+        returnScheduleObj = await ScheduleDataSchema.findOneAndUpdate(filter, finalScheduleData, {returnOriginal: false});
       }
-      
-      finalScheduleData.scheduleKeys.set(schedulePayload.locationID, scheduleKeyObj)
-      
-      returnScheduleObj = await ScheduleDataSchema.findOneAndUpdate(filter, finalScheduleData, {returnOriginal: false});
     }
     
     const locationFilter = {'locationID': schedulePayload.locationID};

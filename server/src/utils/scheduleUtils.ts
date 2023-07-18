@@ -10,53 +10,35 @@ const ScheduleDataSchema = require('../models/scheduleDataSchema')
  * @param {ScheduleDataMongoResponse} originalScheduleData - The original schedule data
  * @returns {EachScheduleData[]} - A promise that resolves to a list of EachScheduleData.
  */
-export const handleScheduleSequenceAdd = (newScheduleData: EachScheduleData, conflictingData: EachScheduleData[], originalScheduleData: ScheduleDataMongoResponse): EachScheduleData[] => {
+export const handleScheduleSequenceAdd = (newScheduleData: EachScheduleData, conflictingData: EachScheduleData[], originalScheduleData: ScheduleDataMongoResponse): EachScheduleData[] | undefined => {
   const allScheduleDatas: EachScheduleData[] = [newScheduleData];
-  let date = "";
 
-  const recursivelyFindAllConflictingDataSegments = (targetScheduleData: EachScheduleData, allAdditionalDataSegments: EachScheduleData[], checkedKeys: Set<string>): EachScheduleData[] => {
-    const startTimeInMins = (parseInt((targetScheduleData.timeFrom as string).split(':')[0]) * 60) + parseInt((targetScheduleData.timeFrom as string).split(':')[1])
-    const duration = conflictingData[0].duration as number
-    const targetLocationID = targetScheduleData.locationID
-    const targetKey = originalScheduleData.scheduleKeys.get(targetLocationID) ?? null;
+  if (conflictingData.length === 2) {
+    const tempAllData = [...conflictingData];
+    const sortedTempData = sortScheduleData(tempAllData);
 
-    if (targetKey == null) {
-      return allAdditionalDataSegments;
+    const firstEndSplit = (sortedTempData[0].timeTo as string).split(":");
+    const lastStartSplit = (sortedTempData[1].timeFrom as string).split(":");
+    const firstInMins = (parseInt(firstEndSplit[0]) * 60) + parseInt(firstEndSplit[1]);
+    const lastInMins = (parseInt(lastStartSplit[0]) * 60) + parseInt(lastStartSplit[1]);
+
+    if (firstInMins <= lastInMins && sortedTempData[1].position === 0) {
+
+    } else {
+      return undefined;
     }
-    const tempDate = targetKey.key.split(" ")
-    tempDate.pop()
-    date = tempDate.join(" ");
-
-    const conflicts = identifyNumOfConflicts(targetLocationID, startTimeInMins, date, originalScheduleData.scheduleData, duration)
-
-    if (conflicts.size === 0) {
-      return allAdditionalDataSegments;
-    }
-
-    let conflictingLocationID = "";
-    conflicts.forEach(locationID => {
-      if (!checkedKeys.has(locationID)) {
-        conflictingLocationID = locationID;
-      }
-    });
-    if (conflictingLocationID === "") {
-      return allAdditionalDataSegments
-    }
-
-    const targetDataSegment = findDataSegments(conflictingLocationID, originalScheduleData.scheduleData, originalScheduleData.scheduleKeys);
-    
-    if (targetDataSegment === null) {
-      return allAdditionalDataSegments;
-    }
-    checkedKeys.add(conflictingLocationID);
-    allAdditionalDataSegments.push(targetDataSegment)
-    return recursivelyFindAllConflictingDataSegments(targetDataSegment, allAdditionalDataSegments, checkedKeys)
   }
+
+  let date = "";
+  const targetKey = originalScheduleData.scheduleKeys.get(newScheduleData.locationID) as ScheduleKeys;
+  const tempDate = targetKey.key.split(" ")
+  tempDate.pop()
+  date = tempDate.join(" ");
 
   conflictingData.forEach(eachScheduleData => {
     const checkedKeys: Set<string> = new Set()
     checkedKeys.add(eachScheduleData.locationID);
-    const allFoundDataSegments = recursivelyFindAllConflictingDataSegments(eachScheduleData, [], checkedKeys);
+    const allFoundDataSegments = recursivelyFindAllConflictingDataSegments(eachScheduleData, [], checkedKeys, date, originalScheduleData);
     if (allFoundDataSegments !== undefined) {
       allScheduleDatas.push(eachScheduleData, ...allFoundDataSegments)
     }
@@ -153,6 +135,37 @@ export const handleScheduleSequenceDelete = async (conflictingData : EachSchedul
   }
 
   return { sequencedData: sequencedData, filteredScheduleData: filteredScheduleData }
+}
+
+export const recursivelyFindAllConflictingDataSegments = (targetScheduleData: EachScheduleData, allAdditionalDataSegments: EachScheduleData[], checkedKeys: Set<string>, date: string, originalScheduleData: ScheduleDataMongoResponse): EachScheduleData[] => {
+  const startTimeInMins = (parseInt((targetScheduleData.timeFrom as string).split(':')[0]) * 60) + parseInt((targetScheduleData.timeFrom as string).split(':')[1])
+  const duration = targetScheduleData.duration as number
+  const targetLocationID = targetScheduleData.locationID
+
+  const conflicts = identifyNumOfConflicts(targetLocationID, startTimeInMins, date, originalScheduleData.scheduleData, duration)
+
+  if (conflicts.size === 0) {
+    return allAdditionalDataSegments;
+  }
+
+  let conflictingLocationID = "";
+  conflicts.forEach(locationID => {
+    if (!checkedKeys.has(locationID)) {
+      conflictingLocationID = locationID;
+    }
+  });
+  if (conflictingLocationID === "") {
+    return allAdditionalDataSegments
+  }
+
+  const targetDataSegment = findDataSegments(conflictingLocationID, originalScheduleData.scheduleData, originalScheduleData.scheduleKeys);
+  
+  if (targetDataSegment === null) {
+    return allAdditionalDataSegments;
+  }
+  checkedKeys.add(conflictingLocationID);
+  allAdditionalDataSegments.push(targetDataSegment)
+  return recursivelyFindAllConflictingDataSegments(targetDataSegment, allAdditionalDataSegments, checkedKeys, date, originalScheduleData)
 }
 
 /**
