@@ -449,7 +449,6 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     enabledOrDisabled: boolean
   ) => {
     e.preventDefault();
-
     if (!enabledOrDisabled) {
       const status: StatusPayload = {
         statusCode: STATUS_CODES.BadRequest,

@@ -31,6 +31,17 @@ const CalendarColumns: FC<Props> = ({
   projectData,
   handleDeleteSchedule,
 }) => {
+  const allowDrop = (e: any) => {
+    if (
+      e.target.className ===
+      "bg-transparent h-12 border border-Background_Lighter/50 p-1"
+    ) {
+      e.preventDefault();
+    } else {
+      return false;
+    }
+  };
+
   return (
     <div className="w-[calc((100vw-25rem)/7)] h-full">
       {Object.entries(timeData).map(([key, time]) => {
@@ -58,7 +69,7 @@ const CalendarColumns: FC<Props> = ({
               gap: stackedSegment ? "2px" : "",
             }}
             key={key}
-            onDragOver={(e) => e.preventDefault()}
+            onDragOver={(e) => allowDrop(e)}
             onDrop={(e) =>
               handleDrop(
                 e,
