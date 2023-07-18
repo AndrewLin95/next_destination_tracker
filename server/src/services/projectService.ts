@@ -506,27 +506,9 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
     
     // everything else
     if (conflictingLocationIDs.size >= 1) { 
-      const { sequencedData, clear }  = handleScheduleSequenceAdd(newScheduleData, conflictingData, scheduleData);
-      // scheduling conflict
-      if (sequencedData === undefined) {
-        const statusPayload: {status: StatusPayload} = {
-          status: {
-            statusCode: STATUS_CODES.BadRequest,
-            errorCause: ERROR_CAUSE.Schedule,
-            errorData: ERROR_DATA.ScheduleConflict,
-          }
-        }
-  
-        return statusPayload;
-      } 
-
-      let finalScheduleData
-      if (clear) {
-        const filteredScheduleData = await clearScheduleData(sequencedData, formattedDate, schedulePayload.projectID);
-        finalScheduleData = await generateFinalScheduleData(sequencedData, filteredScheduleData, formattedDate);
-      } else {
-        finalScheduleData = await generateFinalScheduleData(sequencedData, scheduleData, formattedDate);
-      }
+      const sequencedData = handleScheduleSequenceAdd(newScheduleData, conflictingData, scheduleData);
+      const filteredScheduleData = await clearScheduleData(sequencedData, formattedDate, schedulePayload.projectID);
+      const finalScheduleData = await generateFinalScheduleData(sequencedData, filteredScheduleData, formattedDate);
 
       const scheduleKeyObj: ScheduleKeys = {
         key: `${formattedDate} ${Math.floor(currTimeInMinutes / 60)}:${(currTimeInMinutes % 60 === 0 ? "00" : currTimeInMinutes % 60)}`,

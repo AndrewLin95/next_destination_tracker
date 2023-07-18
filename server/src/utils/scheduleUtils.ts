@@ -4,6 +4,77 @@ import { DeleteScheduleResponse, EachScheduleData, HandleScheduleSequenceDeleteR
 const ScheduleDataSchema = require('../models/scheduleDataSchema')
 
 /**
+ * For ADDING data to the scheduling ONLY. Recursively finds all subsequent conflicting data then returns the sorted dataset.
+ * @param {EachScheduleData} newScheduleData - The new schedule Data to add
+ * @param {EachScheduleData[]} conflictingData - The other conflicting data
+ * @param {ScheduleDataMongoResponse} originalScheduleData - The original schedule data
+ * @returns {EachScheduleData[]} - A promise that resolves to a list of EachScheduleData.
+ */
+export const handleScheduleSequenceAdd = (newScheduleData: EachScheduleData, conflictingData: EachScheduleData[], originalScheduleData: ScheduleDataMongoResponse): EachScheduleData[] => {
+  const allScheduleDatas: EachScheduleData[] = [newScheduleData];
+  let date = "";
+
+  const recursivelyFindAllConflictingDataSegments = (targetScheduleData: EachScheduleData, allAdditionalDataSegments: EachScheduleData[], checkedKeys: Set<string>): EachScheduleData[] => {
+    const startTimeInMins = (parseInt((targetScheduleData.timeFrom as string).split(':')[0]) * 60) + parseInt((targetScheduleData.timeFrom as string).split(':')[1])
+    const duration = conflictingData[0].duration as number
+    const targetLocationID = targetScheduleData.locationID
+    const targetKey = originalScheduleData.scheduleKeys.get(targetLocationID) ?? null;
+
+    if (targetKey == null) {
+      return allAdditionalDataSegments;
+    }
+    const tempDate = targetKey.key.split(" ")
+    tempDate.pop()
+    date = tempDate.join(" ");
+
+    const conflicts = identifyNumOfConflicts(targetLocationID, startTimeInMins, date, originalScheduleData.scheduleData, duration)
+
+    if (conflicts.size === 0) {
+      return allAdditionalDataSegments;
+    }
+
+    let conflictingLocationID = "";
+    conflicts.forEach(locationID => {
+      if (!checkedKeys.has(locationID)) {
+        conflictingLocationID = locationID;
+      }
+    });
+    if (conflictingLocationID === "") {
+      return allAdditionalDataSegments
+    }
+
+    const targetDataSegment = findDataSegments(conflictingLocationID, originalScheduleData.scheduleData, originalScheduleData.scheduleKeys);
+    
+    if (targetDataSegment === null) {
+      return allAdditionalDataSegments;
+    }
+    checkedKeys.add(conflictingLocationID);
+    allAdditionalDataSegments.push(targetDataSegment)
+    return recursivelyFindAllConflictingDataSegments(targetDataSegment, allAdditionalDataSegments, checkedKeys)
+  }
+
+  conflictingData.forEach(eachScheduleData => {
+    const checkedKeys: Set<string> = new Set()
+    checkedKeys.add(eachScheduleData.locationID);
+    const allFoundDataSegments = recursivelyFindAllConflictingDataSegments(eachScheduleData, [], checkedKeys);
+    if (allFoundDataSegments !== undefined) {
+      allScheduleDatas.push(eachScheduleData, ...allFoundDataSegments)
+    }
+  });
+
+  const sortedScheduleData = sortScheduleData(allScheduleDatas);
+
+  let i = 0;
+  while (i < sortedScheduleData.length) {
+    sortedScheduleData[i].position = i % 2;
+    sortedScheduleData[i].numColumns = 2;
+    i++;
+  }
+
+  return sortedScheduleData;
+}
+
+/**
  * For ADDING data to the scheduling ONLY. If a conflicting data is of length 1, just add it in with default positions. If the conflicting data is length 2, 
  * check if the conflicting data has any additional conflicts. If there is additional conflicts, the conflicts need to remain. If not, sort then resassign.
  * If there are 3 conflicts, sort them, then return.
@@ -12,7 +83,7 @@ const ScheduleDataSchema = require('../models/scheduleDataSchema')
  * @param {ScheduleDataMongoResponse} originalScheduleData - The original schedule data
  * @returns {HandleScheduleSequenceAddResponse} - A promise that resolves to the HandleScheduleSequenceAdd response.
  */
-export const handleScheduleSequenceAdd = (newScheduleData: EachScheduleData, conflictingData: EachScheduleData[], originalScheduleData: ScheduleDataMongoResponse): HandleScheduleSequenceAddResponse => {
+export const handleScheduleSequenceAddOriginal = (newScheduleData: EachScheduleData, conflictingData: EachScheduleData[], originalScheduleData: ScheduleDataMongoResponse): HandleScheduleSequenceAddResponse => {
   // update this for scnearios where greater than length = 2. sort, then reassign alternating.
   // to check for furthur conflicts. recusrively scan upwards, to find a clear break. then 
   // loop over to re-sort everything from clean break to the next clean break.
@@ -92,6 +163,7 @@ export const handleScheduleSequenceAdd = (newScheduleData: EachScheduleData, con
 
   return { sequencedData: undefined, clear: false }
 }
+
 
 /**
  * For re-scheduling the sequence on DELETE only. If a conflicting data is of length 1, check if the conflicting data has any additional conflicts. If it does, 
@@ -228,7 +300,7 @@ export const findDataSegments = (targetLocationID: string, scheduleData: Map<str
  * Identifies the number of conflicts given a target locationID
  * @param {string} targetLocationID - The target location ID 
  * @param {number} startTimeInMins - The target start time in minutes
- * @param {string} date - The target date
+ * @param {string} date - The date formatted to 'Jan 21st, 2023'
  * @param {Map<string, EachScheduleData[]>} scheduleData - The entire schedule data map
  * @param {number} duration - The target duration
  * @returns {Set<string>} The set of locationIDs that conflict with the target location ID
