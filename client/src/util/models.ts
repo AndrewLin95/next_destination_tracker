@@ -44,9 +44,9 @@ export interface LocationData {
   mapData: {
     formattedAddress: string,
     googleLocationID: string,
-    picture?: string,
     locationID: string,
-    noteName?: string,
+    noteName: string,
+    picture?: string,
     position: {
       lat: number,
       lng: number,
@@ -55,14 +55,14 @@ export interface LocationData {
   },
   noteData: {
     noteName: string,
-    priority: string,
-    formattedAddress: string,
-    color?: LABEL_COLOR,
     locationID: string,
-    scheduleDate?: Date,
+    formattedAddress: string,
     customNote?: string,
     openHours?: string,
     closeHours?: string,
+    picture?: LABEL_COLOR,
+    scheduleDate?: Date,
+    priority: string,
   }
   status: StatusPayload,
 }

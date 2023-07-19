@@ -17,7 +17,7 @@ import {
   ScheduleKeys,
   ScheduleDataMongoResponse,
   DeleteScheduleResponse,
-} from "../utils/types";
+} from "../utils/models/ProjectModels";
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
 import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, URL_REGEX, SCHEDULE_SEGMENTS, MS_IN_WEEK, MS_IN_DAY, DEFAULT_SCHEDULE_COLORS, DELETE_RESPONSE, MS_IN_MINUTE } from '../utils/constants';
 import { getUnixTime, isSaturday, isSunday, nextSaturday, previousSunday } from 'date-fns';

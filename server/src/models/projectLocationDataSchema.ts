@@ -26,17 +26,17 @@ const projectLocationDataSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
-    picture: {
+    locationID: {
       type: String,
-      required: false
+      required: true,
     },
     noteName: {
       type: String,
       required: true,
     },
-    locationID: {
+    picture: {
       type: String,
-      required: true,
+      required: false
     },
     position: {
       lat: {

@@ -10,7 +10,7 @@ import {
   NoteDataResponse,
   SetSchedulePayload,
   ScheduleDataMongoResponse,
-} from "../utils/types";
+} from "../utils/models/ProjectModels";
 import { STATUS_CODES } from "../utils/constants";
 
 export const createNewProject = async (req: Request, res: Response) => {
