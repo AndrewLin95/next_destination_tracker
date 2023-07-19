@@ -1,6 +1,6 @@
 import { formatInTimeZone } from "date-fns-tz";
 import { DELETE_RESPONSE } from "./constants";
-import { DeleteScheduleResponse, EachScheduleData, HandleScheduleSequenceDeleteResponse, ScheduleDataMongoResponse, ScheduleKeys, HandleScheduleSequenceAddResponse } from "./types";
+import { DeleteScheduleResponse, EachScheduleData, HandleScheduleSequenceDeleteResponse, ScheduleDataMongoResponse, ScheduleKeys, HandleScheduleSequenceAddResponse } from "./models/ProjectModels"
 const ScheduleDataSchema = require('../models/scheduleDataSchema')
 
 /**
