@@ -116,22 +116,77 @@ export const handleScheduleSequenceDelete = async (conflictingData : EachSchedul
       } 
     }
   } else if (conflictingData.length === 2) {
-    if (conflictingData.length === 2) {
-      if (targetKey !== null) {
-        const tempDate = targetKey.key.split(" ")
-        tempDate.pop()
-        const date = tempDate.join(" ");
-  
-        filteredScheduleData = await clearScheduleData([...conflictingData, targetData], date, originalScheduleData.projectID);
-        const sortedScheduleData = sortScheduleData(conflictingData);
+    if (targetKey !== null) {
+      const topConflictingScheduleData: EachScheduleData[] = [];
+      const botConflictingScheduleData: EachScheduleData[] = [];
+      const finalSequencedData: EachScheduleData[] = [];
 
-        sortedScheduleData[0].position = 0;
-        sortedScheduleData[0].numColumns = 1;
-        sortedScheduleData[1].position = 0;
-        sortedScheduleData[1].numColumns = 1;
-        sequencedData = sortedScheduleData
+      const tempDate = targetKey.key.split(" ")
+      tempDate.pop()
+      const date = tempDate.join(" ");
+      
+      const sortedConflictingData = sortScheduleData(conflictingData);
+      let topConflict = false;
+      let bottomConflict = false;
+
+      let i = 0;
+      while (i < sortedConflictingData.length) {
+        const checkedKeys: Set<string> = new Set()
+        checkedKeys.add(sortedConflictingData[i].locationID);
+        checkedKeys.add(targetData.locationID)
+        const allFoundDataSegments = recursivelyFindAllConflictingDataSegments(sortedConflictingData[i], [], checkedKeys, date, originalScheduleData);
+        if (allFoundDataSegments.length > 0) {
+          if (i === 0) {
+            topConflictingScheduleData.push(sortedConflictingData[i], ...allFoundDataSegments)
+            topConflict = true;
+          }
+          if (i === 1) {
+            botConflictingScheduleData.push(sortedConflictingData[i], ...allFoundDataSegments)
+            bottomConflict = true;
+          }
+        }
+        i++;
       }
+
+      if (topConflictingScheduleData.length > 0) {
+        const sequencedTopData = sortScheduleData(topConflictingScheduleData);
+        i = 0;
+        while (i < sequencedTopData.length) {
+          sequencedTopData[i].position = i % 2;
+          sequencedTopData[i].numColumns = 2;
+          i++;
+        }
+        finalSequencedData.push(...sequencedTopData);
+      }
+
+      if (!topConflict) {
+        sortedConflictingData[0].position = 0;
+        sortedConflictingData[0].numColumns = 1;
+        finalSequencedData.push(sortedConflictingData[0])
+      }
+
+      if (!bottomConflict) {
+        sortedConflictingData[1].position = 0;
+        sortedConflictingData[1].numColumns = 1;
+        finalSequencedData.push(sortedConflictingData[1])
+      }
+
+      if (botConflictingScheduleData.length > 0) {
+        const sequencedBotData = sortScheduleData(botConflictingScheduleData);
+        i = 0;
+        while (i < sequencedBotData.length) {
+          sequencedBotData[i].position = i % 2;
+          sequencedBotData[i].numColumns = 2;
+          i++;
+        }
+        finalSequencedData.push(...sequencedBotData);
+      }
+
+      filteredScheduleData = await clearScheduleData(finalSequencedData, date, originalScheduleData.projectID);
+
+      sequencedData = finalSequencedData
     }
+    
   }
 
   return { sequencedData: sequencedData, filteredScheduleData: filteredScheduleData }
