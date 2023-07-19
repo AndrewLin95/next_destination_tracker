@@ -192,6 +192,15 @@ export const handleScheduleSequenceDelete = async (conflictingData : EachSchedul
   return { sequencedData: sequencedData, filteredScheduleData: filteredScheduleData }
 }
 
+/**
+ * Recursively finds all conflicting data segements associated with the target data. 
+ * @param {EachScheduleData} targetScheduleData - The target schedule data that you want to recursively look for conflicts for.
+ * @param {EachScheduleData[]} allAdditionalDataSegments - The aggregation array.
+ * @param {Set<string>} checkedKeys - The set of keys (locationID) that has been checked of set if you want to ignore.
+ * @param {string} date - The date formatted to 'Jan 21st, 2023'
+ * @param {ScheduleDataMongoResponseq} originalScheduleData - The Original Schedule Data for which the algorithm uses to search for conflicts.
+ * @returns {EachScheduleData[]} - Returns the schedule data segments of all identified conflicts.
+ */
 export const recursivelyFindAllConflictingDataSegments = (targetScheduleData: EachScheduleData, allAdditionalDataSegments: EachScheduleData[], checkedKeys: Set<string>, date: string, originalScheduleData: ScheduleDataMongoResponse): EachScheduleData[] => {
   const startTimeInMins = (parseInt((targetScheduleData.timeFrom as string).split(':')[0]) * 60) + parseInt((targetScheduleData.timeFrom as string).split(':')[1])
   const duration = targetScheduleData.duration as number
