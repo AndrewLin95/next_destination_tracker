@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
+import { AuthUserResponse } from './src/utils/models/AuthModels';
 const bcrypt = require("bcryptjs");
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
@@ -31,7 +32,7 @@ passport.use(
     },
     async (email: any, password: any, done: any) => {
       try {
-        const user = await AuthUserSchema.findOne({ userEmail: email });
+        const user: AuthUserResponse = await AuthUserSchema.findOne({ userEmail: email });
         if (!user) {
           return done(null, false, { message: "Incorrect username" });
         };

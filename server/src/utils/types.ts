@@ -1,14 +1,4 @@
 import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, LABEL_COLOR, SCHEDULE_SEGMENTS, NOTE_PRIORITY, DELETE_RESPONSE } from "./constants"
-
-export interface jwtToken {
-  exp: number,
-  iat: number,
-  user: {
-    _id: string,
-    email: string,
-  }
-}
-
 export interface CreateProjectQuery {
   userID: string,
   projectName: string,
