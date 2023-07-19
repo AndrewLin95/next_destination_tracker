@@ -1,4 +1,3 @@
-// import { ProjectProvider } from "./context/ProjectContext";
 import { UserContextProvider } from "./context/UserProfileContext";
 import "./globals.css";
 import { Inter } from "next/font/google";

@@ -5,7 +5,7 @@ import {
   LoadScript,
   Marker,
 } from "@react-google-maps/api";
-import { MapData, ProjectData } from "@/util/models";
+import { MapData, ProjectData } from "@/util/models/ProjectModels";
 import Image from "next/image";
 
 interface Props {

@@ -1,4 +1,4 @@
-import { NoteData, ScheduleColors } from "@/util/models";
+import { NoteData, ScheduleColors } from "@/util/models/ProjectModels";
 import { FC, useState } from "react";
 import {
   SIMPLE_BUTTON_STYLE,

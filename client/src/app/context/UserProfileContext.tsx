@@ -1,7 +1,7 @@
 "use client";
 
 import { Dispatch, SetStateAction, createContext, useState } from "react";
-import { UserProfileState } from "@/util/models";
+import { UserProfileState } from "@/util/models/AuthModels";
 
 const UserContext = createContext<{
   userProfileState: UserProfileState | {};

@@ -1,5 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { ProjectData, ScheduleConfigData, ScheduleData } from "@/util/models";
+import {
+  ProjectData,
+  ScheduleConfigData,
+  ScheduleData,
+} from "@/util/models/ProjectModels";
 import { FC } from "react";
 import CalendarColumns from "./scheduleComponents/CalendarColumns";
 import CalendarTimeColumn from "./scheduleComponents/CalendarTimeColumn";

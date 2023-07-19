@@ -6,7 +6,7 @@ import {
   CreateProjectQuery, 
   SearchQuery, 
   LocationMongoResponse, 
-  ProjectPayload, 
+  ProjectSetupResponse, 
   NotePayloadData, 
   StatusPayload, 
   MapPayloadData,
@@ -17,7 +17,7 @@ import {
   ScheduleKeys,
   ScheduleDataMongoResponse,
   DeleteScheduleResponse,
-} from "../utils/types";
+} from "../utils/models/ProjectModels";
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
 import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, URL_REGEX, SCHEDULE_SEGMENTS, MS_IN_WEEK, MS_IN_DAY, DEFAULT_SCHEDULE_COLORS, DELETE_RESPONSE, MS_IN_MINUTE } from '../utils/constants';
 import { getUnixTime, isSaturday, isSunday, nextSaturday, previousSunday } from 'date-fns';
@@ -266,7 +266,7 @@ const getProject = async (currUserID: string) => {
 const getEachProject = async (projectID: string) => {
   // return the projectsetup and all mappoints data
   try {
-    const userProject: ProjectPayload = await ProjectSetupSchema.findOne({projectID: projectID});
+    const userProject: ProjectSetupResponse = await ProjectSetupSchema.findOne({projectID: projectID});
     const projectDataPoints: LocationMongoResponse[] = await ProjectLocationDataSchema.find({projectID: projectID, deleteFlag: false});
     const scheduleConfig: ScheduleConfigMongoResponse = await ScheduleConfigSchema.findOne({'config.projectID': projectID, 'config.page': 1});
     const scheduleData: ScheduleDataMongoResponse = await ScheduleDataSchema.findOne({'projectID': projectID});

@@ -2,13 +2,13 @@ import { ErrorRequestHandler, Request } from "express";
 const bcrypt = require("bcryptjs");
 const AuthUserSchema = require("../models/AuthUserSchema");
 const jwt = require('jsonwebtoken');
-import { jwtToken } from "../utils/types";
+import { AuthUserResponse, jwtToken } from "../utils/models/AuthModels";
 
 const signUp = async (req: Request) => {
   try {
-    const existingEmail = await AuthUserSchema.findOne({ userEmail: req.body.signupEmail});
+    const existingUser: AuthUserResponse = await AuthUserSchema.findOne({ userEmail: req.body.signupEmail});
 
-    if (existingEmail) {
+    if (existingUser) {
       return 'This email is already in use'
     }
 
