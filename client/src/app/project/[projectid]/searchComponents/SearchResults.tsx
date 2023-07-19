@@ -1,4 +1,4 @@
-import { NoteData, ScheduleColors } from "@/util/models";
+import { NoteData, ScheduleColors } from "@/util/models/ProjectModels";
 import { FC } from "react";
 import Note from "./Note";
 import { VIEW_TYPES } from "@/util/constants";

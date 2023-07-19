@@ -3,7 +3,7 @@ import {
   EachScheduleData,
   ProjectData,
   ScheduleHeaderData,
-} from "@/util/models";
+} from "@/util/models/ProjectModels";
 import EachScheduleItem from "./EachScheduleItem";
 
 interface Props {

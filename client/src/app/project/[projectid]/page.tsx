@@ -7,7 +7,6 @@ import MapModule from "./MapModule";
 import { useContext, useEffect, useState } from "react";
 import UserContext from "@/app/context/UserProfileContext";
 import {
-  UserProfileState,
   ProjectData,
   LocationData,
   MapData,
@@ -20,7 +19,8 @@ import {
   ScheduleConfigData,
   DeleteNoteResponse,
   DeleteScheduleResponse,
-} from "@/util/models";
+} from "@/util/models/ProjectModels";
+import { UserProfileState } from "@/util/models/AuthModels";
 import authConfigData from "@/util/authConfig";
 import axios, { isAxiosError } from "axios";
 import SearchResults from "./searchComponents/SearchResults";

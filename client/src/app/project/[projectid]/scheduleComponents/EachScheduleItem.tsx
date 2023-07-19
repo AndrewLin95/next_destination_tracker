@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { EachScheduleData, ScheduleColors } from "@/util/models";
+import { EachScheduleData, ScheduleColors } from "@/util/models/ProjectModels";
 import {
   BASE_SCHEDULE_HEIGHT,
   DAYS_OF_WEEK,

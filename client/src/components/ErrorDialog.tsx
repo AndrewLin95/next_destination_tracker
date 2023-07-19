@@ -1,4 +1,4 @@
-import { StatusPayload } from "@/util/models";
+import { StatusPayload } from "@/util/models/ProjectModels";
 import Image from "next/image";
 import { Dispatch, FC, SetStateAction } from "react";
 

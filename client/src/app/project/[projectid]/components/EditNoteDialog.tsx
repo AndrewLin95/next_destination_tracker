@@ -8,7 +8,7 @@ import {
   NOTE_PRIORITY,
   PRIORITY_STYLE,
 } from "@/util/constants";
-import { NoteData } from "@/util/models";
+import { NoteData } from "@/util/models/ProjectModels";
 import {
   faPerson,
   faPersonWalking,

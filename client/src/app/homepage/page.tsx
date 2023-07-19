@@ -10,7 +10,8 @@ import Header from "./Header";
 import NewProject from "./NewProject";
 import ExistingProjects from "./ExistingProjects";
 import axios from "axios";
-import { UserProfileState, ProjectData } from "@/util/models";
+import { ProjectData } from "@/util/models/ProjectModels";
+import { UserProfileState } from "@/util/models/AuthModels";
 import { setUserProfile } from "@/util/authUtil";
 import { VERIFY_TOKEN_RESPONSE } from "@/util/constants";
 

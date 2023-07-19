@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { ProjectData } from "@/util/models";
+import { ProjectData } from "@/util/models/ProjectModels";
 import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
@@ -40,7 +40,7 @@ const ExistingProjects: FC<Props> = ({
             return (
               <div
                 className="h-60 w-72 flex flex-col p-2 border border-red-200 mr-8"
-                key={existingProject._id}
+                key={existingProject.projectID}
                 onClick={() =>
                   handleEachProjectClick(existingProject.projectID)
                 }

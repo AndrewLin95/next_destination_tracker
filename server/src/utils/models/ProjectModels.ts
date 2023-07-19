@@ -118,18 +118,22 @@ export interface ScheduleConfigMongoResponse {
   timeValueData: Map<string, string>,
 }
 
+export interface ScheduleHeaderData {
+  date: string,
+  dateUnix: number,
+  dayOfWeek: string,
+  enabled: boolean,
+}
+
 export interface ScheduleDataMongoResponse {
   projectID: string,
   scheduleKeys: Map<string, ScheduleKeys>,
   scheduleData: Map<string, EachScheduleData[]>,
 }
 
-// Other
-export interface ScheduleHeaderData {
-  date: string,
-  dateUnix: number,
-  dayOfWeek: string,
-  enabled: boolean,
+export interface ScheduleKeys {
+  key: string,
+  duration: number,
 }
 
 export interface EachScheduleData {
@@ -141,17 +145,13 @@ export interface EachScheduleData {
   noteName?: string,
   timeFrom?: string,
   timeTo?: string,
-  duration?: number,
   scheduledTimeUnix?: number,
+  duration?: number,
   noteMessage?: string,
   notePriority?: NOTE_PRIORITY,
 }
 
-export interface ScheduleKeys {
-  key: string,
-  duration: number,
-}
-
+// Other
 export interface MapPayloadData {
   formattedAddress: string,
   googleLocationID: string,
