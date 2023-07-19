@@ -9,7 +9,7 @@ import jwtDecode from "jwt-decode";
 
 import InLineTextButton from "@/components/InLineTextButton";
 import UserContext from "./context/UserProfileContext";
-import { DecodedJWT } from "@/util/models";
+import { DecodedJWT } from "@/util/models/AuthModels";
 import { setUserProfile } from "@/util/authUtil";
 import { VERIFY_TOKEN_RESPONSE } from "@/util/constants";
 

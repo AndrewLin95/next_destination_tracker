@@ -1,20 +1,5 @@
 import { STATUS_CODES, ERROR_CAUSE, ERROR_DATA, LABEL_COLOR, SCHEDULE_SEGMENTS, NOTE_PRIORITY } from "./constants";
 
-export interface DecodedJWT {
-  exp: number,
-  iat: number,
-  user: {
-    email: string,
-    _id: string
-  }
-}
-
-export interface UserProfileState {
-  userID: string;
-  userEmail: string;
-  token: string;
-}
-
 export interface ProjectData {
   userID: string,
   projectID: string,
