@@ -6,7 +6,7 @@ import {
   CreateProjectQuery, 
   SearchQuery, 
   LocationMongoResponse, 
-  ProjectPayload, 
+  ProjectSetupResponse, 
   NotePayloadData, 
   StatusPayload, 
   MapPayloadData,
@@ -266,7 +266,7 @@ const getProject = async (currUserID: string) => {
 const getEachProject = async (projectID: string) => {
   // return the projectsetup and all mappoints data
   try {
-    const userProject: ProjectPayload = await ProjectSetupSchema.findOne({projectID: projectID});
+    const userProject: ProjectSetupResponse = await ProjectSetupSchema.findOne({projectID: projectID});
     const projectDataPoints: LocationMongoResponse[] = await ProjectLocationDataSchema.find({projectID: projectID, deleteFlag: false});
     const scheduleConfig: ScheduleConfigMongoResponse = await ScheduleConfigSchema.findOne({'config.projectID': projectID, 'config.page': 1});
     const scheduleData: ScheduleDataMongoResponse = await ScheduleDataSchema.findOne({'projectID': projectID});

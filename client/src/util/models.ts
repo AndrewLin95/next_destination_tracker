@@ -4,19 +4,18 @@ export interface ProjectData {
   userID: string,
   projectID: string,
   deleteFlag: boolean,
-  _id: string,
   scheduleColors: ScheduleColors,
   project: {
-    projectCoords: {
-      destination: string,
-      lat: string,
-      lng: string,
-    },
     projectName: string,
     projectDescription: string,
     projectStartDate: number,
     projectEndDate: number,
     projectImage: string,
+    projectCoords: {
+      destination: string,
+      lat: string,
+      lng: string,
+    },
   },
   scheduleConfig: {
     startingTime: string,

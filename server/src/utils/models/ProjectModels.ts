@@ -41,11 +41,11 @@ export interface SetSchedulePayload {
   duration: number,
 }
 
-export interface ProjectPayload {
+// Mongo Responses
+export interface ProjectSetupResponse {
   userID: string,
   projectID: string,
   deleteFlag: boolean,
-  _id: string,
   scheduleColors: {
     Monday: string,
     Tuesday: string,
@@ -56,16 +56,16 @@ export interface ProjectPayload {
     Sunday: string,
   },
   project: {
-    projectCoords: {
-      destination: string,
-      lat: string,
-      lng: string,
-    },
     projectName: string,
     projectDescription: string,
     projectStartDate: number,
     projectEndDate: number,
     projectImage: string,
+    projectCoords: {
+      destination: string,
+      lat: string,
+      lng: string,
+    },
   },
   scheduleConfig: {
     startingTime: string,
@@ -75,7 +75,6 @@ export interface ProjectPayload {
   },
 }
 
-// Mongo Responses
 export interface LocationMongoResponse {
   userID: string,
   projectID: string,
