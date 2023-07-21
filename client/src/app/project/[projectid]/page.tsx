@@ -599,6 +599,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
               handleActiveNote={handleActiveNote}
               activeInfoWindow={activeInfoWindow}
               handleInactivateNote={handleInactivateNote}
+              scheduleColors={projectData.scheduleColors}
             />
           ) : (
             <ScheduleModule
