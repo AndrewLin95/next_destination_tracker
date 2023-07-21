@@ -497,6 +497,11 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
             scheduleResponseData.locationData.noteData;
           setNoteData(tempNoteData);
 
+          const tempMapData = [...mapData];
+          tempMapData[indexOfUpdate] =
+            scheduleResponseData.locationData.mapData;
+          setMapData(tempMapData);
+
           const indexOfAllNoteDataUpdate = allLocationData.findIndex(
             (note) => note.locationID === incomingLocationID
           );
