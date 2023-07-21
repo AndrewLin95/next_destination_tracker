@@ -83,6 +83,9 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   // Map Data
   const [activeInfoWindow, setActiveInfoWindow] = useState<number | null>(null);
   const [activeLocationID, setActiveLocationID] = useState<string | null>(null);
+  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>(
+    {} as { lat: number; lng: number }
+  );
 
   // Dialog Data
   const [noteDialogToggle, setNoteDialogToggle] = useState<Boolean>(false);
@@ -115,7 +118,6 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
 
       const response = await axios.get<InitResponseData>(url, authConfig);
       const responseData: InitResponseData = response.data;
-      console.log(responseData);
       setProjectData(responseData.projectData);
       setAllLocationData(responseData.locationData);
       setScheduleData(responseData.scheduleData);
@@ -144,6 +146,12 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       });
       setMapData(tempMapData);
       setNoteData(tempNoteData);
+
+      const initMapCenter = {
+        lat: parseFloat(responseData.projectData.project.projectCoords.lat),
+        lng: parseFloat(responseData.projectData.project.projectCoords.lng),
+      };
+      setMapCenter(initMapCenter);
 
       // handle initial pagination state
       const totalPages = Math.ceil(responseData.locationData.length / 10);
@@ -601,6 +609,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
             <MapModule
               projectData={projectData}
               mapData={mapData}
+              mapCenter={mapCenter}
               handleActiveNote={handleActiveNote}
               activeInfoWindow={activeInfoWindow}
               handleInactivateNote={handleInactivateNote}

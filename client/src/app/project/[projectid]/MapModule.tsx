@@ -17,6 +17,7 @@ import { DAYS_OF_WEEK, HEX_TRANSPARENCY } from "@/util/constants";
 interface Props {
   projectData: ProjectData;
   mapData: MapData[];
+  mapCenter: { lat: number; lng: number };
   handleActiveNote: (locationID: string, index: number) => void;
   activeInfoWindow: number | null;
   handleInactivateNote: () => void;
@@ -26,17 +27,13 @@ interface Props {
 const MapModule: FC<Props> = ({
   projectData,
   mapData,
+  mapCenter,
   handleActiveNote,
   activeInfoWindow,
   handleInactivateNote,
   scheduleColors,
 }) => {
   //https://www.ultimateakash.com/blog-details/Ii0jNGAKYAo=/How-To-Integrate-Google-Maps-in-React-2022
-  const center = {
-    lat: parseFloat(projectData!.project.projectCoords.lat),
-    lng: parseFloat(projectData!.project.projectCoords.lng),
-  };
-
   const mapClicked = (event: any) => {
     console.log(event.latLng.lat(), event.latLng.lng());
   };
@@ -51,7 +48,7 @@ const MapModule: FC<Props> = ({
       <LoadScript googleMapsApiKey="">
         <GoogleMap
           mapContainerClassName="w-full h-full"
-          center={center}
+          center={mapCenter}
           zoom={12}
           onClick={mapClicked}
         >
@@ -85,7 +82,7 @@ const MapModule: FC<Props> = ({
                     Object.assign(
                       {
                         path: "M 16 0 C 14 -9 12 -15 0 -17 C -12 -15 -14 -9 -16 0 M -16 0 C -15 15 -5 15 0 28 C 5 15 15 15 16 0",
-                        fillColor: `#FF0000${HEX_TRANSPARENCY.SixtyPercent}`,
+                        fillColor: `#FF0000${HEX_TRANSPARENCY.SeventyPercent}`,
                         fillOpacity: 0.8,
                         strokeColor: "#000",
                         strokeWeight: 0.4,
