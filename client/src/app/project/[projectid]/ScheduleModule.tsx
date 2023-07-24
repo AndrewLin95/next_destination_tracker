@@ -47,7 +47,10 @@ const ScheduleModule: FC<Props> = ({
         })}
       </div>
       <div className="flex flex-row h-[calc(100vh-8rem)] w-[calc(100%-1.4rem)] ml-2 overflow-y-auto border border-Background_Lighter">
-        <CalendarTimeColumn timeValueData={scheduleConfig.timeValueData} />
+        <CalendarTimeColumn
+          timeValueData={scheduleConfig.timeValueData}
+          projectData={projectData}
+        />
         {scheduleConfig.headerData.map((data, index) => {
           return (
             <CalendarColumns

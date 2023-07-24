@@ -1,4 +1,4 @@
-import { LocationData } from "@/util/models";
+import { LocationData } from '@/util/models/ProjectModels';
 import { Dispatch, SetStateAction } from 'react';
 
 export const handleValidatePagination = (type: string, locationData: LocationData[], numberOfPages: number, setNumberOfPages: Dispatch<SetStateAction<number>> ) => {
@@ -13,3 +13,12 @@ export const handleValidatePagination = (type: string, locationData: LocationDat
     setNumberOfPages(newNumberOfPages);
   }
 };
+
+export const getTimeInMinutes = (timeString: string) => {
+  const timeSplit = timeString.split(":");
+  const hours = parseInt(timeSplit[0]);
+  const minutes = parseInt(timeSplit[1]);
+  
+  const timeInMinutes = (hours * 60) + minutes
+  return timeInMinutes;
+}

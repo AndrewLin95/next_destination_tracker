@@ -5,6 +5,7 @@ import {
   ScheduleHeaderData,
 } from "@/util/models/ProjectModels";
 import EachScheduleItem from "./EachScheduleItem";
+import { getTimeInMinutes } from "../util";
 
 interface Props {
   timeData: Map<string, string>;
@@ -42,9 +43,17 @@ const CalendarColumns: FC<Props> = ({
     }
   };
 
+  const startTime = getTimeInMinutes(projectData.scheduleConfig.startingTime);
+  const endTime = getTimeInMinutes(projectData.scheduleConfig.endingTime);
+
   return (
     <div className="w-[calc((100vw-25rem)/7)] h-full">
       {Object.entries(timeData).map(([key, time]) => {
+        const currTimeInMinutes = getTimeInMinutes(time);
+        if (currTimeInMinutes < startTime || currTimeInMinutes > endTime + 30) {
+          return null;
+        }
+
         const formattedKey = `${headerData.date} ${time}`;
         let stackedSegment = false;
         if (formattedKey in scheduleInfoData) {
