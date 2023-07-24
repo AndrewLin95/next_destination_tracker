@@ -10,7 +10,6 @@ import {
   NotePayloadData, 
   StatusPayload, 
   MapPayloadData,
-  NoteDataResponse,
   ScheduleConfigMongoResponse,
   SetSchedulePayload,
   EachScheduleData,
@@ -22,7 +21,7 @@ import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
 import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, URL_REGEX, SCHEDULE_SEGMENTS, MS_IN_WEEK, MS_IN_DAY, DEFAULT_SCHEDULE_COLORS, DELETE_RESPONSE, MS_IN_MINUTE } from '../utils/constants';
 import { getUnixTime, isSaturday, isSunday, nextSaturday, previousSunday } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz'
-import { generateFinalScheduleData, handleScheduleSequenceAdd, findDataSegments, handleDeleteSchedule, identifyNumOfConflicts, clearScheduleData } from '../utils/scheduleUtils';
+import { generateFinalScheduleData, handleScheduleSequenceAdd, findDataSegments, handleDeleteSchedule, identifyNumOfConflicts, clearScheduleData, getTimeInMinutes } from '../utils/scheduleUtils';
 const ProjectSetupSchema = require('../models/projectSetupSchema');
 const ProjectLocationDataSchema = require('../models/projectLocationDataSchema');
 const ScheduleDataSchema = require('../models/scheduleDataSchema');
@@ -419,7 +418,7 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
       'projectID': schedulePayload.projectID,
     };
     const scheduleData: ScheduleDataMongoResponse = await ScheduleDataSchema.findOne(filter);
-    let currTimeInMinutes = (parseInt(schedulePayload.time.split(':')[0]) * 60) + parseInt(schedulePayload.time.split(':')[1])
+    let currTimeInMinutes = getTimeInMinutes(schedulePayload.time);
 
     if (scheduleData.scheduleKeys.has(schedulePayload.locationID)) {
       const statusPayload: {status: StatusPayload} = {
@@ -451,7 +450,7 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
 
     const scheduleID = uuidv4();
 
-    const startingTimeInMinutes = (parseInt(schedulePayload.time.split(':')[0]) * 60) + parseInt(schedulePayload.time.split(':')[1])
+    const startingTimeInMinutes = getTimeInMinutes(schedulePayload.time);
     const endTimeInMinutes = startingTimeInMinutes + schedulePayload.duration;
     const formattedEndTime = `${Math.floor(endTimeInMinutes / 60)}:${endTimeInMinutes % 60 === 0 ? "00" : endTimeInMinutes % 60}`
     const formattedDate = formatInTimeZone(schedulePayload.dateUnix, 'GMT', "PPP");

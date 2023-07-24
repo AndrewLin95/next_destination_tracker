@@ -17,10 +17,8 @@ export const handleScheduleSequenceAdd = (newScheduleData: EachScheduleData, con
     const tempAllData = [...conflictingData];
     const sortedTempData = sortScheduleData(tempAllData);
 
-    const firstEndSplit = (sortedTempData[0].timeTo as string).split(":");
-    const lastStartSplit = (sortedTempData[1].timeFrom as string).split(":");
-    const firstInMins = (parseInt(firstEndSplit[0]) * 60) + parseInt(firstEndSplit[1]);
-    const lastInMins = (parseInt(lastStartSplit[0]) * 60) + parseInt(lastStartSplit[1]);
+    const firstInMins = getTimeInMinutes(sortedTempData[0].timeTo as string)
+    const lastInMins = getTimeInMinutes(sortedTempData[1].timeFrom as string)
 
     if (firstInMins <= lastInMins && sortedTempData[1].position === 0) {
 
@@ -68,7 +66,7 @@ export const handleScheduleSequenceDelete = async (conflictingData : EachSchedul
   let sequencedData: EachScheduleData[] = [];
   let filteredScheduleData: ScheduleDataMongoResponse = originalScheduleData;
 
-  const startTimeInMins = (parseInt((conflictingData[0].timeFrom as string).split(':')[0]) * 60) + parseInt((conflictingData[0].timeFrom as string).split(':')[1])
+  const startTimeInMins = getTimeInMinutes(conflictingData[0].timeFrom as string);
   const duration = conflictingData[0].duration as number
   const targetLocationID = conflictingData[0].locationID;
   const targetKey = originalScheduleData.scheduleKeys.get(targetLocationID) ?? null;
@@ -202,7 +200,7 @@ export const handleScheduleSequenceDelete = async (conflictingData : EachSchedul
  * @returns {EachScheduleData[]} - Returns the schedule data segments of all identified conflicts.
  */
 export const recursivelyFindAllConflictingDataSegments = (targetScheduleData: EachScheduleData, allAdditionalDataSegments: EachScheduleData[], checkedKeys: Set<string>, date: string, originalScheduleData: ScheduleDataMongoResponse): EachScheduleData[] => {
-  const startTimeInMins = (parseInt((targetScheduleData.timeFrom as string).split(':')[0]) * 60) + parseInt((targetScheduleData.timeFrom as string).split(':')[1])
+  const startTimeInMins = getTimeInMinutes(targetScheduleData.timeFrom as string);
   const duration = targetScheduleData.duration as number
   const targetLocationID = targetScheduleData.locationID
 
@@ -239,10 +237,8 @@ export const recursivelyFindAllConflictingDataSegments = (targetScheduleData: Ea
  */
 export const sortScheduleData = (unsortedScheduleData: EachScheduleData[]): EachScheduleData[] => {
   return unsortedScheduleData.sort((a, b) => {
-    const aSplit = (a.timeFrom as string).split(":")
-    const bSplit = (b.timeFrom as string).split(":")
-    const aTimeInMins = (parseInt(aSplit[0]) * 60) + parseInt(aSplit[1]);
-    const bTimeInMins = (parseInt(bSplit[0]) * 60) + parseInt(bSplit[1]);
+    const aTimeInMins = getTimeInMinutes(a.timeFrom as string);
+    const bTimeInMins = getTimeInMinutes(b.timeFrom as string);
 
     if (aTimeInMins > bTimeInMins) {
       return 1; 
@@ -327,7 +323,7 @@ export const handleDeleteSchedule = async (originalScheduleData: ScheduleDataMon
       const targetData: EachScheduleData | null = findDataSegments(locationIDToDelete, originalScheduleData.scheduleData, originalScheduleData.scheduleKeys)
       
       if (targetData !== null) {
-        let currTimeInMinutes = (parseInt((targetData.timeFrom as string).split(':')[0]) * 60) + parseInt((targetData.timeFrom as string).split(':')[1])
+        let currTimeInMinutes = getTimeInMinutes(targetData.timeFrom as string);
       
         const date = formatInTimeZone(scheduleDateUnix, 'GMT', "PPP");
         // need to delete, and update position + num columns
@@ -383,10 +379,8 @@ export const clearFromAndTo = (allScheduleDatas: EachScheduleData[]) => {
   const toArray: number[] = [];
 
   allScheduleDatas.forEach(eachScheduleData => {
-    const fromSplit = (eachScheduleData.timeFrom as string).split(":");
-    const toSplit = (eachScheduleData.timeTo as string).split(":");
-    const fromInMins = (parseInt(fromSplit[0]) * 60) + parseInt(fromSplit[1]);
-    const toInMins = (parseInt(toSplit[0]) * 60) + parseInt(toSplit[1]);
+    const fromInMins = getTimeInMinutes(eachScheduleData.timeFrom as string);
+    const toInMins = getTimeInMinutes(eachScheduleData.timeTo as string)
 
     fromArray.push(fromInMins);
     toArray.push(toInMins);
@@ -436,7 +430,7 @@ export const clearScheduleData = async (scheduleData: EachScheduleData[], format
 export const generateFinalScheduleData = async (sequencedData:EachScheduleData[], scheduleDataToAddTo: ScheduleDataMongoResponse, formattedDate: string): Promise<ScheduleDataMongoResponse> => {
   sequencedData.forEach(eachScheduleData => {
     let alreadySetData = false;
-    let currTimeInMinutes = (parseInt((eachScheduleData.timeFrom as String).split(':')[0]) * 60) + parseInt((eachScheduleData.timeFrom as String).split(':')[1]);
+    let currTimeInMinutes = getTimeInMinutes(eachScheduleData.timeFrom as string);
     const startTime = JSON.parse(JSON.stringify(currTimeInMinutes));
 
     const nonDataScheduleSegment = {
@@ -474,4 +468,18 @@ export const generateFinalScheduleData = async (sequencedData:EachScheduleData[]
   const finalScheduleData = scheduleDataToAddTo;
 
   return finalScheduleData;
+}
+
+/**
+ * Returns the time in minutes from a time string.
+ * @param timeString 
+ * @returns 
+ */
+export const getTimeInMinutes = (timeString: string) => {
+  const timeSplit = timeString.split(":");
+  const hours = parseInt(timeSplit[0]);
+  const minutes = parseInt(timeSplit[1]);
+  
+  const timeInMinutes = (hours * 60) + minutes
+  return timeInMinutes;
 }
