@@ -77,10 +77,10 @@ export const handleScheduleSequenceDelete = async (conflictingData : EachSchedul
       tempDate.pop()
       const date = tempDate.join(" ");
       
-      const conflicts = identifyNumOfConflicts(targetLocationID, startTimeInMins, date, originalScheduleData.scheduleData, duration)
+      const {conflictingLocationIDs, conflictingDataSegments} = identifyNumOfConflicts(targetLocationID, startTimeInMins, date, originalScheduleData, duration)
 
       // since we are using the original scheduled data, conflicts 1 means that it only conflicts with the one that we removed
-      if (conflicts.size === 1) {
+      if (conflictingLocationIDs.size === 1) {
         const dataArrayToClear = [targetData, ...conflictingData];
         const sortedDataToClear = sortScheduleData(dataArrayToClear);
         filteredScheduleData = await clearScheduleData(sortedDataToClear, date, originalScheduleData.projectID);
@@ -90,7 +90,7 @@ export const handleScheduleSequenceDelete = async (conflictingData : EachSchedul
         sequencedData = conflictingData;
       } else {
         let targetID;
-        conflicts.forEach(eachLocationID => {
+        conflictingLocationIDs.forEach(eachLocationID => {
           if (eachLocationID !== conflictingData[0].locationID && eachLocationID !== targetData.locationID) {
             targetID = eachLocationID;
           }
@@ -204,14 +204,14 @@ export const recursivelyFindAllConflictingDataSegments = (targetScheduleData: Ea
   const duration = targetScheduleData.duration as number
   const targetLocationID = targetScheduleData.locationID
 
-  const conflicts = identifyNumOfConflicts(targetLocationID, startTimeInMins, date, originalScheduleData.scheduleData, duration)
+  const { conflictingLocationIDs, conflictingDataSegments} = identifyNumOfConflicts(targetLocationID, startTimeInMins, date, originalScheduleData, duration)
 
-  if (conflicts.size === 0) {
+  if (conflictingLocationIDs.size === 0) {
     return allAdditionalDataSegments;
   }
 
   let conflictingLocationID = "";
-  conflicts.forEach(locationID => {
+  conflictingLocationIDs.forEach(locationID => {
     if (!checkedKeys.has(locationID)) {
       conflictingLocationID = locationID;
     }
@@ -283,20 +283,20 @@ export const findDataSegments = (targetLocationID: string, scheduleData: Map<str
  * @param {string} targetLocationID - The target location ID 
  * @param {number} startTimeInMins - The target start time in minutes
  * @param {string} date - The date formatted to 'Jan 21st, 2023'
- * @param {Map<string, EachScheduleData[]>} scheduleData - The entire schedule data map
+ * @param {ScheduleDataMongoResponse} scheduleData - The entire schedule data map
  * @param {number} duration - The target duration
- * @returns {Set<string>} The set of locationIDs that conflict with the target location ID
+ * @returns The set of locationIDs that conflict with the target location ID, and the conflictingDataSegments
  */
-export const identifyNumOfConflicts = (targetLocationID: string, startTimeInMins: number, date: string, scheduleData: Map<string, EachScheduleData[]>, duration: number): Set<string> => {
+export const identifyNumOfConflicts = (targetLocationID: string, startTimeInMins: number, date: string, scheduleData: ScheduleDataMongoResponse, duration: number) => {
   let i = 0;
   const conflictingLocationIDs: Set<string> = new Set();
   let currTime = startTimeInMins;
   while (i < (duration / 30)) {
     const currFormattedTime = `${Math.floor(currTime / 60)}:${(currTime % 60 === 0 ? "00" : currTime % 60)}`
     const key = `${date} ${currFormattedTime}`;
-    const hasKey = scheduleData.has(key);
+    const hasKey = scheduleData.scheduleData.has(key);
     if (hasKey) {
-      const originalData = scheduleData.get(key) as EachScheduleData[];
+      const originalData = scheduleData.scheduleData.get(key) as EachScheduleData[];
       originalData.forEach(scheduleData => {
         if (!conflictingLocationIDs.has(scheduleData.locationID) && scheduleData.locationID !== targetLocationID) {
           conflictingLocationIDs.add(scheduleData.locationID);
@@ -306,7 +306,16 @@ export const identifyNumOfConflicts = (targetLocationID: string, startTimeInMins
     currTime = currTime + 30;
     i++
   }
-  return conflictingLocationIDs 
+
+  const conflictingDataSegments: EachScheduleData[] = [];
+  conflictingLocationIDs.forEach(eachLocationID => {
+    const dataSegment = findDataSegments(eachLocationID, scheduleData.scheduleData, scheduleData.scheduleKeys)
+    if (dataSegment !== null) {
+      conflictingDataSegments.push(dataSegment);
+    }
+  });
+
+  return { conflictingLocationIDs, conflictingDataSegments }
 }
 
 /**
@@ -327,15 +336,7 @@ export const handleDeleteSchedule = async (originalScheduleData: ScheduleDataMon
       
         const date = formatInTimeZone(scheduleDateUnix, 'GMT', "PPP");
         // need to delete, and update position + num columns
-        const conflictingLocationIDs = identifyNumOfConflicts(locationIDToDelete, currTimeInMinutes, date, originalScheduleData.scheduleData, targetData.duration as number)
-  
-        const conflictingData: EachScheduleData[] = [];
-        conflictingLocationIDs.forEach(eachLocationID => {
-          const dataSegment = findDataSegments(eachLocationID, originalScheduleData.scheduleData, originalScheduleData.scheduleKeys)
-          if (dataSegment !== null) {
-            conflictingData.push(dataSegment);
-          }
-        });
+        const { conflictingLocationIDs, conflictingDataSegments } = identifyNumOfConflicts(locationIDToDelete, currTimeInMinutes, date, originalScheduleData, targetData.duration as number)
   
         // if there is no conflicts, just return the filteredScheduleData
         if (conflictingLocationIDs.size === 0) {
@@ -348,7 +349,7 @@ export const handleDeleteSchedule = async (originalScheduleData: ScheduleDataMon
           }
         } else {
           // get the datas and return after modifying their numColumns and position /LOOK AT THIS
-          const { sequencedData, filteredScheduleData } = await handleScheduleSequenceDelete(conflictingData, targetData, originalScheduleData);
+          const { sequencedData, filteredScheduleData } = await handleScheduleSequenceDelete(conflictingDataSegments, targetData, originalScheduleData);
           if (sequencedData.length !== 0) {
             const returnScheduleData = await generateFinalScheduleData(sequencedData, filteredScheduleData, date);
             return { 

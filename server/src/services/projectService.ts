@@ -284,7 +284,6 @@ const getEachProject = async (projectID: string) => {
   }
 }
 
-// if update priority or name or message, need to update schedule as well
 const updateNote = async (payload: {noteData: NotePayloadData, mapData: MapPayloadData} ) => {
   const filter = {"locationID": payload.noteData.locationID as string};
   const data = { 
@@ -472,16 +471,7 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
     }
 
     // indentify conflicts
-    const conflictingLocationIDs = identifyNumOfConflicts(schedulePayload.locationID, currTimeInMinutes, schedulePayload.date, scheduleData.scheduleData, schedulePayload.duration);
-
-    // TODO: Decide if I want to move this into the identifyNumOfConflicts function
-    const conflictingData: EachScheduleData[] = [];
-    conflictingLocationIDs.forEach(eachLocationID => {
-      const dataSegment = findDataSegments(eachLocationID, scheduleData.scheduleData, scheduleData.scheduleKeys)
-      if (dataSegment !== null) {
-        conflictingData.push(dataSegment);
-      }
-    });
+    const {conflictingLocationIDs, conflictingDataSegments} = identifyNumOfConflicts(schedulePayload.locationID, currTimeInMinutes, schedulePayload.date, scheduleData, schedulePayload.duration);
 
     // too many conflicts
     if (conflictingLocationIDs.size > 3) {
@@ -505,7 +495,7 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
     
     // everything else
     if (conflictingLocationIDs.size >= 1) { 
-      const sequencedData = handleScheduleSequenceAdd(newScheduleData, conflictingData, scheduleData);
+      const sequencedData = handleScheduleSequenceAdd(newScheduleData, conflictingDataSegments, scheduleData);
       if (sequencedData === undefined) {
         const statusPayload: {status: StatusPayload} = {
           status: {
