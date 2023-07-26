@@ -8,7 +8,7 @@ export interface DecodedJWT {
   }
 }
 
-export interface UserProfileState {
+export interface AuthState {
   userID: string;
   userEmail: string;
   token: string;

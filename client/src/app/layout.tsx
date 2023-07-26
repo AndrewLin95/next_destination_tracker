@@ -1,4 +1,4 @@
-import { UserContextProvider } from "./context/UserProfileContext";
+import { AuthProvider } from "./context/AuthContext";
 import "./globals.css";
 import { Inter } from "next/font/google";
 
@@ -16,9 +16,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <UserContextProvider>
+      <AuthProvider>
         <body className={inter.className}>{children}</body>
-      </UserContextProvider>
+      </AuthProvider>
     </html>
   );
 }

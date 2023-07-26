@@ -8,14 +8,14 @@ import Image from "next/image";
 import jwtDecode from "jwt-decode";
 
 import InLineTextButton from "@/components/InLineTextButton";
-import UserContext from "./context/UserProfileContext";
+import AuthContext from "./context/AuthContext";
 import { DecodedJWT } from "@/util/models/AuthModels";
 import { setUserProfile } from "@/util/authUtil";
 import { VERIFY_TOKEN_RESPONSE } from "@/util/constants";
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const { userProfileState, setUserProfileState } = useContext(UserContext);
+  const { authState, setAuthState } = useContext(AuthContext);
   const [signUpToggle, setSignUpToggle] = useState(false);
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const Home: NextPage = () => {
     const verifyToken = async () => {
       const response: VERIFY_TOKEN_RESPONSE = await setUserProfile(
         userToken,
-        setUserProfileState
+        setAuthState
       );
       if (response === VERIFY_TOKEN_RESPONSE.TokenFound) {
         router.push("/homepage");
@@ -54,7 +54,7 @@ const Home: NextPage = () => {
 
       const decodedJWT: DecodedJWT = jwtDecode(response.data);
 
-      setUserProfileState({
+      setAuthState({
         userID: decodedJWT.user._id,
         userEmail: decodedJWT.user.email,
         token: response.data,

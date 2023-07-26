@@ -476,7 +476,7 @@ export const generateFinalScheduleData = async (sequencedData:EachScheduleData[]
  * @param timeString The time string in format `##:##` 
  * @returns {number} Returns the timestring converted to timeInMinutes.
  */
-export const getTimeInMinutes = (timeString: string) => {
+export const getTimeInMinutes = (timeString: string): number => {
   const timeSplit = timeString.split(":");
   const hours = parseInt(timeSplit[0]);
   const minutes = parseInt(timeSplit[1]);

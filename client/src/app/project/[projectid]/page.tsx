@@ -5,7 +5,7 @@ import { NextPage } from "next";
 import SearchModule from "./SearchModule";
 import MapModule from "./MapModule";
 import { useContext, useEffect, useState } from "react";
-import UserContext from "@/app/context/UserProfileContext";
+import AuthContext from "@/app/context/AuthContext";
 import {
   ProjectData,
   LocationData,
@@ -20,7 +20,7 @@ import {
   DeleteNoteResponse,
   DeleteScheduleResponse,
 } from "@/util/models/ProjectModels";
-import { UserProfileState } from "@/util/models/AuthModels";
+import { AuthState } from "@/util/models/AuthModels";
 import authConfigData from "@/util/authConfig";
 import axios, { isAxiosError } from "axios";
 import SearchResults from "./searchComponents/SearchResults";
@@ -51,7 +51,7 @@ interface Props {
 
 const ProjectPage: NextPage<Props> = ({ params }) => {
   const router = useRouter();
-  const { userProfileState, setUserProfileState } = useContext(UserContext);
+  const { authState, setAuthState } = useContext(AuthContext);
 
   const [loading, setLoading] = useState(true);
   const [projectData, setProjectData] = useState<ProjectData>(
@@ -101,7 +101,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   useEffect(() => {
     if (
       params.projectid === undefined ||
-      (userProfileState as UserProfileState).token === undefined
+      (authState as AuthState).token === undefined
     ) {
       router.push("/homepage");
     }
@@ -110,9 +110,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       const url = `/api/project/geteachproject/${params.projectid}`;
       const authConfig = {
         headers: {
-          Authorization: `Bearer ${
-            (userProfileState as UserProfileState).token
-          }`,
+          Authorization: `Bearer ${(authState as AuthState).token}`,
         },
       };
 
@@ -168,13 +166,11 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       const url = `/api/project/searchlocation`;
       const authConfig = {
         headers: {
-          Authorization: `Bearer ${
-            (userProfileState as UserProfileState).token
-          }`,
+          Authorization: `Bearer ${(authState as AuthState).token}`,
         },
       };
       const body = {
-        userID: (userProfileState as UserProfileState).userID,
+        userID: (authState as AuthState).userID,
         projectID: params.projectid as string,
         query: searchText.split(" ").join("+"),
       };
@@ -316,9 +312,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       const body = { noteData: newNoteData, mapData: tempMapData[0] };
       const authConfig = {
         headers: {
-          Authorization: `Bearer ${
-            (userProfileState as UserProfileState).token
-          }`,
+          Authorization: `Bearer ${(authState as AuthState).token}`,
         },
       };
 
@@ -380,9 +374,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       const body = {};
       const authConfig = {
         headers: {
-          Authorization: `Bearer ${
-            (userProfileState as UserProfileState).token
-          }`,
+          Authorization: `Bearer ${(authState as AuthState).token}`,
         },
       };
 
@@ -482,9 +474,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
         projectID: projectData.projectID,
         duration: 120,
       };
-      const authConfig = authConfigData(
-        (userProfileState as UserProfileState).token
-      );
+      const authConfig = authConfigData((authState as AuthState).token);
 
       try {
         const response = await axios.post<ScheduleDataResponse>(
@@ -541,9 +531,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     const handleDeleteScheduleData = async () => {
       const url = `/api/project/deleteschedule/${projectData.projectID}/${locationID}`;
       const body = {};
-      const authConfig = authConfigData(
-        (userProfileState as UserProfileState).token
-      );
+      const authConfig = authConfigData((authState as AuthState).token);
 
       try {
         const response = await axios.put(url, body, authConfig);

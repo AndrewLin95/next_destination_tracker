@@ -3,7 +3,7 @@
 import { NextPage } from "next";
 import { useRouter } from "next/navigation";
 import { useContext, useState, useEffect } from "react";
-import UserContext from "../context/UserProfileContext";
+import AuthContext from "../context/AuthContext";
 import { ImageListType } from "react-images-uploading/dist/typings";
 
 import Header from "./Header";
@@ -11,21 +11,21 @@ import NewProject from "./NewProject";
 import ExistingProjects from "./ExistingProjects";
 import axios from "axios";
 import { ProjectData } from "@/util/models/ProjectModels";
-import { UserProfileState } from "@/util/models/AuthModels";
+import { AuthState } from "@/util/models/AuthModels";
 import { setUserProfile } from "@/util/authUtil";
 import { VERIFY_TOKEN_RESPONSE } from "@/util/constants";
 
 const HomePage: NextPage = () => {
   const router = useRouter();
 
-  const { userProfileState, setUserProfileState } = useContext(UserContext);
+  const { authState, setAuthState } = useContext(AuthContext);
   const [uploadedImage, setUploadedImage] = useState<any[]>([]);
   const [existingProjectsList, setExistingProjectsList] = useState<
     ProjectData[]
   >([]);
 
   useEffect(() => {
-    if ((userProfileState as UserProfileState).token === undefined) {
+    if ((authState as AuthState).token === undefined) {
       const userToken: string = JSON.parse(
         localStorage.getItem("token") as string
       );
@@ -38,7 +38,7 @@ const HomePage: NextPage = () => {
       const verifyToken = async () => {
         const response: VERIFY_TOKEN_RESPONSE = await setUserProfile(
           userToken,
-          setUserProfileState
+          setAuthState
         );
         if (response === VERIFY_TOKEN_RESPONSE.NoToken) {
           router.push("/");
@@ -49,15 +49,11 @@ const HomePage: NextPage = () => {
   }, []);
 
   useEffect(() => {
-    if ((userProfileState as UserProfileState).token !== undefined) {
-      const url = `/api/project/getprojects/${
-        (userProfileState as UserProfileState).userID
-      }`;
+    if ((authState as AuthState).token !== undefined) {
+      const url = `/api/project/getprojects/${(authState as AuthState).userID}`;
       const authConfig = {
         headers: {
-          Authorization: `Bearer ${
-            (userProfileState as UserProfileState).token
-          }`,
+          Authorization: `Bearer ${(authState as AuthState).token}`,
         },
       };
 
@@ -70,7 +66,7 @@ const HomePage: NextPage = () => {
       };
       getProjectData();
     }
-  }, [userProfileState]);
+  }, [authState]);
 
   const submitNewProject = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -84,7 +80,7 @@ const HomePage: NextPage = () => {
     try {
       const url = "/api/project/newproject";
       const body = {
-        userID: (userProfileState as UserProfileState).userID,
+        userID: (authState as AuthState).userID,
         projectName: projectName,
         projectDescription: projectDescription,
         projectStartDate: startDate,
@@ -94,9 +90,7 @@ const HomePage: NextPage = () => {
       };
       const authConfig = {
         headers: {
-          Authorization: `Bearer ${
-            (userProfileState as UserProfileState).token
-          }`,
+          Authorization: `Bearer ${(authState as AuthState).token}`,
         },
       };
       const response = await axios.post(url, body, authConfig);
