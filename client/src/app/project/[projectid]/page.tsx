@@ -37,6 +37,7 @@ import EditNoteDialog from "./components/EditNoteDialog";
 import { useRouter } from "next/navigation";
 import ErrorDialog from "@/components/ErrorDialog";
 import ScheduleModule from "./ScheduleModule";
+import ProjectProfileDialog from "./components/ProjectProfileDialog";
 
 interface InitResponseData {
   projectData: ProjectData;
@@ -97,6 +98,9 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   const [errorDialogData, setErrorDialogData] = useState<StatusPayload>(
     {} as StatusPayload
   );
+
+  const [projectSettingsToggle, setProjectSettingsToggle] =
+    useState<Boolean>(false);
 
   useEffect(() => {
     if (
@@ -566,7 +570,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
 
   return (
     <div className="w-screen h-screen max-h-screen overflow-hidden flex flex-col justify-center items-center">
-      <Header />
+      <Header setProjectSettingsToggle={setProjectSettingsToggle} />
       {loading ? (
         // TODO: loading component
         <></>
@@ -636,6 +640,12 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
         <ErrorDialog
           setErrorDialogToggle={setErrorDialogToggle}
           errorDialogData={errorDialogData}
+        />
+      ) : null}
+      {projectSettingsToggle ? (
+        <ProjectProfileDialog
+          projectData={projectData}
+          setProjectSettingsToggle={setProjectSettingsToggle}
         />
       ) : null}
     </div>
