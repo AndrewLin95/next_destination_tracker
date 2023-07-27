@@ -1,3 +1,4 @@
+import { SIMPLE_BUTTON_STYLE } from "@/util/constants";
 import Image from "next/image";
 import { FC, Dispatch, SetStateAction } from "react";
 
@@ -7,15 +8,19 @@ interface Props {
 
 const ProjectProfile: FC<Props> = ({ setProjectSettingsToggle }) => {
   return (
-    <div onClick={() => setProjectSettingsToggle(true)}>
+    <button
+      type="button"
+      className={`${SIMPLE_BUTTON_STYLE}`}
+      onClick={() => setProjectSettingsToggle(true)}
+    >
       <Image
-        src="/user-profile.png"
+        src="/settings-icon.png"
         alt="User Profile"
         width={144}
         height={144}
         className="h-8 w-auto pr-2"
       />
-    </div>
+    </button>
   );
 };
 
