@@ -1,7 +1,8 @@
 import { ProjectData } from "@/util/models/ProjectModels";
+import { FORM_SUBMIT_BUTTON, FORM_CANCEL_BUTTON } from "@/util/constants";
 import { FC, Dispatch, SetStateAction, useState } from "react";
-import ImageUploading, { ImageListType } from "react-images-uploading";
 import { formatInTimeZone } from "date-fns-tz";
+import Image from "next/image";
 
 interface Props {
   projectData: ProjectData;
@@ -15,15 +16,15 @@ const ProjectProfileDialog: FC<Props> = ({
   const [projectName, setProjectName] = useState(
     projectData.project.projectName
   );
+
   const [projectDescription, setProjectDescription] = useState(
     projectData.project.projectDescription
   );
-  const [projectImage, setProjectImage] = useState(
-    projectData.project.projectImage
-  );
+
   const [projectStartDate, setProjectStartDate] = useState(
     formatInTimeZone(projectData.project.projectStartDate, "gmt", "yyyy-MM-dd")
   );
+
   const [projectEndDate, setProjectEndDate] = useState(
     formatInTimeZone(projectData.project.projectEndDate, "gmt", "yyyy-MM-dd")
   );
@@ -38,10 +39,17 @@ const ProjectProfileDialog: FC<Props> = ({
         className="absolute h-screen w-screen bg-slate-900/40"
         onClick={() => setProjectSettingsToggle(false)}
       />
-      <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[32rem] h-[22rem] bg-Background flex flex-col p-4">
-        <div className="text-xl font-bold pb-1 underline text-Accent">
+      <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[32rem] h-[20rem] bg-Background flex flex-col p-4">
+        <div className="text-xl font-bold pb-2 underline text-Accent">
           Edit Project Settings
         </div>
+        <Image
+          src={projectData.project.projectImage}
+          alt="project Image"
+          className="w-full h-20 object-cover mb-4"
+          width={256}
+          height={256}
+        />
         <form onSubmit={handleSubmit}>
           <div className="flex flex-row w-full h-auto pb-1">
             <div className="mr-2 w-28 italic">Project Name</div>
@@ -80,50 +88,21 @@ const ProjectProfileDialog: FC<Props> = ({
               onChange={(e) => setProjectEndDate(e.target.value)}
             />
           </div>
-          {/* <ImageUploading
-            value={uploadedImage}
-            onChange={handleImageUploadChange}
-            maxNumber={MAX_NUM_OF_IMAGES}
-          >
-            {({ imageList, onImageUpload, onImageRemoveAll }) => (
-              <div className="upload__image-wrapper">
-                {imageList[0] ? (
-                  <button
-                    type="button"
-                    className="mb-2"
-                    onClick={onImageRemoveAll}
-                  >
-                    Remove Banner
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    className="mb-2"
-                    onClick={onImageUpload}
-                  >
-                    Upload Banner
-                  </button>
-                )}
-                &nbsp;
-                {imageList[0] ? (
-                  imageList.map((image, index) => (
-                    <div key={index} className="image-item">
-                      <img
-                        className="h-24 w-full object-cover"
-                        src={image.dataURL}
-                        alt="uploaded image"
-                        width="100"
-                      />
-                      <div className="image-item__btn-wrapper"></div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="h-24 w-full" />
-                )}
-              </div>
-            )}
-          </ImageUploading> */}
-          <button type="submit">test</button>
+          <div className="flex flex-row justify-end mt-2">
+            <button
+              type="submit"
+              className={`${FORM_SUBMIT_BUTTON} h-10 w-32 mr-2`}
+            >
+              Submit
+            </button>
+            <button
+              type="button"
+              className={`${FORM_CANCEL_BUTTON} h-10 w-24 bg-SecondaryButton/80`}
+              onClick={() => setProjectSettingsToggle(false)}
+            >
+              Cancel
+            </button>
+          </div>
         </form>
       </div>
     </>
