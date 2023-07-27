@@ -646,6 +646,8 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
         <ProjectProfileDialog
           projectData={projectData}
           setProjectSettingsToggle={setProjectSettingsToggle}
+          authState={authState}
+          setProjectData={setProjectData}
         />
       ) : null}
     </div>

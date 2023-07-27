@@ -3,15 +3,21 @@ import { FORM_SUBMIT_BUTTON, FORM_CANCEL_BUTTON } from "@/util/constants";
 import { FC, Dispatch, SetStateAction, useState } from "react";
 import { formatInTimeZone } from "date-fns-tz";
 import Image from "next/image";
+import { AuthState } from "@/util/models/AuthModels";
+import axios from "axios";
 
 interface Props {
   projectData: ProjectData;
   setProjectSettingsToggle: Dispatch<SetStateAction<Boolean>>;
+  authState: AuthState | {};
+  setProjectData: Dispatch<SetStateAction<ProjectData>>;
 }
 
 const ProjectProfileDialog: FC<Props> = ({
   projectData,
   setProjectSettingsToggle,
+  authState,
+  setProjectData,
 }) => {
   const [projectName, setProjectName] = useState(
     projectData.project.projectName
@@ -31,6 +37,38 @@ const ProjectProfileDialog: FC<Props> = ({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const projectID = projectData.projectID;
+    const projectName = (e.target as HTMLFormElement).projectName.value;
+    const projectDescription = (e.target as HTMLFormElement).projectDescription
+      .value;
+    const dateStart = (e.target as HTMLFormElement).dateStart.value;
+    const dateEnd = (e.target as HTMLFormElement).dateEnd.value;
+
+    const handleUpdate = async () => {
+      const url = `/api/project/updateproject`;
+      const authConfig = {
+        headers: {
+          Authorization: `Bearer ${(authState as AuthState).token}`,
+        },
+      };
+      const body = {
+        projectID: projectID,
+        projectName: projectName,
+        projectDescription: projectDescription,
+        dateStart: dateStart,
+        dateEnd: dateEnd,
+        projectImage: projectData.project.projectImage,
+        projectCoords: projectData.project.projectCoords,
+      };
+
+      const response = await axios.put(url, body, authConfig);
+      // error handle
+      const responseData = response.data;
+      setProjectData(responseData);
+    };
+
+    handleUpdate();
   };
 
   return (
@@ -76,14 +114,14 @@ const ProjectProfileDialog: FC<Props> = ({
             <input
               type="date"
               value={projectStartDate}
-              name="noteOpen"
+              name="dateStart"
               className="px-2 text-sm w-[calc(((100%-7rem)/2)-0.1275rem)] mr-1 bg-Background_Lighter"
               onChange={(e) => setProjectStartDate(e.target.value)}
             />
             <input
               type="date"
               value={projectEndDate}
-              name="noteClose"
+              name="dateEnd"
               className="px-2 text-sm w-[calc(((100%-7rem)/2)-0.1275rem)] bg-Background_Lighter"
               onChange={(e) => setProjectEndDate(e.target.value)}
             />

@@ -10,6 +10,20 @@ export interface CreateProjectQuery {
   projectImage: string,
 }
 
+export interface UpdateProjectPayload {
+  projectID: string,
+  projectName: string,
+  projectDescription: string,
+  dateStart: any,
+  dateEnd: any,
+  projectImage: string,
+  projectCoords: {
+    destination: string,
+    lat: string,
+    lng: string,
+  },
+}
+
 export interface SearchQuery {
   userID: string,
   projectID: string,

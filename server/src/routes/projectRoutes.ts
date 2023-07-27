@@ -2,6 +2,7 @@ import express from 'express';
 import { 
   searchLocation, 
   createNewProject, 
+  updateProject,
   getProjects, 
   getEachProject, 
   updateNote, 
@@ -13,6 +14,7 @@ import {
 const router = express.Router();
 
 router.post('/newproject', createNewProject)
+router.put('/updateproject', updateProject)
 router.post('/searchlocation', searchLocation)
 router.get('/getprojects/:userID', getProjects)
 router.get('/geteachproject/:projectID', getEachProject)

@@ -10,6 +10,7 @@ import {
   NoteDataResponse,
   SetSchedulePayload,
   ScheduleDataMongoResponse,
+  UpdateProjectPayload,
 } from "../utils/models/ProjectModels";
 import { STATUS_CODES } from "../utils/constants";
 
@@ -19,6 +20,17 @@ export const createNewProject = async (req: Request, res: Response) => {
 
     const response = await projectService.createNewProject(payload);
     res.status(200).send(JSON.stringify(response))
+  } catch (err) {
+    res.status(500).send(err);
+  }
+}
+
+export const updateProject = async (req: Request, res: Response) => {
+  try {
+    const payload: UpdateProjectPayload = req.body;
+
+    const response = await projectService.updateProject(payload);
+    res.status(200).send(JSON.stringify(response));
   } catch (err) {
     res.status(500).send(err);
   }
@@ -112,6 +124,4 @@ export const deleteSchedule = async (req: Request, res: Response) => {
   } catch (err) {
     res.status(500).send(err)
   }
-
-
 }

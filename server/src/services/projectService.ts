@@ -16,13 +16,13 @@ import {
   ScheduleKeys,
   ScheduleDataMongoResponse,
   DeleteScheduleResponse,
+  UpdateProjectPayload,
 } from "../utils/models/ProjectModels";
 import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
 import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, URL_REGEX, SCHEDULE_SEGMENTS, MS_IN_WEEK, MS_IN_DAY, DEFAULT_SCHEDULE_COLORS, DELETE_RESPONSE, MS_IN_MINUTE } from '../utils/constants';
 import { getUnixTime, isSaturday, isSunday, nextSaturday, previousSunday } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz'
 import { generateFinalScheduleData, handleScheduleSequenceAdd, findDataSegments, handleDeleteSchedule, identifyNumOfConflicts, clearScheduleData, getTimeInMinutes } from '../utils/scheduleUtils';
-import mongoose from 'mongoose';
 const ProjectSetupSchema = require('../models/projectSetupSchema');
 const ProjectLocationDataSchema = require('../models/projectLocationDataSchema');
 const ScheduleDataSchema = require('../models/scheduleDataSchema');
@@ -185,6 +185,32 @@ const createNewProject = async (payload: CreateProjectQuery) => {
   } catch (err) {
     console.log(err);
   }
+}
+
+const updateProject = async (projectPayload: UpdateProjectPayload) => {
+  const startDate = Date.parse(projectPayload.dateStart);
+  const endDate = Date.parse(projectPayload.dateEnd) + MS_IN_DAY - 1;
+
+  const filter = {"projectID": projectPayload.projectID}
+  const data = {
+    project: {
+      projectName: projectPayload.projectName,
+      projectDescription: projectPayload.projectDescription,
+      projectStartDate: startDate,
+      projectEndDate: endDate,
+      projectImage: projectPayload.projectImage,
+      projectCoords: projectPayload.projectCoords,
+    }
+  }
+
+  try {
+    const response: ProjectSetupResponse = await ProjectSetupSchema.findOneAndUpdate(filter, data, {returnOriginal: false})
+
+    return response;
+  } catch (err) {
+    console.log(err);
+  }
+
 }
 
 const searchLocation = async (payload: SearchQuery) => {
@@ -616,6 +642,7 @@ const deleteSchedule = async (locationID: string, projectID: string) => {
 
 const projectService = {
   createNewProject,
+  updateProject,
   searchLocation,
   getProject,
   getEachProject,
