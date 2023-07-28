@@ -1,16 +1,26 @@
-import { ProjectData } from "@/util/models/ProjectModels";
-import { FORM_SUBMIT_BUTTON, FORM_CANCEL_BUTTON } from "@/util/constants";
+import {
+  ProjectData,
+  StatusPayload,
+  UpdateProjectResponse,
+} from "@/util/models/ProjectModels";
+import {
+  FORM_SUBMIT_BUTTON,
+  FORM_CANCEL_BUTTON,
+  STATUS_CODES,
+} from "@/util/constants";
 import { FC, Dispatch, SetStateAction, useState } from "react";
 import { formatInTimeZone } from "date-fns-tz";
 import Image from "next/image";
 import { AuthState } from "@/util/models/AuthModels";
-import axios from "axios";
+import axios, { AxiosError, isAxiosError } from "axios";
 
 interface Props {
   projectData: ProjectData;
   setProjectSettingsToggle: Dispatch<SetStateAction<Boolean>>;
   authState: AuthState | {};
   setProjectData: Dispatch<SetStateAction<ProjectData>>;
+  setErrorDialogToggle: Dispatch<SetStateAction<Boolean>>;
+  setErrorDialogData: Dispatch<SetStateAction<StatusPayload>>;
 }
 
 const ProjectProfileDialog: FC<Props> = ({
@@ -18,6 +28,8 @@ const ProjectProfileDialog: FC<Props> = ({
   setProjectSettingsToggle,
   authState,
   setProjectData,
+  setErrorDialogToggle,
+  setErrorDialogData,
 }) => {
   const [projectName, setProjectName] = useState(
     projectData.project.projectName
@@ -61,11 +73,24 @@ const ProjectProfileDialog: FC<Props> = ({
         projectImage: projectData.project.projectImage,
         projectCoords: projectData.project.projectCoords,
       };
-
-      const response = await axios.put(url, body, authConfig);
-      // error handle
-      const responseData = response.data;
-      setProjectData(responseData);
+      try {
+        const response = await axios.put<UpdateProjectResponse>(
+          url,
+          body,
+          authConfig
+        );
+        const responseData = response.data;
+        setProjectData(responseData.projectData as ProjectData);
+      } catch (err: AxiosError | unknown) {
+        if (axios.isAxiosError(err)) {
+          const responseBody: StatusPayload = err.response?.data.status;
+          if (responseBody.statusCode === STATUS_CODES.BadRequest) {
+            setProjectSettingsToggle(false);
+            setErrorDialogData(responseBody);
+            setErrorDialogToggle(true);
+          }
+        }
+      }
     };
 
     handleUpdate();

@@ -21,6 +21,7 @@ export enum ERROR_CAUSE {
   Search = "Your search query could not be completed.",
   Server = "Our servers are experiencing technical issues.",
   Schedule = "Your schedule could not be completed.",
+  Validation = "Your change request could not be completed.",
 }
 
 export enum ERROR_DATA {
@@ -29,7 +30,8 @@ export enum ERROR_DATA {
   ScheduleConflict = "There are too many scheduling conflicts. Please try another time slot.",
   ScheduleDuplicate = "You have already scheduled this item.",
   ScheduleOutOfBounds = "You scheduled this out of bounds. Please try a different schedule time.",
-  ScheduleDisabled = "This time slot has been disabled. If you intend to add data here, please enable it in the configuration."
+  ScheduleDisabled = "This time slot has been disabled. If you intend to add data here, please enable it in the configuration.",
+  ProjectDateValidation = "Please check the scheduled start and end dates and try again."
 }
 
 export enum LABEL_COLOR {

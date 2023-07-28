@@ -177,3 +177,8 @@ export interface DeleteScheduleResponse {
     statusCode: StatusPayload
   }
 }
+
+export interface UpdateProjectResponse {
+  projectData?: ProjectData,
+  status: StatusPayload
+}

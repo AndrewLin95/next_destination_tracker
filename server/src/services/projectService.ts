@@ -187,9 +187,21 @@ const createNewProject = async (payload: CreateProjectQuery) => {
   }
 }
 
+// TODO: if date is updated, need to re-set schedule;
 const updateProject = async (projectPayload: UpdateProjectPayload) => {
   const startDate = Date.parse(projectPayload.dateStart);
   const endDate = Date.parse(projectPayload.dateEnd) + MS_IN_DAY - 1;
+
+  if (startDate > endDate) {
+    const statusPayload: {status: StatusPayload} = {
+      status: {
+        statusCode: STATUS_CODES.BadRequest,
+        errorCause: ERROR_CAUSE.Validation,
+        errorData: ERROR_DATA.ProjectDateValidation,
+      }
+    }
+    return statusPayload;
+  }
 
   const filter = {"projectID": projectPayload.projectID}
   const data = {
@@ -204,9 +216,16 @@ const updateProject = async (projectPayload: UpdateProjectPayload) => {
   }
 
   try {
-    const response: ProjectSetupResponse = await ProjectSetupSchema.findOneAndUpdate(filter, data, {returnOriginal: false})
+    const projectSetupResponse: ProjectSetupResponse = await ProjectSetupSchema.findOneAndUpdate(filter, data, {returnOriginal: false})
 
-    return response;
+    const returnResponse = {
+      projectData: projectSetupResponse,
+      status: {
+        statusCode: STATUS_CODES.SUCCESS,
+      }
+    }
+
+    return returnResponse;
   } catch (err) {
     console.log(err);
   }

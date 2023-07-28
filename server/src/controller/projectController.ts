@@ -30,7 +30,13 @@ export const updateProject = async (req: Request, res: Response) => {
     const payload: UpdateProjectPayload = req.body;
 
     const response = await projectService.updateProject(payload);
-    res.status(200).send(JSON.stringify(response));
+
+    if (response?.status.statusCode === STATUS_CODES.SUCCESS) {
+      res.status(200).send(JSON.stringify(response));
+    } else if (response?.status.statusCode === STATUS_CODES.BadRequest) {
+      res.status(400).send(JSON.stringify(response));
+    }
+
   } catch (err) {
     res.status(500).send(err);
   }
