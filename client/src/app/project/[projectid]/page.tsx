@@ -570,7 +570,11 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
 
   return (
     <div className="w-screen h-screen max-h-screen overflow-hidden flex flex-col justify-center items-center">
-      <Header setProjectSettingsToggle={setProjectSettingsToggle} />
+      <Header
+        setProjectSettingsToggle={setProjectSettingsToggle}
+        projectImage={projectData.project.projectImage}
+        projectName={projectData.project.projectName}
+      />
       {loading ? (
         // TODO: loading component
         <></>
