@@ -187,29 +187,29 @@ const createNewProject = async (payload: CreateProjectQuery) => {
   }
 }
 
-// TODO: if date is updated, need to re-set schedule;
+// TODO: Decide if i want to modify the project dates as well...
 const updateProject = async (projectPayload: UpdateProjectPayload) => {
-  const startDate = Date.parse(projectPayload.dateStart);
-  const endDate = Date.parse(projectPayload.dateEnd) + MS_IN_DAY - 1;
+  // const startDate = Date.parse(projectPayload.dateStart);
+  // const endDate = Date.parse(projectPayload.dateEnd) + MS_IN_DAY - 1;
 
-  if (startDate > endDate) {
-    const statusPayload: {status: StatusPayload} = {
-      status: {
-        statusCode: STATUS_CODES.BadRequest,
-        errorCause: ERROR_CAUSE.Validation,
-        errorData: ERROR_DATA.ProjectDateValidation,
-      }
-    }
-    return statusPayload;
-  }
+  // if (startDate > endDate) {
+  //   const statusPayload: {status: StatusPayload} = {
+  //     status: {
+  //       statusCode: STATUS_CODES.BadRequest,
+  //       errorCause: ERROR_CAUSE.Validation,
+  //       errorData: ERROR_DATA.ProjectDateValidation,
+  //     }
+  //   }
+  //   return statusPayload;
+  // }
 
   const filter = {"projectID": projectPayload.projectID}
   const data = {
     project: {
       projectName: projectPayload.projectName,
       projectDescription: projectPayload.projectDescription,
-      projectStartDate: startDate,
-      projectEndDate: endDate,
+      projectStartDate: projectPayload.dateStart,
+      projectEndDate: projectPayload.dateEnd,
       projectImage: projectPayload.projectImage,
       projectCoords: projectPayload.projectCoords,
     }

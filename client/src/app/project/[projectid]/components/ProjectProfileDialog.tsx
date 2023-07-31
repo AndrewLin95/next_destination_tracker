@@ -54,8 +54,8 @@ const ProjectProfileDialog: FC<Props> = ({
     const projectName = (e.target as HTMLFormElement).projectName.value;
     const projectDescription = (e.target as HTMLFormElement).projectDescription
       .value;
-    const dateStart = (e.target as HTMLFormElement).dateStart.value;
-    const dateEnd = (e.target as HTMLFormElement).dateEnd.value;
+    // const dateStart = (e.target as HTMLFormElement).dateStart.value;
+    // const dateEnd = (e.target as HTMLFormElement).dateEnd.value;
 
     const handleUpdate = async () => {
       const url = `/api/project/updateproject`;
@@ -68,8 +68,8 @@ const ProjectProfileDialog: FC<Props> = ({
         projectID: projectID,
         projectName: projectName,
         projectDescription: projectDescription,
-        dateStart: dateStart,
-        dateEnd: dateEnd,
+        dateStart: projectData.project.projectStartDate,
+        dateEnd: projectData.project.projectStartDate,
         projectImage: projectData.project.projectImage,
         projectCoords: projectData.project.projectCoords,
       };
@@ -102,7 +102,7 @@ const ProjectProfileDialog: FC<Props> = ({
         className="absolute h-screen w-screen bg-slate-900/40"
         onClick={() => setProjectSettingsToggle(false)}
       />
-      <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[32rem] h-[20rem] bg-Background flex flex-col p-4">
+      <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[32rem] h-[18rem] bg-Background flex flex-col p-4">
         <div className="text-xl font-bold pb-2 underline text-Accent">
           Edit Project Settings
         </div>
@@ -134,7 +134,7 @@ const ProjectProfileDialog: FC<Props> = ({
               onChange={(e) => setProjectDescription(e.target.value)}
             />
           </div>
-          <div className="flex flex-row w-full h-auto pb-1">
+          {/* <div className="flex flex-row w-full h-auto pb-1">
             <div className="mr-2 w-28 italic">Dates:</div>
             <input
               type="date"
@@ -150,7 +150,7 @@ const ProjectProfileDialog: FC<Props> = ({
               className="px-2 text-sm w-[calc(((100%-7rem)/2)-0.1275rem)] bg-Background_Lighter"
               onChange={(e) => setProjectEndDate(e.target.value)}
             />
-          </div>
+          </div> */}
           <div className="flex flex-row justify-end mt-2">
             <button
               type="submit"
