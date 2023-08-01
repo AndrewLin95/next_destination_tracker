@@ -50,7 +50,7 @@ const Home: NextPage = () => {
         password: password,
       };
       const response = await axios.post("api/auth/login", body);
-      localStorage.setItem("user", JSON.stringify(response.data.token));
+      localStorage.setItem("token", JSON.stringify(response.data.token));
 
       const decodedJWT: DecodedJWT = jwtDecode(response.data);
 
