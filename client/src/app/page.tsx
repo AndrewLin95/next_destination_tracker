@@ -43,7 +43,6 @@ const Home: NextPage = () => {
     e.preventDefault();
     const email: string = (e.target as HTMLFormElement).email.value;
     const password: string = (e.target as HTMLFormElement).password.value;
-
     try {
       const body = {
         email: email,
@@ -52,12 +51,12 @@ const Home: NextPage = () => {
       const response = await axios.post("api/auth/login", body);
       localStorage.setItem("token", JSON.stringify(response.data.token));
 
-      const decodedJWT: DecodedJWT = jwtDecode(response.data);
+      const decodedJWT: DecodedJWT = jwtDecode(response.data.token);
 
       setAuthState({
         userID: decodedJWT.user._id,
         userEmail: decodedJWT.user.email,
-        token: response.data,
+        token: response.data.token,
       });
 
       router.push("/homepage");

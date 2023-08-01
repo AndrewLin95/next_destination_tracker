@@ -1,11 +1,11 @@
 import { Dispatch, SetStateAction } from "react";
 import axios from "axios";
 import jwtDecode from "jwt-decode";
-import { UserProfileState } from "./models";
+import { AuthState } from "./models/AuthModels";
 import { DecodedJWT } from "./models/AuthModels";
 import { VERIFY_TOKEN_RESPONSE } from "./constants";
 
-export const setUserProfile = async (userJWT: string, setUserProfileState: Dispatch<SetStateAction<UserProfileState>>) => {
+export const setUserProfile = async (userJWT: string, setUserProfileState: Dispatch<SetStateAction<AuthState>>) => {
   const body = {
     token: userJWT,
   };
