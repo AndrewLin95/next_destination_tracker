@@ -39,13 +39,13 @@ const ProjectProfileDialog: FC<Props> = ({
     projectData.project.projectDescription
   );
 
-  const [projectStartDate, setProjectStartDate] = useState(
-    formatInTimeZone(projectData.project.projectStartDate, "gmt", "yyyy-MM-dd")
-  );
+  // const [projectStartDate, setProjectStartDate] = useState(
+  //   formatInTimeZone(projectData.project.projectStartDate, "gmt", "yyyy-MM-dd")
+  // );
 
-  const [projectEndDate, setProjectEndDate] = useState(
-    formatInTimeZone(projectData.project.projectEndDate, "gmt", "yyyy-MM-dd")
-  );
+  // const [projectEndDate, setProjectEndDate] = useState(
+  //   formatInTimeZone(projectData.project.projectEndDate, "gmt", "yyyy-MM-dd")
+  // );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

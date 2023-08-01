@@ -38,6 +38,7 @@ import { useRouter } from "next/navigation";
 import ErrorDialog from "@/components/ErrorDialog";
 import ScheduleModule from "./ScheduleModule";
 import ProjectProfileDialog from "./components/ProjectProfileDialog";
+import ScheduleSettingsDialog from "./components/ScheduleSettingsDialog";
 
 interface InitResponseData {
   projectData: ProjectData;
@@ -100,6 +101,9 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   );
 
   const [projectSettingsToggle, setProjectSettingsToggle] =
+    useState<Boolean>(false);
+
+  const [scheduleSettingsToggle, setScheduleSettingsToggle] =
     useState<Boolean>(false);
 
   useEffect(() => {
@@ -570,68 +574,71 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
 
   return (
     <div className="w-screen h-screen max-h-screen overflow-hidden flex flex-col justify-center items-center">
-      <Header
-        setProjectSettingsToggle={setProjectSettingsToggle}
-        projectImage={projectData.project.projectImage}
-        projectName={projectData.project.projectName}
-      />
       {loading ? (
         // TODO: loading component
         <></>
       ) : (
-        <div className="flex flex-row w-full h-[calc(100vh-4rem)]">
-          <div className="flex flex-col w-96 max-w-[24rem] h-full border border-Background_Darker">
-            <SearchModule
-              searchText={searchText}
-              setSearchText={setSearchText}
-              handleSearch={handleSearch}
-            />
-            <SearchResults
-              noteData={noteData}
-              handleEditNoteDialog={handleEditNoteDialog}
-              handleDeleteNote={handleDeleteNote}
-              activeLocationID={activeLocationID}
-              handleActiveNote={handleActiveNote}
-              viewToggle={viewToggle}
-              handleDrag={handleDrag}
-              scheduleColors={projectData.scheduleColors}
-            />
-            <SearchPagination
-              paginationState={paginationState}
-              handlePageChange={handlePageChange}
-            />
+        <>
+          <Header
+            setProjectSettingsToggle={setProjectSettingsToggle}
+            projectImage={projectData.project.projectImage}
+            projectName={projectData.project.projectName}
+          />
+          <div className="flex flex-row w-full h-[calc(100vh-4rem)]">
+            <div className="flex flex-col w-96 max-w-[24rem] h-full border border-Background_Darker">
+              <SearchModule
+                searchText={searchText}
+                setSearchText={setSearchText}
+                handleSearch={handleSearch}
+              />
+              <SearchResults
+                noteData={noteData}
+                handleEditNoteDialog={handleEditNoteDialog}
+                handleDeleteNote={handleDeleteNote}
+                activeLocationID={activeLocationID}
+                handleActiveNote={handleActiveNote}
+                viewToggle={viewToggle}
+                handleDrag={handleDrag}
+                scheduleColors={projectData.scheduleColors}
+              />
+              <SearchPagination
+                paginationState={paginationState}
+                handlePageChange={handlePageChange}
+              />
+            </div>
+            {viewToggle === VIEW_TYPES.Map ? (
+              <MapModule
+                projectData={projectData}
+                mapData={mapData}
+                mapCenter={mapCenter}
+                handleActiveNote={handleActiveNote}
+                activeInfoWindow={activeInfoWindow}
+                handleInactivateNote={handleInactivateNote}
+                scheduleColors={projectData.scheduleColors}
+              />
+            ) : (
+              <ScheduleModule
+                projectData={projectData}
+                scheduleData={scheduleData}
+                scheduleConfig={scheduleConfig}
+                handleDrop={handleDrop}
+                handleDeleteSchedule={handleDeleteSchedule}
+                setScheduleSettingsToggle={setScheduleSettingsToggle}
+              />
+            )}
+            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+              <button
+                type="button"
+                onClick={() => handleViewChange()}
+                className="bg-Background_Lighter/70 h-10 px-4 py-0 rounded-3xl"
+              >
+                {viewToggle === VIEW_TYPES.Map
+                  ? `Toggle Schedule View`
+                  : `Toggle Map View`}
+              </button>
+            </div>
           </div>
-          {viewToggle === VIEW_TYPES.Map ? (
-            <MapModule
-              projectData={projectData}
-              mapData={mapData}
-              mapCenter={mapCenter}
-              handleActiveNote={handleActiveNote}
-              activeInfoWindow={activeInfoWindow}
-              handleInactivateNote={handleInactivateNote}
-              scheduleColors={projectData.scheduleColors}
-            />
-          ) : (
-            <ScheduleModule
-              projectData={projectData}
-              scheduleData={scheduleData}
-              scheduleConfig={scheduleConfig}
-              handleDrop={handleDrop}
-              handleDeleteSchedule={handleDeleteSchedule}
-            />
-          )}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-            <button
-              type="button"
-              onClick={() => handleViewChange()}
-              className="bg-Background_Lighter/70 h-10 px-4 py-0 rounded-3xl"
-            >
-              {viewToggle === VIEW_TYPES.Map
-                ? `Toggle Schedule View`
-                : `Toggle Map View`}
-            </button>
-          </div>
-        </div>
+        </>
       )}
       {noteDialogToggle ? (
         <EditNoteDialog
@@ -654,6 +661,12 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
           setProjectData={setProjectData}
           setErrorDialogToggle={setErrorDialogToggle}
           setErrorDialogData={setErrorDialogData}
+        />
+      ) : null}
+      {scheduleSettingsToggle ? (
+        <ScheduleSettingsDialog
+          setScheduleSettingsToggle={setScheduleSettingsToggle}
+          projectData={projectData}
         />
       ) : null}
     </div>

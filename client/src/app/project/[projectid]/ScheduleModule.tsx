@@ -1,14 +1,13 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import {
   ProjectData,
   ScheduleConfigData,
   ScheduleData,
 } from "@/util/models/ProjectModels";
-import { FC } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import CalendarColumns from "./scheduleComponents/CalendarColumns";
 import CalendarTimeColumn from "./scheduleComponents/CalendarTimeColumn";
-import CalendarColumnTimeHeader from "./scheduleComponents/CalendarColumnTimeHeader";
 import CalendarColumnHeader from "./scheduleComponents/CalendarColumnHeader";
+import CalendarSettingsConfig from "./scheduleComponents/CalendarSettingsConfig";
 
 interface Props {
   projectData: ProjectData;
@@ -22,6 +21,7 @@ interface Props {
     enabledOrDisabled: boolean
   ) => void;
   handleDeleteSchedule: (locationID: string) => void;
+  setScheduleSettingsToggle: Dispatch<SetStateAction<Boolean>>;
 }
 
 const ScheduleModule: FC<Props> = ({
@@ -30,11 +30,14 @@ const ScheduleModule: FC<Props> = ({
   scheduleConfig,
   handleDrop,
   handleDeleteSchedule,
+  setScheduleSettingsToggle,
 }) => {
   return (
     <div className="h-full w-full">
       <div className="flex flex-row h-12 w-[calc(100%-1.4rem)] ml-2 border border-Background_Lighter">
-        <CalendarColumnTimeHeader />
+        <CalendarSettingsConfig
+          setScheduleSettingsToggle={setScheduleSettingsToggle}
+        />
         {scheduleConfig.headerData.map((data, index) => {
           return (
             <CalendarColumnHeader
