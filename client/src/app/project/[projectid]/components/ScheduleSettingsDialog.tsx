@@ -1,16 +1,20 @@
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import DateColorPicker from "./DateColorPicker";
 import { ProjectData } from "@/util/models/ProjectModels";
+import { AuthState } from "@/util/models/AuthModels";
 import { FORM_SUBMIT_BUTTON, FORM_CANCEL_BUTTON } from "@/util/constants";
+import authConfigData from "@/util/authConfig";
 
 interface Props {
   setScheduleSettingsToggle: Dispatch<SetStateAction<Boolean>>;
   projectData: ProjectData;
+  authState: AuthState | {};
 }
 
 const ScheduleSettingsDialog: FC<Props> = ({
   setScheduleSettingsToggle,
   projectData,
+  authState,
 }) => {
   const [loading, setLoading] = useState(true);
   const [startTime, setStartTime] = useState<string>();
@@ -58,6 +62,47 @@ const ScheduleSettingsDialog: FC<Props> = ({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const eTarget = e.target as HTMLFormElement;
+
+    const monColor = eTarget.MondayColor.value;
+    const tueColor = eTarget.TuesdayColor.value;
+    const wedColor = eTarget.WednesdayColor.value;
+    const thurColor = eTarget.ThursdayColor.value;
+    const friColor = eTarget.FridayColor.value;
+    const satColor = eTarget.SaturdayColor.value;
+    const sunColor = eTarget.SundayColor.value;
+
+    const newProjectObject: ProjectData = {
+      project: projectData.project,
+      projectID: projectData.projectID,
+      userID: projectData.userID,
+      deleteFlag: projectData.deleteFlag,
+      scheduleColors: {
+        Monday: monColor,
+        Tuesday: tueColor,
+        Wednesday: wedColor,
+        Thursday: thurColor,
+        Friday: friColor,
+        Saturday: satColor,
+        Sunday: sunColor,
+      },
+      scheduleConfig: {
+        startingTime: startTime as string,
+        endingTime: endTime as string,
+        minPerSegment: projectData.scheduleConfig.minPerSegment,
+        segments: projectData.scheduleConfig.segments,
+      },
+    };
+
+    console.log(newProjectObject);
+
+    // TODO: route to api and error handling
+    const handleEditData = async () => {
+      const url = `/api/project/`;
+      const authConfig = authConfigData((authState as AuthState).token);
+    };
+    handleEditData();
+
     console.log(e);
     console.log((e.target as HTMLFormElement).SundayColor.value);
   };

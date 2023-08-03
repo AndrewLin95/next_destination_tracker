@@ -667,6 +667,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
         <ScheduleSettingsDialog
           setScheduleSettingsToggle={setScheduleSettingsToggle}
           projectData={projectData}
+          authState={authState}
         />
       ) : null}
     </div>
