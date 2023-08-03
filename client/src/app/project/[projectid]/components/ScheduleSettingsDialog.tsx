@@ -1,6 +1,7 @@
-import { Dispatch, FC, SetStateAction } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import DateColorPicker from "./DateColorPicker";
 import { ProjectData } from "@/util/models/ProjectModels";
+import { FORM_SUBMIT_BUTTON, FORM_CANCEL_BUTTON } from "@/util/constants";
 
 interface Props {
   setScheduleSettingsToggle: Dispatch<SetStateAction<Boolean>>;
@@ -11,11 +12,59 @@ const ScheduleSettingsDialog: FC<Props> = ({
   setScheduleSettingsToggle,
   projectData,
 }) => {
+  const [loading, setLoading] = useState(true);
+  const [startTime, setStartTime] = useState<string>();
+  const [endTime, setEndTime] = useState<string>();
+
+  useEffect(() => {
+    const startTime = projectData.scheduleConfig.startingTime.split(":");
+    const endTime = projectData.scheduleConfig.endingTime.split(":");
+
+    if (startTime[0].length === 1) {
+      const formattedStartTime = `0${startTime[0]}:${startTime[1]}`;
+      setStartTime(formattedStartTime);
+    } else {
+      setStartTime(projectData.scheduleConfig.startingTime);
+    }
+
+    if (endTime[0].length === 1) {
+      const formattedEndTime = `0${endTime[0]}:${endTime[1]}`;
+      setEndTime(formattedEndTime);
+    } else {
+      setEndTime(projectData.scheduleConfig.endingTime);
+    }
+    setLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleTimeChange = (time: string, type: string) => {
+    const splitTime = time.split(":");
+    const minutes = parseInt(splitTime[1]);
+
+    let newMinutes;
+    if (minutes < 30) {
+      newMinutes = "00";
+    } else if (minutes < 60) {
+      newMinutes = "30";
+    }
+
+    const formattedTime = `${splitTime[0]}:${newMinutes}`;
+    if (type === "start") {
+      setStartTime(formattedTime);
+    } else {
+      setEndTime(formattedTime);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(e);
     console.log((e.target as HTMLFormElement).SundayColor.value);
   };
+
+  if (loading) {
+    return null;
+  }
 
   return (
     <>
@@ -28,7 +77,7 @@ const ScheduleSettingsDialog: FC<Props> = ({
           Edit Schedule Settings
         </div>
         <form onSubmit={handleSubmit}>
-          <div className="underline pb-2 pl-1">Schedule Colors</div>
+          <div className="underline pb-2">Schedule Colors</div>
           <div className="flex flex-row pb-3">
             <DateColorPicker
               dayOfWeek={"Monday"}
@@ -61,10 +110,46 @@ const ScheduleSettingsDialog: FC<Props> = ({
               color={projectData.scheduleColors.Sunday}
             />
           </div>
-          <div className="underline pb-2 pl-1">
-            Schedule Start and End Times
+          <div className="underline pb-2">Schedule Start and End Times</div>
+          <div className="flex flex-row">
+            <div className="pr-4 flex flex-row justify-center items-center">
+              <div className="pr-2 text-sm">Start:</div>
+              <input
+                type="time"
+                value={startTime}
+                name="startTime"
+                className="bg-Background_Lighter"
+                onChange={(e) => handleTimeChange(e.target.value, "start")}
+                step={1800}
+              />
+            </div>
+            <div className="flex flex-row justify-center items-center">
+              <div className="pr-2 text-sm">End:</div>
+              <input
+                type="time"
+                value={endTime}
+                name="endTime"
+                className="bg-Background_Lighter"
+                onChange={(e) => handleTimeChange(e.target.value, "end")}
+                step={1800}
+              />
+            </div>
           </div>
-          <button type="submit">Submit Test</button>
+          <div className="flex flex-row justify-end mt-2">
+            <button
+              type="submit"
+              className={`${FORM_SUBMIT_BUTTON} h-10 w-32 mr-2`}
+            >
+              Submit
+            </button>
+            <button
+              type="button"
+              className={`${FORM_CANCEL_BUTTON} h-10 w-24 bg-SecondaryButton/80`}
+              onClick={() => setScheduleSettingsToggle(false)}
+            >
+              Cancel
+            </button>
+          </div>
         </form>
       </div>
     </>
