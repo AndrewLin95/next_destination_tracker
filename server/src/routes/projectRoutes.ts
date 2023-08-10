@@ -9,6 +9,7 @@ import {
   deleteLocation, 
   setScheduleData,
   deleteSchedule,
+  updateScheduleSettings,
 } from '../controller/projectController';
 
 const router = express.Router();
@@ -22,5 +23,6 @@ router.put('/updatenote', updateNote)
 router.put('/deletelocation/:projectID/:locationID', deleteLocation)
 router.post('/setscheduledata', setScheduleData)
 router.put('/deleteschedule/:projectID/:locationID', deleteSchedule)
+router.put('/updateschedulesettings', updateScheduleSettings)
 
 export default router

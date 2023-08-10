@@ -11,6 +11,7 @@ import {
   SetSchedulePayload,
   ScheduleDataMongoResponse,
   UpdateProjectPayload,
+  ProjectSetupResponse,
 } from "../utils/models/ProjectModels";
 import { STATUS_CODES } from "../utils/constants";
 
@@ -127,6 +128,24 @@ export const deleteSchedule = async (req: Request, res: Response) => {
 
     const response = await projectService.deleteSchedule(locationID, projectID);
     res.status(200).send(JSON.stringify(response))
+  } catch (err) {
+    res.status(500).send(err)
+  }
+}
+
+export const updateScheduleSettings = async (req: Request, res: Response) => {
+  try {
+    const newProjectData: ProjectSetupResponse = req.body;
+
+    const response = await projectService.updateScheduleSettings(newProjectData);
+
+    if (response?.status.statusCode === STATUS_CODES.SUCCESS) {
+      res.status(200).send(JSON.stringify(response))
+    } else if (response.status.statusCode === STATUS_CODES.BadRequest) {
+      res.status(400).send(JSON.stringify(response))
+    }
+
+
   } catch (err) {
     res.status(500).send(err)
   }

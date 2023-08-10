@@ -659,6 +659,48 @@ const deleteSchedule = async (locationID: string, projectID: string) => {
 
 }
 
+const updateScheduleSettings = async (newProjectData: ProjectSetupResponse) => {
+  const startTime = getTimeInMinutes(newProjectData.scheduleConfig.startingTime);
+  const endTime = getTimeInMinutes(newProjectData.scheduleConfig.endingTime);
+
+  if (startTime > endTime) {
+    const statusPayload: {status: StatusPayload} = {
+      status: {
+        statusCode: STATUS_CODES.BadRequest,
+        errorCause: ERROR_CAUSE.Validation,
+        errorData: ERROR_DATA.ProjectDateValidation,
+      }
+    }
+    return statusPayload;
+  }
+
+  try {
+    const filter = {"projectID": newProjectData.projectID};
+
+    const projectSetupResponse: ProjectSetupResponse = await ProjectSetupSchema.findOneAndUpdate(filter, newProjectData, {returnOriginal: false})
+
+    const returnResponse = {
+      projectData: projectSetupResponse,
+      status: {
+        statusCode: STATUS_CODES.SUCCESS,
+      }
+    }
+
+    return returnResponse;
+  } catch (err) {
+    console.log(err);
+  }
+
+  const statusPayload: {status: StatusPayload} = {
+    status: {
+      statusCode: STATUS_CODES.ServerError,
+      errorCause: ERROR_CAUSE.Server,
+      errorData: ERROR_DATA.Server
+    }
+  }
+  return statusPayload;
+}
+
 const projectService = {
   createNewProject,
   updateProject,
@@ -669,6 +711,7 @@ const projectService = {
   deleteLocation,
   setScheduleData,
   deleteSchedule,
+  updateScheduleSettings,
 }
 
 export default projectService;

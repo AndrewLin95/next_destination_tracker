@@ -1,20 +1,31 @@
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import DateColorPicker from "./DateColorPicker";
-import { ProjectData } from "@/util/models/ProjectModels";
+import { ProjectData, StatusPayload } from "@/util/models/ProjectModels";
 import { AuthState } from "@/util/models/AuthModels";
-import { FORM_SUBMIT_BUTTON, FORM_CANCEL_BUTTON } from "@/util/constants";
+import {
+  FORM_SUBMIT_BUTTON,
+  FORM_CANCEL_BUTTON,
+  STATUS_CODES,
+} from "@/util/constants";
 import authConfigData from "@/util/authConfig";
+import axios, { AxiosError } from "axios";
 
 interface Props {
   setScheduleSettingsToggle: Dispatch<SetStateAction<Boolean>>;
   projectData: ProjectData;
   authState: AuthState | {};
+  setProjectData: Dispatch<SetStateAction<ProjectData>>;
+  setErrorDialogToggle: Dispatch<SetStateAction<Boolean>>;
+  setErrorDialogData: Dispatch<SetStateAction<StatusPayload>>;
 }
 
 const ScheduleSettingsDialog: FC<Props> = ({
   setScheduleSettingsToggle,
   projectData,
   authState,
+  setProjectData,
+  setErrorDialogToggle,
+  setErrorDialogData,
 }) => {
   const [loading, setLoading] = useState(true);
   const [startTime, setStartTime] = useState<string>();
@@ -96,10 +107,27 @@ const ScheduleSettingsDialog: FC<Props> = ({
 
     console.log(newProjectObject);
 
-    // TODO: route to api and error handling
+    // TODO: error handling + confirmation response
     const handleEditData = async () => {
-      const url = `/api/project/`;
+      const url = `/api/project/updateschedulesettings`;
       const authConfig = authConfigData((authState as AuthState).token);
+
+      try {
+        const response = await axios.put(url, newProjectObject, authConfig);
+        const responseData = response.data;
+
+        setProjectData(responseData.projectData);
+        setScheduleSettingsToggle(false);
+      } catch (err: AxiosError | unknown) {
+        if (axios.isAxiosError(err)) {
+          const responseBody: StatusPayload = err.response?.data.status;
+          if (responseBody.statusCode === STATUS_CODES.BadRequest) {
+            setScheduleSettingsToggle(false);
+            setErrorDialogData(responseBody);
+            setErrorDialogToggle(true);
+          }
+        }
+      }
     };
     handleEditData();
 
@@ -185,7 +213,7 @@ const ScheduleSettingsDialog: FC<Props> = ({
               type="submit"
               className={`${FORM_SUBMIT_BUTTON} h-10 w-32 mr-2`}
             >
-              Submit
+              Save
             </button>
             <button
               type="button"
