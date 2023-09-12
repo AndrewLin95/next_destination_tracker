@@ -50,7 +50,12 @@ const SearchResults: FC<Props> = ({
   };
 
   const handleFilterChange = (newVal: string) => {
-    setFilterValues([...filterValues, newVal]);
+    if (filterValues.includes(newVal)) {
+      setFilterValues((curr) => curr.filter((val) => val != newVal));
+    } else {
+      setFilterValues([...filterValues, newVal]);
+    }
+    
   };
 
   const applyFilter = () => {
@@ -58,7 +63,6 @@ const SearchResults: FC<Props> = ({
     setData(filteredData);
     setResort(true);
     setExpandFilter(false);
-    setFilterValues([]);
   };
 
   useEffect(() => {
@@ -90,7 +94,7 @@ const SearchResults: FC<Props> = ({
         setExpandFilter(!expandFilter);
         setExpandSort(false);
       }}>Filter</button>
-      
+
       {expandSort ? (
         <div>
           <ul>
@@ -105,15 +109,15 @@ const SearchResults: FC<Props> = ({
         <div>
           <ul>
             <li>
-              <input type="checkbox" id="priorityLow" name="Low" value="Low" onChange={() => handleFilterChange("Low")}/>
+              <input type="checkbox" id="priorityLow" name="Low" value="Low" checked={filterValues.includes("Low")} onChange={() => handleFilterChange("Low")}/>
               <label htmlFor="priorityLow"> Low Priority</label>
             </li>
             <li>
-              <input type="checkbox" id="priorityMedium" name="Medium" value="Medium" onChange={() => handleFilterChange("Medium")}/>
+              <input type="checkbox" id="priorityMedium" name="Medium" value="Medium" checked={filterValues.includes("Medium")} onChange={() => handleFilterChange("Medium")}/>
               <label htmlFor="priorityMedium"> Medium Priority</label>
             </li>
             <li>
-              <input type="checkbox" id="priorityHigh" name="High" value="High" onChange={() => handleFilterChange("High")}/>
+              <input type="checkbox" id="priorityHigh" name="High" value="High" checked={filterValues.includes("High")} onChange={() => handleFilterChange("High")}/>
               <label htmlFor="priorityHigh"> High Priority</label>
             </li>
           </ul>
