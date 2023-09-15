@@ -24,11 +24,11 @@ const SearchResults: FC<Props> = ({
   handleDrag,
   scheduleColors,
 }) => {
-  const [expandSort, setExpandSort] = useState(false);
-  const [expandFilter, setExpandFilter] = useState(false);
+  const [expandModal, setExpandModal] = useState(false);
   const [data, setData] = useState(noteData);
-  const [sorted, setSorted] = useState("");
   const [filterValues, setFilterValues] = useState<string []>([]);
+  const [lastFilterValues, setLastFilterValues] = useState<string []>([]);
+  const [sortValue, setSortValue] = useState("");
   const [resort, setResort] = useState(false);
 
   const sortByValue = (value: string) => {
@@ -40,13 +40,12 @@ const SearchResults: FC<Props> = ({
     }
     else if (value === "priority") {
       const order = { 'Low': 1, 'Medium': 2, 'High': 3 }
-      //Not sure why this error occurs
       data.sort((a,b) => order[b.priority] - order[a.priority]);
+    } else {
+      setData(noteData);
     }
-
-    setData(data);
-    setExpandSort(false);
-    setSorted(value);
+    setSortValue(value);
+    setData([...data]);
   };
 
   const handleFilterChange = (newVal: string) => {
@@ -55,20 +54,29 @@ const SearchResults: FC<Props> = ({
     } else {
       setFilterValues([...filterValues, newVal]);
     }
-    
   };
 
   const applyFilter = () => {
-    const filteredData = noteData.filter((note) => filterValues.includes(note.priority));
-    setData(filteredData);
+    if (filterValues.length != 0) {
+      const filteredData = noteData.filter((note) => filterValues.includes(note.priority));
+      setData(filteredData);
+    } else {
+      setData(noteData);
+    }
     setResort(true);
-    setExpandFilter(false);
+    setLastFilterValues([...filterValues]);
+    setExpandModal(false);
+  };
+
+  const cancelFilter = () => {
+    setExpandModal(false);
+    setFilterValues([...lastFilterValues]);
   };
 
   useEffect(() => {
     if (resort) {
-      if (sorted != "") {
-        sortByValue(sorted);
+      if (sortValue != "") {
+        sortByValue(sortValue);
       }
     }
     setResort(false);
@@ -86,42 +94,37 @@ const SearchResults: FC<Props> = ({
       </div>
 
       <button onClick={() => {
-        setExpandSort(!expandSort);
-        setExpandFilter(false);
-      }}>Sort</button>
+        setExpandModal(!expandModal);
+      }}>Sort/Filter</button>
 
-      <button onClick={() => {
-        setExpandFilter(!expandFilter);
-        setExpandSort(false);
-      }}>Filter</button>
+      {expandModal ? (
+        <div className="h-full flex justify-center items-center bg-gray-600/50 absolute inset-0">
+          <div className="flex justify-center flex-col items-center rounded-lg bg-white py-5 px-20 relative z-50">
+            <p className="font-medium text-2xl mb-4">Sort</p>
+            <ul>
+              <li><button onClick={() => sortByValue("name")}>by Name</button></li>
+              <li><button onClick={() => sortByValue("date")}>by Date</button></li>
+              <li><button onClick={() => sortByValue("priority")}>by Priority</button></li>
+            </ul>
 
-      {expandSort ? (
-        <div>
-          <ul>
-            <li><button onClick={() => sortByValue("name")}>by Name</button></li>
-            <li><button onClick={() => sortByValue("date")}>by Date</button></li>
-            <li><button onClick={() => sortByValue("priority")}>by Priority</button></li>
-          </ul>
-        </div>
-      ) : null}
-
-      {expandFilter ? (
-        <div>
-          <ul>
-            <li>
-              <input type="checkbox" id="priorityLow" name="Low" value="Low" checked={filterValues.includes("Low")} onChange={() => handleFilterChange("Low")}/>
-              <label htmlFor="priorityLow"> Low Priority</label>
-            </li>
-            <li>
-              <input type="checkbox" id="priorityMedium" name="Medium" value="Medium" checked={filterValues.includes("Medium")} onChange={() => handleFilterChange("Medium")}/>
-              <label htmlFor="priorityMedium"> Medium Priority</label>
-            </li>
-            <li>
-              <input type="checkbox" id="priorityHigh" name="High" value="High" checked={filterValues.includes("High")} onChange={() => handleFilterChange("High")}/>
-              <label htmlFor="priorityHigh"> High Priority</label>
-            </li>
-          </ul>
-          <button onClick={applyFilter}>Apply</button>
+            <p className="font-medium text-2xl my-4">Filter</p>
+            <ul className="flex flex-col space-y-2 mb-5">
+              <li>
+                <input type="checkbox" id="priorityLow" name="Low" value="Low" checked={filterValues.includes("Low")} onChange={() => handleFilterChange("Low")}/>
+                <label htmlFor="priorityLow"> Low Priority</label>
+              </li>
+              <li>
+                <input type="checkbox" id="priorityMedium" name="Medium" value="Medium" checked={filterValues.includes("Medium")} onChange={() => handleFilterChange("Medium")}/>
+                <label htmlFor="priorityMedium"> Medium Priority</label>
+              </li>
+              <li>
+                <input type="checkbox" id="priorityHigh" name="High" value="High" checked={filterValues.includes("High")} onChange={() => handleFilterChange("High")}/>
+                <label htmlFor="priorityHigh"> High Priority</label>
+              </li>
+            </ul>
+            <button onClick={cancelFilter}>Cancel</button>
+            <button onClick={applyFilter}>Apply Filters</button>
+          </div>
         </div>
       ) : null}
 
