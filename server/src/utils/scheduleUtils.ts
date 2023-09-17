@@ -55,8 +55,9 @@ export const handleScheduleSequenceAdd = (newScheduleData: EachScheduleData, con
 }
 
 /**
- * For re-scheduling the sequence on DELETE only. If a conflicting data is of length 1, check if the conflicting data has any additional conflicts. If it does, 
- * reschedule all conflicting data. If it does not, update the confict to the default position. If the conflicting data is length === 2 , reset their positions.
+ * For re-scheduling the sequence on DELETE only. Checks for conflicting data on delete. If there is conflicting data, check the length. 
+ * If the conflicting Data is only 1. We just need to resize to default.
+ * If the conflicting data is greater than 1, we need to re-sort and re-position after the deletion.
  * @param {EachScheduleData[]} conflictingData - The data that conflicts with the target to delete. Should NOT include the target data.
  * @param {EachScheduleData} targetData - The target data to delete only.
  * @param {ScheduleDataMongoResponse} originalScheduleData - The original schedule data.
@@ -66,128 +67,52 @@ export const handleScheduleSequenceDelete = async (conflictingData : EachSchedul
   let sequencedData: EachScheduleData[] = [];
   let filteredScheduleData: ScheduleDataMongoResponse = originalScheduleData;
 
-  const startTimeInMins = getTimeInMinutes(conflictingData[0].timeFrom as string);
-  const duration = conflictingData[0].duration as number
   const targetLocationID = conflictingData[0].locationID;
   const targetKey = originalScheduleData.scheduleKeys.get(targetLocationID) ?? null;
+  const tempDate = targetKey!.key.split(" ");
+  tempDate.pop();
+  const date = tempDate?.join(" ");
 
-  if (conflictingData.length === 1) {
-    if (targetKey !== null) {
-      const tempDate = targetKey.key.split(" ")
-      tempDate.pop()
-      const date = tempDate.join(" ");
-      
-      const {conflictingLocationIDs, conflictingDataSegments} = identifyNumOfConflicts(targetLocationID, startTimeInMins, date, originalScheduleData, duration)
+  conflictingData.forEach(eachScheduleData => {
+    let conflictsPresent = false;
+    const tempConflictingData: EachScheduleData[] = [];
+    const checkedKeys: Set<string> = new Set();
+    checkedKeys.add(eachScheduleData.locationID);
+    checkedKeys.add(targetData.locationID);
+    const allFoundDataSegments = recursivelyFindAllConflictingDataSegments(eachScheduleData, [], checkedKeys, date, originalScheduleData)
 
-      // since we are using the original scheduled data, conflicts 1 means that it only conflicts with the one that we removed
-      if (conflictingLocationIDs.size === 1) {
-        const dataArrayToClear = [targetData, ...conflictingData];
-        const sortedDataToClear = sortScheduleData(dataArrayToClear);
-        filteredScheduleData = await clearScheduleData(sortedDataToClear, date, originalScheduleData.projectID);
-
-        conflictingData[0].position = 0;
-        conflictingData[0].numColumns = 1;
-        sequencedData = conflictingData;
-      } else {
-        let targetID;
-        conflictingLocationIDs.forEach(eachLocationID => {
-          if (eachLocationID !== conflictingData[0].locationID && eachLocationID !== targetData.locationID) {
-            targetID = eachLocationID;
-          }
-        });
-        // get the data for the new one
-        if (targetID !== undefined) {
-          const otherConflictingDataSegment = findDataSegments(targetID, originalScheduleData.scheduleData, originalScheduleData.scheduleKeys)
-          if (otherConflictingDataSegment !== null) {
-            conflictingData.push(otherConflictingDataSegment);
-            const sortedScheduleData = sortScheduleData(conflictingData);
-
-            filteredScheduleData = await clearScheduleData([...sortedScheduleData, targetData], date, originalScheduleData.projectID);
-
-            sortedScheduleData[0].position = 0;
-            sortedScheduleData[0].numColumns = 2;
-            sortedScheduleData[1].position = 1;
-            sortedScheduleData[1].numColumns = 2;
-            sequencedData = sortedScheduleData
-          }
-        }
-      } 
+    if (allFoundDataSegments !== undefined) {
+      tempConflictingData.push(eachScheduleData, ...allFoundDataSegments);
+      if (allFoundDataSegments.length >= 1) {
+        conflictsPresent = true;
+      }
     }
-  } else if (conflictingData.length === 2) {
-    if (targetKey !== null) {
-      const topConflictingScheduleData: EachScheduleData[] = [];
-      const botConflictingScheduleData: EachScheduleData[] = [];
-      const finalSequencedData: EachScheduleData[] = [];
-
-      const tempDate = targetKey.key.split(" ")
-      tempDate.pop()
-      const date = tempDate.join(" ");
-      
-      const sortedConflictingData = sortScheduleData(conflictingData);
-      let topConflict = false;
-      let bottomConflict = false;
-
+    // If there are no conflicts, reset position and number of columns.
+    if (!conflictsPresent) {
+      tempConflictingData[0].position = 0;
+      tempConflictingData[0].numColumns = 1;
+      sequencedData.push(...tempConflictingData);
+    }
+    // If there are conflicts. Sort and reassign position and columns.
+    if (conflictsPresent) {
+      const sortedTempConflictingData = sortScheduleData(tempConflictingData);
       let i = 0;
-      while (i < sortedConflictingData.length) {
-        const checkedKeys: Set<string> = new Set()
-        checkedKeys.add(sortedConflictingData[i].locationID);
-        checkedKeys.add(targetData.locationID)
-        const allFoundDataSegments = recursivelyFindAllConflictingDataSegments(sortedConflictingData[i], [], checkedKeys, date, originalScheduleData);
-        if (allFoundDataSegments.length > 0) {
-          if (i === 0) {
-            topConflictingScheduleData.push(sortedConflictingData[i], ...allFoundDataSegments)
-            topConflict = true;
-          }
-          if (i === 1) {
-            botConflictingScheduleData.push(sortedConflictingData[i], ...allFoundDataSegments)
-            bottomConflict = true;
-          }
-        }
+      while (i < sortedTempConflictingData.length) {
+        sortedTempConflictingData[i].position = i % 2;
+        sortedTempConflictingData[i].numColumns = 2;
         i++;
       }
-
-      if (topConflictingScheduleData.length > 0) {
-        const sequencedTopData = sortScheduleData(topConflictingScheduleData);
-        i = 0;
-        while (i < sequencedTopData.length) {
-          sequencedTopData[i].position = i % 2;
-          sequencedTopData[i].numColumns = 2;
-          i++;
-        }
-        finalSequencedData.push(...sequencedTopData);
-      }
-
-      if (!topConflict) {
-        sortedConflictingData[0].position = 0;
-        sortedConflictingData[0].numColumns = 1;
-        finalSequencedData.push(sortedConflictingData[0])
-      }
-
-      if (!bottomConflict) {
-        sortedConflictingData[1].position = 0;
-        sortedConflictingData[1].numColumns = 1;
-        finalSequencedData.push(sortedConflictingData[1])
-      }
-
-      if (botConflictingScheduleData.length > 0) {
-        const sequencedBotData = sortScheduleData(botConflictingScheduleData);
-        i = 0;
-        while (i < sequencedBotData.length) {
-          sequencedBotData[i].position = i % 2;
-          sequencedBotData[i].numColumns = 2;
-          i++;
-        }
-        finalSequencedData.push(...sequencedBotData);
-      }
-
-      filteredScheduleData = await clearScheduleData(finalSequencedData, date, originalScheduleData.projectID);
-
-      sequencedData = finalSequencedData
+      sequencedData.push(...sortedTempConflictingData);
     }
-    
-  }
 
-  return { sequencedData: sequencedData, filteredScheduleData: filteredScheduleData }
+  })
+  const dataArrayToClear = [targetData, ...sequencedData];
+  const sortedDataToClear = sortScheduleData(dataArrayToClear);
+  filteredScheduleData = await clearScheduleData(sortedDataToClear, date, originalScheduleData.projectID);
+
+  const sortedSequenceData = sortScheduleData(sequencedData);
+
+  return { sequencedData: sortedSequenceData, filteredScheduleData: filteredScheduleData }
 }
 
 /**
