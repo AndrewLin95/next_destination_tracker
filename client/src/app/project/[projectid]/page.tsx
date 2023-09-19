@@ -631,12 +631,12 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
 
               {expandModal ? (
                 <div className="h-full flex justify-center items-center bg-gray-600/50 absolute inset-0">
-                  <div className="flex justify-center flex-col items-center rounded-lg bg-white py-5 px-20 relative z-50">
+                  <div className="flex justify-center flex-col items-center rounded-lg bg-Background_Lighter py-5 px-20 relative z-50">
                     <p className="font-medium text-2xl mb-4">Sort</p>
-                    <ul>
-                      <li><button onClick={() => setSortValue("name")}>by Name</button></li>
-                      <li><button onClick={() => setSortValue("date")}>by Date</button></li>
-                      <li><button onClick={() => setSortValue("priority")}>by Priority</button></li>
+                    <ul className="flex flex-col space-y-2">
+                      <li><button onClick={() => setSortValue("name")} className="w-full" autoFocus={sortValue === "name"}>by Name</button></li>
+                      <li><button onClick={() => setSortValue("date")} className="w-full" autoFocus={sortValue === "date"}>by Date</button></li>
+                      <li><button onClick={() => setSortValue("priority")} className="w-full" autoFocus={sortValue === "priority"}>by Priority</button></li>
                     </ul>
 
                     <p className="font-medium text-2xl my-4">Filter</p>
@@ -654,7 +654,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
                         <label htmlFor="priorityHigh"> High Priority</label>
                       </li>
                     </ul>
-                    <button onClick={cancelFilter}>Cancel</button>
+                    <button onClick={cancelFilter} className="mb-2">Cancel</button>
                     <button onClick={applyFilter}>Apply Filters</button>
                   </div>
                 </div>
