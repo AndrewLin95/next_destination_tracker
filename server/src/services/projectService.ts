@@ -520,7 +520,7 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
     const {conflictingLocationIDs, conflictingDataSegments} = identifyNumOfConflicts(schedulePayload.locationID, currTimeInMinutes, schedulePayload.date, scheduleData, schedulePayload.duration);
 
     // too many conflicts
-    if (conflictingLocationIDs.size > 3) {
+    if (conflictingLocationIDs.size > 2) {
       const statusPayload: {status: StatusPayload} = {
         status: {
           statusCode: STATUS_CODES.BadRequest,
