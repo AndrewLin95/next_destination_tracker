@@ -18,6 +18,7 @@ const SortFilterModal:FC<Props> = ({
   const [filterValues, setFilterValues] = useState<string []>([]);
   const [lastFilterValues, setLastFilterValues] = useState<string []>([]);
 
+  //update filterValues on change of filter checkboxes
   const handleFilterChange = (newVal: string) => {
     if (filterValues.includes(newVal)) {
       setFilterValues((curr) => curr.filter((val) => val != newVal));
@@ -26,6 +27,7 @@ const SortFilterModal:FC<Props> = ({
     }
   };
 
+  //add location IDs of filtered data to be later passed on to map and search modules
   const applyFilter = () => {
     const tempIDs: string[] = [];
 
@@ -40,6 +42,7 @@ const SortFilterModal:FC<Props> = ({
     setExpandModal(false);
   };
 
+  //close modal and set filterValues to last set chosen by user
   const cancelFilter = () => {
     setExpandModal(false);
     setFilterValues([...lastFilterValues]);
@@ -50,7 +53,7 @@ const SortFilterModal:FC<Props> = ({
       <div className="flex flex-row justify-center items-center pb-4 text-2xl">
         <div className="pr-4 text-lg font-bold">Searched Places</div>
       </div>
-      
+
       <button onClick={() => {
         setExpandModal(!expandModal);
       }}>Sort/Filter</button>

@@ -107,7 +107,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   const [scheduleSettingsToggle, setScheduleSettingsToggle] =
     useState<Boolean>(false);
 
-  //Filter and sort Data
+  //Sort and Filter Data
   const [locationIDArray, setLocationIDArray] = useState<string []>([]);
   const [sortValue, setSortValue] = useState("");
 
