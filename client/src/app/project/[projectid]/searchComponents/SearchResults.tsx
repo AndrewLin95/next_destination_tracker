@@ -59,10 +59,6 @@ const SearchResults: FC<Props> = ({
   
   return (
     <div className="h-full">
-      <div className="flex flex-row justify-center items-center pb-4 text-2xl">
-        <div className="pr-4 text-lg font-bold">Searched Places</div>
-      </div>
-
       <div className="flex flex-col items-center h-[calc(100vh-15rem)] overflow-y-auto pt-4">
         {noteDisplayData.map((note) => {
           if (locationIDArray.length === 0 || locationIDArray.includes(note.locationID)) {
