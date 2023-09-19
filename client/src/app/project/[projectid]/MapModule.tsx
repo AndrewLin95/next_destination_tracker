@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import {
   GoogleMap,
   InfoWindow,
@@ -22,6 +22,7 @@ interface Props {
   activeInfoWindow: number | null;
   handleInactivateNote: () => void;
   scheduleColors: ScheduleColors;
+  locationIDArray: string[];
 }
 
 const MapModule: FC<Props> = ({
@@ -32,6 +33,7 @@ const MapModule: FC<Props> = ({
   activeInfoWindow,
   handleInactivateNote,
   scheduleColors,
+  locationIDArray
 }) => {
   //https://www.ultimateakash.com/blog-details/Ii0jNGAKYAo=/How-To-Integrate-Google-Maps-in-React-2022
   const mapClicked = (event: any) => {
@@ -69,7 +71,8 @@ const MapModule: FC<Props> = ({
               fontSize: "12px",
             };
 
-            return (
+            if (locationIDArray.length === 0 || locationIDArray.includes(marker.locationID)) {
+              return (
               <Marker
                 key={index}
                 position={marker.position}
@@ -130,7 +133,7 @@ const MapModule: FC<Props> = ({
                   </InfoWindow>
                 )}
               </Marker>
-            );
+            )};
           })}
         </GoogleMap>
       </LoadScript>

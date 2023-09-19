@@ -109,7 +109,6 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   //Filter/sort Data
   const [expandModal, setExpandModal] = useState(false);
   const [locationIDArray, setLocationIDArray] = useState<string []>([]);
-  const [filteredNoteData, setFilteredNoteData] = useState<NoteData[]>([]);
   const [filterValues, setFilterValues] = useState<string []>([]);
   const [lastFilterValues, setLastFilterValues] = useState<string []>([]);
   const [sortValue, setSortValue] = useState("");
@@ -129,7 +128,6 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       const filteredData = noteData.filter((note) => filterValues.includes(note.priority));
       filteredData.forEach((note)=>{tempIDs.push(note.locationID)});
       setLocationIDArray(tempIDs);
-      setFilteredNoteData(filteredData);
     } else {
       setLocationIDArray([]);
     }
@@ -188,7 +186,6 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       });
       setMapData(tempMapData);
       setNoteData(tempNoteData);
-      setFilteredNoteData(tempNoteData);
 
       const initMapCenter = {
         lat: parseFloat(responseData.projectData.project.projectCoords.lat),
@@ -663,7 +660,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
                 </div>
               ) : null}
               <SearchResults
-                noteData={filteredNoteData}
+                noteData={noteData}
                 handleEditNoteDialog={handleEditNoteDialog}
                 handleDeleteNote={handleDeleteNote}
                 activeLocationID={activeLocationID}
@@ -672,6 +669,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
                 handleDrag={handleDrag}
                 scheduleColors={projectData.scheduleColors}
                 sortValue={sortValue}
+                locationIDArray = {locationIDArray}
               />
               <SearchPagination
                 paginationState={paginationState}
@@ -687,6 +685,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
                 activeInfoWindow={activeInfoWindow}
                 handleInactivateNote={handleInactivateNote}
                 scheduleColors={projectData.scheduleColors}
+                locationIDArray = {locationIDArray}
               />
             ) : (
               <ScheduleModule

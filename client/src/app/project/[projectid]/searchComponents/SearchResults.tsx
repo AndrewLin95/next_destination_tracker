@@ -12,7 +12,8 @@ interface Props {
   viewToggle: VIEW_TYPES;
   handleDrag: (e: React.DragEvent<HTMLDivElement>, note: NoteData) => void;
   scheduleColors: ScheduleColors;
-  sortValue:string
+  sortValue:string;
+  locationIDArray: string[];
 }
 
 const SearchResults: FC<Props> = ({
@@ -24,14 +25,15 @@ const SearchResults: FC<Props> = ({
   viewToggle,
   handleDrag,
   scheduleColors,
-  sortValue
+  sortValue,
+  locationIDArray
 }) => {
 
   const [noteDisplayData, setNoteDisplayData] = useState<NoteData[]>([...noteData]);
 
   useEffect(() => {
     const sortByValue = (value: string) => {
-      var tempNoteData: NoteData[] = [...noteData];
+      let tempNoteData: NoteData[] = [...noteData];
   
       if (value === "name") {
         tempNoteData.sort((a,b) => a.noteName.localeCompare(b.noteName));
@@ -63,19 +65,20 @@ const SearchResults: FC<Props> = ({
 
       <div className="flex flex-col items-center h-[calc(100vh-15rem)] overflow-y-auto pt-4">
         {noteDisplayData.map((note) => {
-          return (
-            <Note
-              key={note.locationID}
-              note={note}
-              handleEditNoteDialog={handleEditNoteDialog}
-              handleDeleteNote={handleDeleteNote}
-              activeLocationID={activeLocationID}
-              handleActiveNote={handleActiveNote}
-              viewToggle={viewToggle}
-              handleDrag={handleDrag}
-              scheduleColors={scheduleColors}
-            />
-          )
+          if (locationIDArray.length === 0 || locationIDArray.includes(note.locationID)) {
+            return (
+              <Note
+                key={note.locationID}
+                note={note}
+                handleEditNoteDialog={handleEditNoteDialog}
+                handleDeleteNote={handleDeleteNote}
+                activeLocationID={activeLocationID}
+                handleActiveNote={handleActiveNote}
+                viewToggle={viewToggle}
+                handleDrag={handleDrag}
+                scheduleColors={scheduleColors}
+              />
+            )}
         })}
       </div>
     </div>
