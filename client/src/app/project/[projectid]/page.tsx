@@ -111,6 +111,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   const [locationIDArray, setLocationIDArray] = useState<string []>([]);
   const [sortValue, setSortValue] = useState("name");
   const [sortedNoteData, setSortedNoteData] = useState<NoteData[]>([]);
+  const [ascending, setAscending] = useState(true);
 
   //Sort data
   useEffect(() => {
@@ -118,14 +119,26 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       let tempNoteData: NoteData[] = [...noteData];
   
       if (value === "name") {
-        tempNoteData.sort((a,b) => a.noteName.localeCompare(b.noteName));
+        if (ascending) {
+          tempNoteData.sort((a,b) => a.noteName.localeCompare(b.noteName));
+        } else {
+          tempNoteData.sort((a,b) => b.noteName.localeCompare(a.noteName));
+        }
       }
       else if (value === "date") {
-        tempNoteData.sort((a,b) => a.scheduleDate ? b.scheduleDate ? a.scheduleDate - b.scheduleDate : -1 : 1);
+        if (ascending) {
+          tempNoteData.sort((a,b) => a.scheduleDate ? b.scheduleDate ? a.scheduleDate - b.scheduleDate : -1 : 1);
+        } else {
+          tempNoteData.sort((a,b) => a.scheduleDate ? b.scheduleDate ? b.scheduleDate - a.scheduleDate : 1 : -1);
+        }
       }
       else if (value === "priority") {
         const order = { 'Low': 1, 'Medium': 2, 'High': 3 }
-        tempNoteData.sort((a,b) => order[b.priority] - order[a.priority]);
+        if (ascending) {
+          tempNoteData.sort((a,b) => order[b.priority] - order[a.priority]);
+        } else {
+          tempNoteData.sort((a,b) => order[a.priority] - order[b.priority]);
+        }
       } 
   
       setSortedNoteData(tempNoteData);
@@ -133,7 +146,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
 
     sortByValue(sortValue);
 
-  },[sortValue, noteData]);
+  },[sortValue, noteData, ascending]);
 
   useEffect(() => {
     if (
@@ -626,6 +639,8 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
                 setLocationIDArray={setLocationIDArray}
                 setSortValue={setSortValue}
                 sortValue={sortValue}
+                ascending={ascending}
+                setAscending={setAscending}
               />
               <SearchResults
                 sortedNoteData={sortedNoteData}

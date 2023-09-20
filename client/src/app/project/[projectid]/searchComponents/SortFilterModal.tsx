@@ -1,6 +1,6 @@
 import { FORM_CANCEL_BUTTON, FORM_SUBMIT_BUTTON } from "@/util/constants";
 import { NoteData } from "@/util/models/ProjectModels";
-import { faSortDown, faSortUp } from "@fortawesome/free-solid-svg-icons";
+import { faArrowDown, faArrowUp, faSortDown, faSortUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 
@@ -9,18 +9,23 @@ interface Props {
   setLocationIDArray: Dispatch<SetStateAction<string []>>;
   setSortValue: Dispatch<SetStateAction<string>>;
   sortValue: string;
+  ascending: boolean;
+  setAscending: Dispatch<SetStateAction<boolean>>;
 }
 
 const SortFilterModal:FC<Props> = ({
   noteData,
   setLocationIDArray,
   setSortValue,
-  sortValue
+  sortValue,
+  ascending,
+  setAscending
 }) => {
   const [expandModal, setExpandModal] = useState(false);
   const [filterValues, setFilterValues] = useState<string []>([]);
   const [lastFilterValues, setLastFilterValues] = useState<string []>([]);
   const [sortDropDown, setSortDropDown] = useState(false);
+  
 
   //update filterValues on change of filter checkboxes
   const handleFilterChange = (newVal: string) => {
@@ -51,6 +56,13 @@ const SortFilterModal:FC<Props> = ({
     setExpandModal(false);
     setFilterValues([...lastFilterValues]);
   };
+
+  const sortClick = (value:string) => {
+    setSortValue(value);
+    if (sortValue === value) {
+      setAscending(!ascending);
+    }
+  }
 
   return (
     <div>
@@ -96,9 +108,24 @@ const SortFilterModal:FC<Props> = ({
           
           {sortDropDown && 
             <ul className="flex flex-col space-y-2 absolute z-1">
-              <li><button onClick={() => {setSortValue("name"); setSortDropDown(false)}} className="w-full" autoFocus={sortValue === "name"}>by Name</button></li>
-              <li><button onClick={() => {setSortValue("date"); setSortDropDown(false)}} className="w-full" autoFocus={sortValue === "date"}>by Date</button></li>
-              <li><button onClick={() => {setSortValue("priority"); setSortDropDown(false)}} className="w-full" autoFocus={sortValue === "priority"}>by Priority</button></li>
+              <li>
+                <button onClick={() => sortClick("name")} className="w-full flex flex-row items-center space-x-2" autoFocus={sortValue === "name"}>
+                  <p>by Name</p>
+                  {(!ascending && sortValue === "name") ? <FontAwesomeIcon icon={faArrowDown} /> : <FontAwesomeIcon icon={faArrowUp} />}
+                </button>
+              </li>
+              <li>
+                <button onClick={() => sortClick("date")} className="w-full flex flex-row items-center space-x-2" autoFocus={sortValue === "date"}>
+                  <p>by Date</p>
+                  {(!ascending && sortValue === "date") ? <FontAwesomeIcon icon={faArrowDown} /> : <FontAwesomeIcon icon={faArrowUp} />}
+                </button>
+              </li>
+              <li>
+                <button onClick={() => sortClick("priority")} className="w-full flex flex-row items-center space-x-2" autoFocus={sortValue === "priority"}>
+                  <p>by Priority</p>
+                  {(!ascending && sortValue === "priority") ? <FontAwesomeIcon icon={faArrowDown} /> : <FontAwesomeIcon icon={faArrowUp} />}
+                </button>
+              </li>
             </ul>
           }
         </div>
