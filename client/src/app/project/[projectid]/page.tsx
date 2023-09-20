@@ -110,6 +110,30 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   //Sort and Filter Data
   const [locationIDArray, setLocationIDArray] = useState<string []>([]);
   const [sortValue, setSortValue] = useState("");
+  const [sortedNoteData, setSortedNoteData] = useState<NoteData[]>([]);
+
+  //Sort data
+  useEffect(() => {
+    const sortByValue = (value: string) => {
+      let tempNoteData: NoteData[] = [...noteData];
+  
+      if (value === "name") {
+        tempNoteData.sort((a,b) => a.noteName.localeCompare(b.noteName));
+      }
+      else if (value === "date") {
+        tempNoteData.sort((a,b) => a.scheduleDate ? b.scheduleDate ? a.scheduleDate - b.scheduleDate : -1 : 1);
+      }
+      else if (value === "priority") {
+        const order = { 'Low': 1, 'Medium': 2, 'High': 3 }
+        tempNoteData.sort((a,b) => order[b.priority] - order[a.priority]);
+      } 
+  
+      setSortedNoteData(tempNoteData);
+    };
+
+    sortByValue(sortValue);
+
+  },[sortValue, noteData]);
 
   useEffect(() => {
     if (
@@ -157,6 +181,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       });
       setMapData(tempMapData);
       setNoteData(tempNoteData);
+      setSortedNoteData(tempNoteData);
 
       const initMapCenter = {
         lat: parseFloat(responseData.projectData.project.projectCoords.lat),
@@ -602,8 +627,13 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
                 setSortValue={setSortValue}
                 sortValue={sortValue}
               />
+              <ul className="flex flex-col space-y-2">
+                <li><button onClick={() => setSortValue("name")} className="w-full" autoFocus={sortValue === "name"}>by Name</button></li>
+                <li><button onClick={() => setSortValue("date")} className="w-full" autoFocus={sortValue === "date"}>by Date</button></li>
+                <li><button onClick={() => setSortValue("priority")} className="w-full" autoFocus={sortValue === "priority"}>by Priority</button></li>
+              </ul>
               <SearchResults
-                noteData={noteData}
+                sortedNoteData={sortedNoteData}
                 handleEditNoteDialog={handleEditNoteDialog}
                 handleDeleteNote={handleDeleteNote}
                 activeLocationID={activeLocationID}
@@ -611,7 +641,6 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
                 viewToggle={viewToggle}
                 handleDrag={handleDrag}
                 scheduleColors={projectData.scheduleColors}
-                sortValue={sortValue}
                 locationIDArray = {locationIDArray}
               />
               <SearchPagination

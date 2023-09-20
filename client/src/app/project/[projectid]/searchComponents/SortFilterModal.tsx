@@ -11,9 +11,7 @@ interface Props {
 
 const SortFilterModal:FC<Props> = ({
   noteData,
-  setLocationIDArray,
-  setSortValue,
-  sortValue
+  setLocationIDArray
 }) => {
   const [expandModal, setExpandModal] = useState(false);
   const [filterValues, setFilterValues] = useState<string []>([]);
@@ -62,13 +60,6 @@ const SortFilterModal:FC<Props> = ({
       {expandModal ? (
         <div className="h-full flex justify-center items-center bg-gray-600/50 absolute inset-0">
           <div className="flex justify-center flex-col items-center rounded-lg bg-Background_Lighter py-5 px-10 relative z-50">
-            <p className="font-medium text-2xl mb-4">Sort</p>
-            <ul className="flex flex-col space-y-2">
-              <li><button onClick={() => setSortValue("name")} className="w-full" autoFocus={sortValue === "name"}>by Name</button></li>
-              <li><button onClick={() => setSortValue("date")} className="w-full" autoFocus={sortValue === "date"}>by Date</button></li>
-              <li><button onClick={() => setSortValue("priority")} className="w-full" autoFocus={sortValue === "priority"}>by Priority</button></li>
-            </ul>
-
             <p className="font-medium text-2xl my-4">Filter</p>
             <ul className="flex flex-col space-y-2 mb-5">
               <li>
