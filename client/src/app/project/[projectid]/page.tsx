@@ -109,7 +109,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
 
   //Sort and Filter Data
   const [locationIDArray, setLocationIDArray] = useState<string []>([]);
-  const [sortValue, setSortValue] = useState("");
+  const [sortValue, setSortValue] = useState("name");
   const [sortedNoteData, setSortedNoteData] = useState<NoteData[]>([]);
 
   //Sort data
@@ -627,11 +627,6 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
                 setSortValue={setSortValue}
                 sortValue={sortValue}
               />
-              <ul className="flex flex-col space-y-2">
-                <li><button onClick={() => setSortValue("name")} className="w-full" autoFocus={sortValue === "name"}>by Name</button></li>
-                <li><button onClick={() => setSortValue("date")} className="w-full" autoFocus={sortValue === "date"}>by Date</button></li>
-                <li><button onClick={() => setSortValue("priority")} className="w-full" autoFocus={sortValue === "priority"}>by Priority</button></li>
-              </ul>
               <SearchResults
                 sortedNoteData={sortedNoteData}
                 handleEditNoteDialog={handleEditNoteDialog}

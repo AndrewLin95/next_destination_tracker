@@ -1,5 +1,7 @@
 import { FORM_CANCEL_BUTTON, FORM_SUBMIT_BUTTON } from "@/util/constants";
 import { NoteData } from "@/util/models/ProjectModels";
+import { faSortDown, faSortUp } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 
 interface Props {
@@ -11,11 +13,14 @@ interface Props {
 
 const SortFilterModal:FC<Props> = ({
   noteData,
-  setLocationIDArray
+  setLocationIDArray,
+  setSortValue,
+  sortValue
 }) => {
   const [expandModal, setExpandModal] = useState(false);
   const [filterValues, setFilterValues] = useState<string []>([]);
   const [lastFilterValues, setLastFilterValues] = useState<string []>([]);
+  const [sortDropDown, setSortDropDown] = useState(false);
 
   //update filterValues on change of filter checkboxes
   const handleFilterChange = (newVal: string) => {
@@ -52,36 +57,52 @@ const SortFilterModal:FC<Props> = ({
       <div className="flex flex-row justify-center items-center pb-4 text-2xl">
         <div className="pr-4 text-lg font-bold">Searched Places</div>
       </div>
+      <div className="flex flex-row justify-between px-2">
+        <button onClick={() => {
+          setExpandModal(!expandModal);
+        }}>Sort/Filter</button>
 
-      <button onClick={() => {
-        setExpandModal(!expandModal);
-      }}>Sort/Filter</button>
-
-      {expandModal ? (
-        <div className="h-full flex justify-center items-center bg-gray-600/50 absolute inset-0">
-          <div className="flex justify-center flex-col items-center rounded-lg bg-Background_Lighter py-5 px-10 relative z-50">
-            <p className="font-medium text-2xl my-4">Filter</p>
-            <ul className="flex flex-col space-y-2 mb-5">
-              <li>
-                <input type="checkbox" id="priorityLow" name="Low" value="Low" checked={filterValues.includes("Low")} onChange={() => handleFilterChange("Low")}/>
-                <label htmlFor="priorityLow"> Low Priority</label>
-              </li>
-              <li>
-                <input type="checkbox" id="priorityMedium" name="Medium" value="Medium" checked={filterValues.includes("Medium")} onChange={() => handleFilterChange("Medium")}/>
-                <label htmlFor="priorityMedium"> Medium Priority</label>
-              </li>
-              <li>
-                <input type="checkbox" id="priorityHigh" name="High" value="High" checked={filterValues.includes("High")} onChange={() => handleFilterChange("High")}/>
-                <label htmlFor="priorityHigh"> High Priority</label>
-              </li>
-            </ul>
-            <div className="flex flex-row justify-end h-full space-x-2">
-              <button onClick={applyFilter} className={`${FORM_SUBMIT_BUTTON} h-10 w-45 px-5`}>Apply Filters</button>
-              <button onClick={cancelFilter} className={`${FORM_CANCEL_BUTTON} h-10 mb-2 px-5`}>Cancel</button>
+        {expandModal &&
+          <div className="h-full flex justify-center items-center bg-gray-600/50 absolute inset-0">
+            <div className="flex justify-center flex-col items-center rounded-lg bg-Background_Lighter py-5 px-10 relative z-50">
+              <p className="font-medium text-2xl my-4">Filter</p>
+              <ul className="flex flex-col space-y-2 mb-5">
+                <li>
+                  <input type="checkbox" id="priorityLow" name="Low" value="Low" checked={filterValues.includes("Low")} onChange={() => handleFilterChange("Low")}/>
+                  <label htmlFor="priorityLow"> Low Priority</label>
+                </li>
+                <li>
+                  <input type="checkbox" id="priorityMedium" name="Medium" value="Medium" checked={filterValues.includes("Medium")} onChange={() => handleFilterChange("Medium")}/>
+                  <label htmlFor="priorityMedium"> Medium Priority</label>
+                </li>
+                <li>
+                  <input type="checkbox" id="priorityHigh" name="High" value="High" checked={filterValues.includes("High")} onChange={() => handleFilterChange("High")}/>
+                  <label htmlFor="priorityHigh"> High Priority</label>
+                </li>
+              </ul>
+              <div className="flex flex-row justify-end h-full space-x-2">
+                <button onClick={applyFilter} className={`${FORM_SUBMIT_BUTTON} h-10 w-45 px-5`}>Apply Filters</button>
+                <button onClick={cancelFilter} className={`${FORM_CANCEL_BUTTON} h-10 mb-2 px-5`}>Cancel</button>
+              </div>
             </div>
           </div>
+        }
+
+        <div className="relative inline-block">
+          <button onClick={() => setSortDropDown(!sortDropDown)} className="capitalize flex space-x-2">
+            <p>{sortValue}</p>
+            <FontAwesomeIcon icon={faSortDown} />
+          </button>
+          
+          {sortDropDown && 
+            <ul className="flex flex-col space-y-2 absolute z-1">
+              <li><button onClick={() => {setSortValue("name"); setSortDropDown(false)}} className="w-full" autoFocus={sortValue === "name"}>by Name</button></li>
+              <li><button onClick={() => {setSortValue("date"); setSortDropDown(false)}} className="w-full" autoFocus={sortValue === "date"}>by Date</button></li>
+              <li><button onClick={() => {setSortValue("priority"); setSortDropDown(false)}} className="w-full" autoFocus={sortValue === "priority"}>by Priority</button></li>
+            </ul>
+          }
         </div>
-      ) : null}
+      </div>
     </div>
   ); 
 };
