@@ -24,18 +24,20 @@ const SearchResults: FC<Props> = ({
   viewToggle,
   handleDrag,
   scheduleColors,
-  locationIDArray
+  locationIDArray,
 }) => {
-
   if (sortedNoteData.length === 0) {
     return null;
-  } 
-  
+  }
+
   return (
     <div className="h-full">
-      <div className="flex flex-col items-center h-[calc(100vh-15rem)] overflow-y-auto pt-4">
+      <div className="flex flex-col items-center h-[calc(100vh-13rem)] overflow-y-auto pt-4">
         {sortedNoteData.map((note) => {
-          if (locationIDArray.length === 0 || locationIDArray.includes(note.locationID)) {
+          if (
+            locationIDArray.length === 0 ||
+            locationIDArray.includes(note.locationID)
+          ) {
             return (
               <Note
                 key={note.locationID}
@@ -48,7 +50,8 @@ const SearchResults: FC<Props> = ({
                 handleDrag={handleDrag}
                 scheduleColors={scheduleColors}
               />
-            )}
+            );
+          }
         })}
       </div>
     </div>

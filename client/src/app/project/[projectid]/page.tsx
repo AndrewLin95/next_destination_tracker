@@ -24,15 +24,12 @@ import { AuthState } from "@/util/models/AuthModels";
 import authConfigData from "@/util/authConfig";
 import axios, { isAxiosError } from "axios";
 import SearchResults from "./searchComponents/SearchResults";
-import SearchPagination from "./searchComponents/SearchPagination";
 import {
   ERROR_CAUSE,
   ERROR_DATA,
-  NUM_RESULTS_PER_PAGE,
   STATUS_CODES,
   VIEW_TYPES,
 } from "@/util/constants";
-import { handleValidatePagination } from "./util";
 import EditNoteDialog from "./components/EditNoteDialog";
 import { useRouter } from "next/navigation";
 import ErrorDialog from "@/components/ErrorDialog";
@@ -65,13 +62,6 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   );
   const [searchText, setSearchText] = useState<string>("");
   const [viewToggle, setViewToggle] = useState<VIEW_TYPES>(VIEW_TYPES.Map);
-
-  // Pagination Data
-  const [numberOfPages, setNumberOfPages] = useState(1);
-  const [currPage, setCurrPage] = useState(1);
-  const [paginationState, setPaginationState] = useState<(string | number)[]>(
-    []
-  );
 
   // Page Data
   const [mapData, setMapData] = useState<MapData[]>([]);
@@ -108,7 +98,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     useState<Boolean>(false);
 
   //Sort and Filter Data
-  const [locationIDArray, setLocationIDArray] = useState<string []>([]);
+  const [locationIDArray, setLocationIDArray] = useState<string[]>([]);
   const [sortValue, setSortValue] = useState("name");
   const [sortedNoteData, setSortedNoteData] = useState<NoteData[]>([]);
   const [ascending, setAscending] = useState(true);
@@ -117,36 +107,45 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   useEffect(() => {
     const sortByValue = (value: string) => {
       let tempNoteData: NoteData[] = [...noteData];
-  
+
       if (value === "name") {
         if (ascending) {
-          tempNoteData.sort((a,b) => a.noteName.localeCompare(b.noteName));
+          tempNoteData.sort((a, b) => a.noteName.localeCompare(b.noteName));
         } else {
-          tempNoteData.sort((a,b) => b.noteName.localeCompare(a.noteName));
+          tempNoteData.sort((a, b) => b.noteName.localeCompare(a.noteName));
+        }
+      } else if (value === "date") {
+        if (ascending) {
+          tempNoteData.sort((a, b) =>
+            a.scheduleDate
+              ? b.scheduleDate
+                ? a.scheduleDate - b.scheduleDate
+                : -1
+              : 1
+          );
+        } else {
+          tempNoteData.sort((a, b) =>
+            a.scheduleDate
+              ? b.scheduleDate
+                ? b.scheduleDate - a.scheduleDate
+                : 1
+              : -1
+          );
+        }
+      } else if (value === "priority") {
+        const order = { Low: 1, Medium: 2, High: 3 };
+        if (ascending) {
+          tempNoteData.sort((a, b) => order[b.priority] - order[a.priority]);
+        } else {
+          tempNoteData.sort((a, b) => order[a.priority] - order[b.priority]);
         }
       }
-      else if (value === "date") {
-        if (ascending) {
-          tempNoteData.sort((a,b) => a.scheduleDate ? b.scheduleDate ? a.scheduleDate - b.scheduleDate : -1 : 1);
-        } else {
-          tempNoteData.sort((a,b) => a.scheduleDate ? b.scheduleDate ? b.scheduleDate - a.scheduleDate : 1 : -1);
-        }
-      }
-      else if (value === "priority") {
-        const order = { 'Low': 1, 'Medium': 2, 'High': 3 }
-        if (ascending) {
-          tempNoteData.sort((a,b) => order[b.priority] - order[a.priority]);
-        } else {
-          tempNoteData.sort((a,b) => order[a.priority] - order[b.priority]);
-        }
-      } 
-  
+
       setSortedNoteData(tempNoteData);
     };
 
     sortByValue(sortValue);
-
-  },[sortValue, noteData, ascending]);
+  }, [sortValue, noteData, ascending]);
 
   useEffect(() => {
     if (
@@ -202,10 +201,6 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       };
       setMapCenter(initMapCenter);
 
-      // handle initial pagination state
-      const totalPages = Math.ceil(responseData.locationData.length / 10);
-      setNumberOfPages(totalPages);
-
       setLoading(false);
     };
     fetchInitPageData();
@@ -233,22 +228,13 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
         tempAllLocationData.push(responseData);
         setAllLocationData(tempAllLocationData);
 
-        if (currPage === numberOfPages && noteData.length <= 9) {
-          const tempMapData = [...mapData];
-          tempMapData.push(responseData.mapData);
-          setMapData(tempMapData);
+        const tempMapData = [...mapData];
+        tempMapData.push(responseData.mapData);
+        setMapData(tempMapData);
 
-          const tempNoteData = [...noteData];
-          tempNoteData.push(responseData.noteData);
-          setNoteData(tempNoteData);
-        }
-
-        handleValidatePagination(
-          "+",
-          tempAllLocationData,
-          numberOfPages,
-          setNumberOfPages
-        );
+        const tempNoteData = [...noteData];
+        tempNoteData.push(responseData.noteData);
+        setNoteData(tempNoteData);
       } catch (err) {
         if (isAxiosError(err)) {
           const responseBody: StatusPayload = err.response?.data.status;
@@ -262,91 +248,6 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     fetchSearchData();
     setSearchText("");
   };
-
-  const handlePageChange = (value: string | number) => {
-    if (value === "...") {
-      return;
-    }
-    let indexOfFirstPost: number;
-    let indexOfLastPost: number;
-    if (value === "+") {
-      if (currPage + 1 > numberOfPages) {
-        return;
-      }
-      indexOfLastPost = (currPage + 1) * NUM_RESULTS_PER_PAGE;
-      indexOfFirstPost = indexOfLastPost - NUM_RESULTS_PER_PAGE;
-      setCurrPage(currPage + 1);
-    } else if (value === "-") {
-      if (currPage - 1 <= 0) {
-        return;
-      }
-      indexOfLastPost = (currPage - 1) * NUM_RESULTS_PER_PAGE;
-      indexOfFirstPost = indexOfLastPost - NUM_RESULTS_PER_PAGE;
-      setCurrPage(currPage - 1);
-    } else {
-      indexOfLastPost = Number(value) * NUM_RESULTS_PER_PAGE;
-      indexOfFirstPost = indexOfLastPost - NUM_RESULTS_PER_PAGE;
-      setCurrPage(Number(value));
-    }
-
-    const tempAllLocationData = [...(allLocationData as LocationData[])];
-    const filteredAllLocationData = tempAllLocationData.slice(
-      indexOfFirstPost,
-      indexOfLastPost
-    );
-
-    const tempMapData: MapData[] = [];
-    const tempNoteData: NoteData[] = [];
-
-    filteredAllLocationData.forEach((eachLocationData) => {
-      const eachMapData = {
-        ...eachLocationData.mapData,
-        locationID: eachLocationData.locationID,
-      };
-      tempMapData.push(eachMapData);
-
-      const eachNoteData = {
-        ...eachLocationData.noteData,
-        locationID: eachLocationData.locationID,
-      };
-      tempNoteData.push(eachNoteData);
-    });
-    setMapData(tempMapData);
-    setNoteData(tempNoteData);
-    handleInactivateNote();
-  };
-
-  useEffect(() => {
-    if (numberOfPages <= 5) {
-      let i = 0;
-      const tempPaginationArray = [];
-      while (i < numberOfPages) {
-        tempPaginationArray.push(i + 1);
-        i++;
-      }
-      setPaginationState(tempPaginationArray);
-    } else {
-      if (currPage === 1) {
-        setPaginationState([1, 2, "...", numberOfPages]);
-      } else if (currPage === 2) {
-        setPaginationState([1, 2, 3, "...", numberOfPages]);
-      } else if (currPage === numberOfPages) {
-        setPaginationState([1, "...", currPage - 1, currPage]);
-      } else if (currPage === numberOfPages - 1) {
-        setPaginationState([1, "...", currPage - 1, currPage, numberOfPages]);
-      } else {
-        setPaginationState([
-          1,
-          "...",
-          currPage - 1,
-          currPage,
-          currPage + 1,
-          "...",
-          numberOfPages,
-        ]);
-      }
-    }
-  }, [numberOfPages, currPage]);
 
   const handleEditNoteDialog = (note: NoteData) => {
     setNoteDialogToggle(true);
@@ -651,11 +552,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
                 viewToggle={viewToggle}
                 handleDrag={handleDrag}
                 scheduleColors={projectData.scheduleColors}
-                locationIDArray = {locationIDArray}
-              />
-              <SearchPagination
-                paginationState={paginationState}
-                handlePageChange={handlePageChange}
+                locationIDArray={locationIDArray}
               />
             </div>
             {viewToggle === VIEW_TYPES.Map ? (
@@ -667,7 +564,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
                 activeInfoWindow={activeInfoWindow}
                 handleInactivateNote={handleInactivateNote}
                 scheduleColors={projectData.scheduleColors}
-                locationIDArray = {locationIDArray}
+                locationIDArray={locationIDArray}
               />
             ) : (
               <ScheduleModule
