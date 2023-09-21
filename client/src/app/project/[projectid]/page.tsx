@@ -39,6 +39,7 @@ import ErrorDialog from "@/components/ErrorDialog";
 import ScheduleModule from "./ScheduleModule";
 import ProjectProfileDialog from "./components/ProjectProfileDialog";
 import ScheduleSettingsDialog from "./components/ScheduleSettingsDialog";
+import SortFilterModal from "./searchComponents/SortFilterModal";
 
 interface InitResponseData {
   projectData: ProjectData;
@@ -106,6 +107,47 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   const [scheduleSettingsToggle, setScheduleSettingsToggle] =
     useState<Boolean>(false);
 
+  //Sort and Filter Data
+  const [locationIDArray, setLocationIDArray] = useState<string []>([]);
+  const [sortValue, setSortValue] = useState("name");
+  const [sortedNoteData, setSortedNoteData] = useState<NoteData[]>([]);
+  const [ascending, setAscending] = useState(true);
+
+  //Sort data
+  useEffect(() => {
+    const sortByValue = (value: string) => {
+      let tempNoteData: NoteData[] = [...noteData];
+  
+      if (value === "name") {
+        if (ascending) {
+          tempNoteData.sort((a,b) => a.noteName.localeCompare(b.noteName));
+        } else {
+          tempNoteData.sort((a,b) => b.noteName.localeCompare(a.noteName));
+        }
+      }
+      else if (value === "date") {
+        if (ascending) {
+          tempNoteData.sort((a,b) => a.scheduleDate ? b.scheduleDate ? a.scheduleDate - b.scheduleDate : -1 : 1);
+        } else {
+          tempNoteData.sort((a,b) => a.scheduleDate ? b.scheduleDate ? b.scheduleDate - a.scheduleDate : 1 : -1);
+        }
+      }
+      else if (value === "priority") {
+        const order = { 'Low': 1, 'Medium': 2, 'High': 3 }
+        if (ascending) {
+          tempNoteData.sort((a,b) => order[b.priority] - order[a.priority]);
+        } else {
+          tempNoteData.sort((a,b) => order[a.priority] - order[b.priority]);
+        }
+      } 
+  
+      setSortedNoteData(tempNoteData);
+    };
+
+    sortByValue(sortValue);
+
+  },[sortValue, noteData, ascending]);
+
   useEffect(() => {
     if (
       params.projectid === undefined ||
@@ -152,6 +194,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       });
       setMapData(tempMapData);
       setNoteData(tempNoteData);
+      setSortedNoteData(tempNoteData);
 
       const initMapCenter = {
         lat: parseFloat(responseData.projectData.project.projectCoords.lat),
@@ -591,8 +634,16 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
                 setSearchText={setSearchText}
                 handleSearch={handleSearch}
               />
-              <SearchResults
+              <SortFilterModal
                 noteData={noteData}
+                setLocationIDArray={setLocationIDArray}
+                setSortValue={setSortValue}
+                sortValue={sortValue}
+                ascending={ascending}
+                setAscending={setAscending}
+              />
+              <SearchResults
+                sortedNoteData={sortedNoteData}
                 handleEditNoteDialog={handleEditNoteDialog}
                 handleDeleteNote={handleDeleteNote}
                 activeLocationID={activeLocationID}
@@ -600,6 +651,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
                 viewToggle={viewToggle}
                 handleDrag={handleDrag}
                 scheduleColors={projectData.scheduleColors}
+                locationIDArray = {locationIDArray}
               />
               <SearchPagination
                 paginationState={paginationState}
@@ -615,6 +667,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
                 activeInfoWindow={activeInfoWindow}
                 handleInactivateNote={handleInactivateNote}
                 scheduleColors={projectData.scheduleColors}
+                locationIDArray = {locationIDArray}
               />
             ) : (
               <ScheduleModule

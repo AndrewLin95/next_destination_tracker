@@ -58,6 +58,8 @@ export interface MapData {
   scheduleDate?: number,
 }
 
+type priorityValues = "Low" | "Medium" | "High"
+
 export interface NoteData {
   noteName: string,
   locationID: string,
@@ -67,7 +69,7 @@ export interface NoteData {
   closeHours?: string,
   picture?: string,
   scheduleDate?: number,
-  priority: string,
+  priority: priorityValues,
 }
 
 export interface ScheduleConfigData {
