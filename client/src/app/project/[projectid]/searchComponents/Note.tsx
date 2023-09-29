@@ -55,7 +55,7 @@ const Note: FC<Props> = ({
             ? `linear-gradient(#64748B${HEX_TRANSPARENCY.SixtyPercent}, transparent)`
             : dayOfWeek === null
             ? ""
-            : `linear-gradient(${scheduleColors[dayOfWeek]}${HEX_TRANSPARENCY.ThirtyPercent}, transparent)`,
+            : `linear-gradient(${scheduleColors[dayOfWeek]}${HEX_TRANSPARENCY.EighttyPercent}, transparent)`,
       }}
       onClick={() => handleActiveNote(note.locationID)}
       draggable={viewToggle === VIEW_TYPES.Schedule ? true : false}

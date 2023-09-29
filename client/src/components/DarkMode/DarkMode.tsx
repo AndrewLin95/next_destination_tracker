@@ -20,7 +20,7 @@ const DarkModeButton = () => {
   // TODO: update position of button
   return (
     <button
-      className={`${DEFAULT_BUTTON} h-10 absolute right-4 bottom-4 bg-primary4 dark:bg-dark_accent2`}
+      className={`${DEFAULT_BUTTON} h-10 absolute left-4 bottom-4 bg-primary4 dark:bg-dark_accent2`}
       onClick={(e) => (theme === "dark" ? setTheme("light") : setTheme("dark"))}
     >
       {theme === "dark" ? (

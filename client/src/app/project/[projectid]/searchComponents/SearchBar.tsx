@@ -11,7 +11,7 @@ const SearchBar: FC<Props> = ({ searchText, setSearchText, handleSearch }) => {
   return (
     <div className="flex flex-row px-4">
       <input
-        className="w-2/3 mr-2 p-2 border bg-accent1 border-dark_accent1 dark:bg-dark_accent1 dark:border-accent1"
+        className="w-2/3 mr-2 p-2 rounded border bg-accent1 border-dark_accent1 dark:bg-dark_accent1 dark:border-accent1"
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
       />

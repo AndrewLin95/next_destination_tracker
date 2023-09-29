@@ -89,58 +89,62 @@ const SortFilterModal: FC<Props> = ({
             setExpandModal(!expandModal);
           }}
         >
-          Sort/Filter
+          Filter
         </button>
 
         {expandModal && (
           <div className="h-full flex justify-center items-center bg-gray-600/50 absolute inset-0">
-            <div className="flex justify-center flex-col items-center rounded-lg bg-Background_Lighter py-5 px-10 relative z-50">
-              <p className="font-medium text-2xl my-4">Filter</p>
-              <ul className="flex flex-col space-y-2 mb-5">
-                <li>
-                  <input
-                    type="checkbox"
-                    id="priorityLow"
-                    name="Low"
-                    value="Low"
-                    checked={filterValues.includes("Low")}
-                    onChange={() => handleFilterChange("Low")}
-                  />
-                  <label htmlFor="priorityLow"> Low Priority</label>
-                </li>
-                <li>
-                  <input
-                    type="checkbox"
-                    id="priorityMedium"
-                    name="Medium"
-                    value="Medium"
-                    checked={filterValues.includes("Medium")}
-                    onChange={() => handleFilterChange("Medium")}
-                  />
-                  <label htmlFor="priorityMedium"> Medium Priority</label>
-                </li>
-                <li>
-                  <input
-                    type="checkbox"
-                    id="priorityHigh"
-                    name="High"
-                    value="High"
-                    checked={filterValues.includes("High")}
-                    onChange={() => handleFilterChange("High")}
-                  />
-                  <label htmlFor="priorityHigh"> High Priority</label>
-                </li>
-              </ul>
+            <div className="flex justify-center flex-col rounded p-4 relative z-50 border bg-primary border-dark_accent1 dark:bg-dark_primary dark:border-accent1">
+              <p className="text-xl font-bold pb-4 underline text-black dark:text-white">
+                Filter
+              </p>
+              <div className="flex flex-col pl-4">
+                <ul className="flex flex-col space-y-2 mb-5">
+                  <li>
+                    <input
+                      type="checkbox"
+                      id="priorityLow"
+                      name="Low"
+                      value="Low"
+                      checked={filterValues.includes("Low")}
+                      onChange={() => handleFilterChange("Low")}
+                    />
+                    <label htmlFor="priorityLow"> Low Priority</label>
+                  </li>
+                  <li>
+                    <input
+                      type="checkbox"
+                      id="priorityMedium"
+                      name="Medium"
+                      value="Medium"
+                      checked={filterValues.includes("Medium")}
+                      onChange={() => handleFilterChange("Medium")}
+                    />
+                    <label htmlFor="priorityMedium"> Medium Priority</label>
+                  </li>
+                  <li>
+                    <input
+                      type="checkbox"
+                      id="priorityHigh"
+                      name="High"
+                      value="High"
+                      checked={filterValues.includes("High")}
+                      onChange={() => handleFilterChange("High")}
+                    />
+                    <label htmlFor="priorityHigh"> High Priority</label>
+                  </li>
+                </ul>
+              </div>
               <div className="flex flex-row justify-end h-full space-x-2">
                 <button
                   onClick={applyFilter}
-                  className={`${FORM_SUBMIT_BUTTON} h-10 w-45 px-5`}
+                  className={`${FORM_SUBMIT_BUTTON} h-10 w-45 px-5 mr-2 br-1 rounded bg-accent1 dark:bg-dark_accent1`}
                 >
                   Apply Filters
                 </button>
                 <button
                   onClick={cancelFilter}
-                  className={`${FORM_CANCEL_BUTTON} h-10 mb-2 px-5`}
+                  className={`${FORM_CANCEL_BUTTON} h-10 w-24 rounded bg-primary2 dark:bg-dark_primary2`}
                 >
                   Cancel
                 </button>

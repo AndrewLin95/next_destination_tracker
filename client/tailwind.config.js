@@ -44,15 +44,6 @@ module.exports = {
         dark_accent3: '#634059',
         dark_accent3_lighter: '#704D66',
         dark_accent3_darker: '56334C',
-
-        Background: '#241633',
-        Background_Lighter: '#704AAB',
-        Background_Darker: '#341c5f',
-        Text: '#f4ebf4',
-        PrimaryButton: '#a760a9',
-        SecondaryButton: '#070407',
-        Accent: '#b070b2',
-        Accent2: '#d280ff',
       }
     },
   },

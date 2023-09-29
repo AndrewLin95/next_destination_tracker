@@ -145,8 +145,8 @@ const ScheduleSettingsDialog: FC<Props> = ({
         className="absolute h-screen w-screen bg-slate-900/40"
         onClick={() => setScheduleSettingsToggle(false)}
       />
-      <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[35rem] h-[18rem] bg-Background flex flex-col p-4">
-        <div className="text-xl font-bold pb-2 underline text-Accent">
+      <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[35rem] h-[18rem] flex flex-col p-4 border bg-primary border-dark_accent1 dark:bg-dark_primary dark:border-accent1">
+        <div className="text-xl font-bold pb-2 underline text-black dark:text-white">
           Edit Schedule Settings
         </div>
         <form onSubmit={handleSubmit}>
@@ -191,7 +191,7 @@ const ScheduleSettingsDialog: FC<Props> = ({
                 type="time"
                 value={startTime}
                 name="startTime"
-                className="bg-Background_Lighter"
+                className="border rounded bg-accent1 border-dark_accent1 dark:bg-dark_accent1 dark:border-accent1"
                 onChange={(e) => handleTimeChange(e.target.value, "start")}
                 step={1800}
               />
@@ -202,7 +202,7 @@ const ScheduleSettingsDialog: FC<Props> = ({
                 type="time"
                 value={endTime}
                 name="endTime"
-                className="bg-Background_Lighter"
+                className="border rounded bg-accent1 border-dark_accent1 dark:bg-dark_accent1 dark:border-accent1"
                 onChange={(e) => handleTimeChange(e.target.value, "end")}
                 step={1800}
               />
@@ -217,7 +217,7 @@ const ScheduleSettingsDialog: FC<Props> = ({
             </button>
             <button
               type="button"
-              className={`${FORM_CANCEL_BUTTON} h-10 w-24 bg-SecondaryButton/80`}
+              className={`${FORM_CANCEL_BUTTON} h-10 w-24`}
               onClick={() => setScheduleSettingsToggle(false)}
             >
               Cancel
