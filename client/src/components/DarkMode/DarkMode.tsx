@@ -17,7 +17,6 @@ const DarkModeButton = () => {
     return null;
   }
 
-  // TODO: update position of button
   return (
     <button
       className={`${DEFAULT_BUTTON} h-10 absolute left-4 bottom-4 bg-primary4 dark:bg-dark_accent2`}
