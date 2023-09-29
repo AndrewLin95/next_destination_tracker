@@ -40,7 +40,7 @@ const EachScheduleItem: FC<Props> = ({
 
     return (
       <div
-        className={`flex flex-col border justify-between`}
+        className={`flex flex-col border border-dark_primary5 dark:border-primary5 justify-between`}
         style={{
           width: `${segmentWidth}%`,
           height: `${segmentHeight}rem`,

@@ -48,7 +48,7 @@ const Note: FC<Props> = ({
 
   return (
     <div
-      className={`mb-8 w-full flex flex-col justify-center items-center border border-Background_Lighter`}
+      className={`mb-8 w-full flex flex-col justify-center items-center border border-primary5 dark:border-dark_primary5`}
       style={{
         backgroundImage:
           activeLocationID === note.locationID

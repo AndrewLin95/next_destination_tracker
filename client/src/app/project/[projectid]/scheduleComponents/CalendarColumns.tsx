@@ -72,7 +72,7 @@ const CalendarColumns: FC<Props> = ({
           <div
             className={`${
               headerData.enabled ? "bg-transparent" : "bg-slate-500/20"
-            } h-12 border border-Background_Lighter/50 p-1`}
+            } h-12 border border-primary5 dark:border-dark_primary5 border-Background_Lighter/50 p-1`}
             style={{
               display: "flex",
               gap: stackedSegment ? "2px" : "",

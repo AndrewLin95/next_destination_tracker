@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSun, faMoon } from "@fortawesome/free-regular-svg-icons";
+import { DEFAULT_BUTTON } from "@/util/constants";
 
 const DarkModeButton = () => {
   const [mounted, setMounted] = useState(false);
@@ -16,9 +17,10 @@ const DarkModeButton = () => {
     return null;
   }
 
+  // TODO: update position of button
   return (
     <button
-      className="absolute right-4 bottom-4 bg-accent2 border-dark_accent2 dark:bg-dark_accent2 dark:border-accent2"
+      className={`${DEFAULT_BUTTON} h-10 absolute right-4 bottom-4 bg-primary4 dark:bg-dark_accent2`}
       onClick={(e) => (theme === "dark" ? setTheme("light") : setTheme("dark"))}
     >
       {theme === "dark" ? (

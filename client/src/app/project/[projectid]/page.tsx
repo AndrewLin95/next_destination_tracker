@@ -530,7 +530,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
             projectName={projectData.project.projectName}
           />
           <div className="flex flex-row w-full h-[calc(100vh-4rem)]">
-            <div className="flex flex-col w-96 max-w-[24rem] h-full border border-primary2 dark:border-dark_primary2">
+            <div className="flex flex-col w-96 max-w-[24rem] h-full">
               <SearchModule
                 searchText={searchText}
                 setSearchText={setSearchText}
