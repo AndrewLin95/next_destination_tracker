@@ -116,7 +116,7 @@ const HomePage: NextPage = () => {
   };
 
   return (
-    <div className="w-screen h-screen overflow-hidden flex flex-col justify-center items-center  dark:bg-dark_primary bg-primary">
+    <div className="w-screen h-screen overflow-hidden flex flex-col justify-center items-center bg-primary text-black dark:bg-dark_primary dark:text-white">
       <Header />
       <div className="flex flex-col w-full h-full">
         <NewProject

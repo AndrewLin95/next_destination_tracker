@@ -16,7 +16,7 @@ const NewProject: FC<Props> = ({
 }) => {
   return (
     <div className="flex h-[420px] w-full justify-center items-center mt-8">
-      <div className="flex flex-col border border-dashed w-10/12 sm:w-6/12 md:w-4/12 xl:w-2/12 h-[420px] p-6">
+      <div className="flex flex-col border border-dashed w-10/12 sm:w-6/12 md:w-4/12 xl:w-2/12 h-[420px] p-6 bg-primary2 border-dark_accent2 dark:bg-dark_primary2 dark:border-accent2">
         <form onSubmit={submitNewProject}>
           <input
             className="w-full mb-2 px-2"
@@ -88,7 +88,10 @@ const NewProject: FC<Props> = ({
             )}
           </ImageUploading>
           <div className="flex justify-end w-full">
-            <button className="bg-PrimaryButton mt-3 w-60" type="submit">
+            <button
+              className="bg-accent1_darker dark:bg-dark_accent1_darker mt-3 w-60"
+              type="submit"
+            >
               Track new project!
             </button>
           </div>
