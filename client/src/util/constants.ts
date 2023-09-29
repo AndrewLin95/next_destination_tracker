@@ -1,6 +1,7 @@
 export const NUM_RESULTS_PER_PAGE = 10;
 export const MS_IN_DAY = 86400000;
 export const BASE_SCHEDULE_HEIGHT = 3; //rem
+export const MAX_NUM_OF_IMAGES = 1;
 
 export enum VERIFY_TOKEN_RESPONSE {
   NoToken = "No Token",

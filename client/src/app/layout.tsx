@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <AuthProvider>
         <Providers>
-          <body className={inter.className}>{children}</body>
+          <body className={`${inter.className}`}>{children}</body>
         </Providers>
       </AuthProvider>
     </html>

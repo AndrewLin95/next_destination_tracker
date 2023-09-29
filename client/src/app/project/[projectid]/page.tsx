@@ -518,7 +518,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   }, [mapData, noteData]);
 
   return (
-    <div className="w-screen h-screen max-h-screen overflow-hidden flex flex-col justify-center items-center">
+    <div className="w-screen h-screen max-h-screen overflow-hidden flex flex-col justify-center items-center bg-sky-800 dark:bg-slate-700">
       {loading ? (
         // TODO: loading component
         <></>
