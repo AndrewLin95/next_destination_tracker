@@ -37,6 +37,7 @@ import ScheduleModule from "./ScheduleModule";
 import ProjectProfileDialog from "./components/ProjectProfileDialog";
 import ScheduleSettingsDialog from "./components/ScheduleSettingsDialog";
 import SortFilterModal from "./searchComponents/SortFilterModal";
+import DarkModeButton from "@/components/DarkMode/DarkMode";
 
 interface InitResponseData {
   projectData: ProjectData;
@@ -588,6 +589,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
               </button>
             </div>
           </div>
+          <DarkModeButton />
         </>
       )}
       {noteDialogToggle ? (

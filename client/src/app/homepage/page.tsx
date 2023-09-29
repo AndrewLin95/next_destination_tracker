@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useContext, useState, useEffect } from "react";
 import AuthContext from "../context/AuthContext";
 import { ImageListType } from "react-images-uploading/dist/typings";
+import DarkModeButton from "@/components/DarkMode/DarkMode";
 
 import Header from "./Header";
 import NewProject from "./NewProject";
@@ -128,6 +129,7 @@ const HomePage: NextPage = () => {
           handleEachProjectClick={handleEachProjectClick}
         />
       </div>
+      <DarkModeButton />
     </div>
   );
 };
