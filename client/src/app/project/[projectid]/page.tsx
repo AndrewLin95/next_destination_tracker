@@ -518,7 +518,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
   }, [mapData, noteData]);
 
   return (
-    <div className="w-screen h-screen max-h-screen overflow-hidden flex flex-col justify-center items-center bg-sky-800 dark:bg-slate-700">
+    <div className="w-screen h-screen max-h-screen overflow-hidden flex flex-col justify-center items-center bg-primary text-black dark:bg-dark_primary dark:text-white">
       {loading ? (
         // TODO: loading component
         <></>
@@ -530,7 +530,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
             projectName={projectData.project.projectName}
           />
           <div className="flex flex-row w-full h-[calc(100vh-4rem)]">
-            <div className="flex flex-col w-96 max-w-[24rem] h-full border border-Background_Darker">
+            <div className="flex flex-col w-96 max-w-[24rem] h-full border border-primary2 dark:border-dark_primary2">
               <SearchModule
                 searchText={searchText}
                 setSearchText={setSearchText}
@@ -581,7 +581,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
               <button
                 type="button"
                 onClick={() => handleViewChange()}
-                className="bg-Background_Lighter/70 h-10 px-4 py-0 rounded-3xl"
+                className="bg-accent1 dark:bg-dark_accent1 border-black h-10 px-4 py-0 rounded-3xl"
               >
                 {viewToggle === VIEW_TYPES.Map
                   ? `Toggle Schedule View`

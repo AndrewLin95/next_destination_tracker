@@ -30,20 +30,20 @@ module.exports = {
         accent3_lighter: '#FFF0F0',
         accent3_darker: 'F2D6D6',
 
-        dark_primary: '#241633',
-        dark_primary2: '#312340',
-        dark_primary3: '#3E304D',
-        dark_primary4: '#4A3C59',
-        dark_primary5: '#574966', // all accents are complementary and 20% lighter
-        dark_accent1: '#496666', 
-        dark_accent1_lighter: '#638080', // 10% lighter
-        dark_accent1_darker: '#304D4D', // 10% darker
-        dark_accent2: '#586649',
-        dark_accent2_lighter: '#728063',
-        dark_accent2_darker: '#3F4D30',
-        dark_accent3: '#664949',
-        dark_accent3_lighter: '#806363',
-        dark_accent3_darker: '4D3030',
+        dark_primary: '#404764',
+        dark_primary2: '#4D5471',
+        dark_primary3: '#5A617E',
+        dark_primary4: '#666D8A',
+        dark_primary5: '#737A97', // all accents are complementary and 20% lighter
+        dark_accent1: '#40634A', 
+        dark_accent1_lighter: '#4D7057', // 10% lighter
+        dark_accent1_darker: '#33563D', // 10% darker
+        dark_accent2: '#635C40',
+        dark_accent2_lighter: '#70694D',
+        dark_accent2_darker: '#564F33',
+        dark_accent3: '#634059',
+        dark_accent3_lighter: '#704D66',
+        dark_accent3_darker: '56334C',
 
         Background: '#241633',
         Background_Lighter: '#704AAB',

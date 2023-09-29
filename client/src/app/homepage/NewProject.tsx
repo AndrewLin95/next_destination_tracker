@@ -16,7 +16,7 @@ const NewProject: FC<Props> = ({
 }) => {
   return (
     <div className="flex h-[420px] w-full justify-center items-center mt-8">
-      <div className="flex flex-col border border-dashed w-10/12 sm:w-6/12 md:w-4/12 xl:w-2/12 h-[420px] p-6 bg-primary2 border-dark_accent2 dark:bg-dark_primary2 dark:border-accent2">
+      <div className="flex flex-col border border-dashed w-10/12 sm:w-6/12 md:w-4/12 xl:w-2/12 h-[420px] p-6 bg-primary3 border-dark_accent2 dark:bg-dark_primary3 dark:border-accent2">
         <form onSubmit={submitNewProject}>
           <input
             className="w-full mb-2 px-2"
