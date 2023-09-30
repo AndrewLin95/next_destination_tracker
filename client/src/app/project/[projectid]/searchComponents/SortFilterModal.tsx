@@ -138,7 +138,7 @@ const SortFilterModal: FC<Props> = ({
               <div className="flex flex-row justify-end h-full space-x-2">
                 <button
                   onClick={applyFilter}
-                  className={`${FORM_SUBMIT_BUTTON} h-10 w-45 px-5 mr-2 br-1 rounded bg-accent1 dark:bg-dark_accent1`}
+                  className={`${FORM_SUBMIT_BUTTON} hover:border-transparent h-10 w-45 px-5 mr-2 br-1 rounded bg-accent1 dark:bg-dark_accent1`}
                 >
                   Apply Filters
                 </button>
@@ -167,7 +167,7 @@ const SortFilterModal: FC<Props> = ({
               <li>
                 <button
                   onClick={() => sortClick("name")}
-                  className="w-full flex flex-row items-center space-x-2 rounded-md text-sm border p-1 mt-2 bg-accent2 border-dark_accent2 dark:bg-dark_accent2 dark:border-accent1"
+                  className="w-full flex flex-row items-center space-x-2 rounded-md text-sm border p-1 mt-2 bg-accent2 border-dark_accent2 dark:bg-dark_accent2 dark:border-accent1 hover:border-transparent focus:outline-none dark:hover:border-transparent dark:focus:outline-none"
                   autoFocus={sortValue === "name"}
                 >
                   <p>by Name</p>
@@ -181,7 +181,7 @@ const SortFilterModal: FC<Props> = ({
               <li>
                 <button
                   onClick={() => sortClick("date")}
-                  className="w-full flex flex-row items-center space-x-2 rounded-md text-sm border p-1 bg-accent2 border-dark_accent2 dark:bg-dark_accent2 dark:border-accent1"
+                  className="w-full flex flex-row items-center space-x-2 rounded-md text-sm border p-1 bg-accent2 border-dark_accent2 dark:bg-dark_accent2 dark:border-accent1 hover:border-transparent focus:outline-none dark:hover:border-transparent dark:focus:outline-none"
                   autoFocus={sortValue === "date"}
                 >
                   <p>by Date</p>
@@ -195,7 +195,7 @@ const SortFilterModal: FC<Props> = ({
               <li>
                 <button
                   onClick={() => sortClick("priority")}
-                  className="w-full flex flex-row items-center space-x-2 rounded-md text-sm border p-1 bg-accent2 border-dark_accent2 dark:bg-dark_accent2 dark:border-accent1"
+                  className="w-full flex flex-row items-center space-x-2 rounded-md text-sm border p-1 bg-accent2 border-dark_accent2 dark:bg-dark_accent2 dark:border-accent1 hover:border-transparent focus:outline-none dark:hover:border-transparent dark:focus:outline-none"
                   autoFocus={sortValue === "priority"}
                 >
                   <p>by Priority</p>
