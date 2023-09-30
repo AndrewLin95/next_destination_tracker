@@ -1,6 +1,6 @@
 import { ErrorRequestHandler, Request } from "express";
 const bcrypt = require("bcryptjs");
-const AuthUserSchema = require("../models/AuthUserSchema");
+const AuthUserSchema = require("../models/authUserSchema");
 const jwt = require('jsonwebtoken');
 import { AuthUserResponse, jwtToken } from "../utils/models/AuthModels";
 
