@@ -1,6 +1,7 @@
 import { AuthProvider } from "./context/AuthContext";
 import "./globals.css";
 import { Inter } from "next/font/google";
+import { Providers } from "../components/DarkMode/providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <AuthProvider>
-        <body className={inter.className}>{children}</body>
+        <Providers>
+          <body className={`${inter.className}`}>{children}</body>
+        </Providers>
       </AuthProvider>
     </html>
   );

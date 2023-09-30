@@ -34,7 +34,7 @@ const ScheduleModule: FC<Props> = ({
 }) => {
   return (
     <div className="h-full w-full">
-      <div className="flex flex-row h-12 w-[calc(100%-1.4rem)] ml-2 border border-Background_Lighter">
+      <div className="flex flex-row h-12 w-[calc(100%-1.4rem)] ml-2 border border-primary5 dark:border-dark_primary5">
         <CalendarSettingsConfig
           setScheduleSettingsToggle={setScheduleSettingsToggle}
         />
@@ -49,7 +49,7 @@ const ScheduleModule: FC<Props> = ({
           );
         })}
       </div>
-      <div className="flex flex-row h-[calc(100vh-8rem)] w-[calc(100%-1.4rem)] ml-2 overflow-y-auto border border-Background_Lighter">
+      <div className="flex flex-row h-[calc(100vh-8rem)] w-[calc(100%-1.4rem)] ml-2 overflow-y-auto border border-primary5 dark:border-dark_primary5">
         <CalendarTimeColumn
           timeValueData={scheduleConfig.timeValueData}
           projectData={projectData}

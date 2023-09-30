@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useContext, useState, useEffect } from "react";
 import AuthContext from "../context/AuthContext";
 import { ImageListType } from "react-images-uploading/dist/typings";
+import DarkModeButton from "@/components/DarkMode/DarkMode";
 
 import Header from "./Header";
 import NewProject from "./NewProject";
@@ -115,7 +116,7 @@ const HomePage: NextPage = () => {
   };
 
   return (
-    <div className="w-screen h-screen overflow-hidden flex flex-col justify-center items-center">
+    <div className="w-screen h-screen overflow-hidden flex flex-col justify-center items-center bg-primary text-black dark:bg-dark_primary dark:text-white">
       <Header />
       <div className="flex flex-col w-full h-full">
         <NewProject
@@ -128,6 +129,7 @@ const HomePage: NextPage = () => {
           handleEachProjectClick={handleEachProjectClick}
         />
       </div>
+      <DarkModeButton />
     </div>
   );
 };

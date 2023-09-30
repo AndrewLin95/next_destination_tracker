@@ -48,14 +48,14 @@ const Note: FC<Props> = ({
 
   return (
     <div
-      className={`mb-8 w-full flex flex-col justify-center items-center border border-Background_Lighter`}
+      className={`mb-8 w-full flex flex-col justify-center items-center border border-primary5 dark:border-dark_primary5`}
       style={{
         backgroundImage:
           activeLocationID === note.locationID
             ? `linear-gradient(#64748B${HEX_TRANSPARENCY.SixtyPercent}, transparent)`
             : dayOfWeek === null
             ? ""
-            : `linear-gradient(${scheduleColors[dayOfWeek]}${HEX_TRANSPARENCY.ThirtyPercent}, transparent)`,
+            : `linear-gradient(${scheduleColors[dayOfWeek]}${HEX_TRANSPARENCY.EighttyPercent}, transparent)`,
       }}
       onClick={() => handleActiveNote(note.locationID)}
       draggable={viewToggle === VIEW_TYPES.Schedule ? true : false}

@@ -1,3 +1,4 @@
+// TODO: revamp
 const Header = () => {
   return (
     <div className="w-screen h-16 flex flex-row justify-around items-center">

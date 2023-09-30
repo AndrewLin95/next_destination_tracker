@@ -89,7 +89,7 @@ const Home: NextPage = () => {
   return (
     <>
       <div className="w-screen h-screen overflow-hidden flex flex-col justify-center items-center">
-        <div className="text-green-500" />
+        <div className="text-green-500 rounded-md" />
         <div className="text-red-500" />
         <div className="text-yellow-500" />
         <div className="h-5/12 w-4/5 max-w-sm flex flex-col py-12 px-8 border border-blue-200">

@@ -1,6 +1,7 @@
 export const NUM_RESULTS_PER_PAGE = 10;
 export const MS_IN_DAY = 86400000;
 export const BASE_SCHEDULE_HEIGHT = 3; //rem
+export const MAX_NUM_OF_IMAGES = 1;
 
 export enum VERIFY_TOKEN_RESPONSE {
   NoToken = "No Token",
@@ -13,20 +14,21 @@ export enum NOTE_PRIORITY {
   High = "High"
 }
 
-export const SIMPLE_BUTTON_STYLE = "font-bold border-r-0 text-md p-0 bg-inherit hover:border-transparent focus:outline-none"
-export const FORM_SUBMIT_BUTTON = "font-bold border-r-0 text-md p-0 bg-PrimaryButton hover:border-transparent focus:outline-none"
-export const FORM_CANCEL_BUTTON = "font-bold border-r-0 text-md p-0 bg-SecondaryButton hover:border-transparent focus:outline-none"
+export const SIMPLE_BUTTON_STYLE = "font-bold text-md p-0 bg-inherit hover:border-transparent focus:outline-none dark:hover:border-transparent dark:focus:outline-none"
+export const FORM_SUBMIT_BUTTON = "font-bold text-md p-0 rounded bg-accent1 dark:bg-dark_accent1 border border-dark_accent1 dark:border-accent1 hover:border-transparent focus:outline-none dark:hover:border-transparent dark:focus:outline-none"
+export const FORM_CANCEL_BUTTON = "font-bold text-md p-0 rounded bg-primary2 dark:bg-dark_primary2 border border-dark_accent1 dark:border-accent1 hover:border-transparent focus:outline-none dark:hover:border-transparent dark:focus:outline-none"
+export const DEFAULT_BUTTON = "rounded-md py-2 px-5 border rounded-md border-dark_accent1 bg-primary3 dark:bg-dark_primary3 dark:border-accent1 hover:border-transparent focus:outline-none dark:hover:border-transparent dark:focus:outline-none"
 
 // Styling for editNoteDialog
 export enum PRIORITY_STYLE {
   Low = "pr-2 text-green-500",
   Med = "pr-2 text-yellow-500",
   High = "pr-2 text-red-500",
-  Default = "pr-2",
+  Default = "pr-2 text-dark_accent3 dark:text-accent1",
 }
 
-export const REMOVE_IMG_BTN_STYLE = "h-10 text-sm font-bold border-r-0 text-md p-0 bg-transparent hover:border-transparent focus:outline-none"
-export const UPLOAD_IMG_BTN_STYLE = "h-10 text-sm font-bold border-r-0 text-md p-0 hover:border-transparent focus:outline-none"
+export const REMOVE_IMG_BTN_STYLE = "h-10 text-sm font-bold text-md px-2 rounded bg-primary2 dark:bg-dark_primary2 bg-transparent border-dark_accent1 dark:border-accent1 hover:border-transparent focus:outline-none dark:hover:border-transparent dark:focus:outline-none"
+export const UPLOAD_IMG_BTN_STYLE = "h-10 text-sm font-bold text-md px-2 rounded bg-accent1 dark:bg-dark_accent1 border border-dark_accent1 dark:border-accent1 hover:border-transparent focus:outline-none dark:hover:border-transparent dark:focus:outline-none"
 
 export enum LABEL_COLOR {
   Mon = "Monday",
