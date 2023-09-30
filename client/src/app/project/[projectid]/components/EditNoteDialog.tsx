@@ -8,7 +8,7 @@ import {
   NOTE_PRIORITY,
   PRIORITY_STYLE,
 } from "@/util/constants";
-import { NoteData } from "@/util/models/ProjectModels";
+import { NoteData, priorityValues } from "@/util/models/ProjectModels";
 import {
   faPerson,
   faPersonWalking,
@@ -23,8 +23,6 @@ interface Props {
   setNoteDialogToggle: Dispatch<SetStateAction<Boolean>>;
   handleUpdateNotes: (newNoteData: NoteData) => void;
 }
-
-// TODO: ADD uploaded image to the preview
 
 const EditNoteDialog: FC<Props> = ({
   noteData,
@@ -44,7 +42,7 @@ const EditNoteDialog: FC<Props> = ({
   const [noteMessage, setNoteMessage] = useState<string>(
     noteData.customNote === undefined ? "" : noteData.customNote
   );
-  const [priority, setPriority] = useState<string>(noteData.priority);
+  const [priority, setPriority] = useState<priorityValues>(noteData.priority);
   const [existingImage, setExistingImage] = useState<string | undefined>(
     noteData.picture
   );
@@ -65,7 +63,7 @@ const EditNoteDialog: FC<Props> = ({
     const openHours: string = (e.target as HTMLFormElement).noteOpen.value;
     const closeHours: string = (e.target as HTMLFormElement).noteClose.value;
     const customNote: string = (e.target as HTMLFormElement).noteMessage.value;
-    const updatedPriority: string = priority;
+    const updatedPriority: priorityValues = priority;
 
     let picture: string;
     if (existingImage === "" || existingImage === undefined) {
