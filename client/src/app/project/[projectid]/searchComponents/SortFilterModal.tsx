@@ -167,7 +167,7 @@ const SortFilterModal: FC<Props> = ({
               <li>
                 <button
                   onClick={() => sortClick("name")}
-                  className="w-full flex flex-row items-center space-x-2 rounded-md text-sm border p-1 mt-2 bg-accent2/80 dark:bg-dark_accent2/60"
+                  className="w-full flex flex-row items-center space-x-2 rounded-md text-sm border p-1 mt-2 bg-accent2 border-dark_accent2 dark:bg-dark_accent2 dark:border-accent1"
                   autoFocus={sortValue === "name"}
                 >
                   <p>by Name</p>
@@ -181,7 +181,7 @@ const SortFilterModal: FC<Props> = ({
               <li>
                 <button
                   onClick={() => sortClick("date")}
-                  className="w-full flex flex-row items-center space-x-2 rounded-md text-sm border p-1 bg-accent2/80 dark:bg-dark_accent2/60"
+                  className="w-full flex flex-row items-center space-x-2 rounded-md text-sm border p-1 bg-accent2 border-dark_accent2 dark:bg-dark_accent2 dark:border-accent1"
                   autoFocus={sortValue === "date"}
                 >
                   <p>by Date</p>
@@ -195,7 +195,7 @@ const SortFilterModal: FC<Props> = ({
               <li>
                 <button
                   onClick={() => sortClick("priority")}
-                  className="w-full flex flex-row items-center space-x-2 rounded-md text-sm border p-1 bg-accent2/80 dark:bg-dark_accent2/60"
+                  className="w-full flex flex-row items-center space-x-2 rounded-md text-sm border p-1 bg-accent2 border-dark_accent2 dark:bg-dark_accent2 dark:border-accent1"
                   autoFocus={sortValue === "priority"}
                 >
                   <p>by Priority</p>
