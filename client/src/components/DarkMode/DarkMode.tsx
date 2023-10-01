@@ -19,7 +19,7 @@ const DarkModeButton = () => {
 
   return (
     <button
-      className={`${DEFAULT_BUTTON} h-10 absolute left-4 bottom-4 bg-dark_primary dark:bg-primary`}
+      className={`rounded-md py-2 px-5 border h-10 absolute left-4 bottom-4 bg-dark_primary dark:bg-primary`}
       onClick={(e) => (theme === "dark" ? setTheme("light") : setTheme("dark"))}
     >
       {theme === "dark" ? (
