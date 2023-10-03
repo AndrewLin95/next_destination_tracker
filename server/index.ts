@@ -21,6 +21,11 @@ db.once("open", () => console.log("Connected to DB!"));
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow_Origin', '*');
+  next();
+})
+
 const AuthUserSchema = require("./src/models/authUserSchema")
 
 passport.use(
