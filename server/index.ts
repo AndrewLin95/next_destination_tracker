@@ -23,15 +23,15 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Content-Type')
+  // res.header('Access-Control-Allow-Headers', 'Content-Type')
 
-  // Allow specific HTTP methods
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  // // Allow specific HTTP methods
+  // res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
 
-  // Handle preflight requests (OPTIONS requests)
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
+  // // Handle preflight requests (OPTIONS requests)
+  // if (req.method === 'OPTIONS') {
+  //   return res.status(200).end();
+  // }
 
   next();
 })
