@@ -11,7 +11,10 @@ dotenv.config();
 const app: Express = express();
 const port: string = process.env.PORT || "8080";
 
-app.use((req, res, next) => {
+const cors = require('cors');
+app.use(cors());
+
+/* app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*'); // Allow requests from any origin
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); // Allow the HTTP methods you need
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept'); // Allow the headers you need
@@ -36,7 +39,7 @@ app.use((req, res, next) => {
   // // }
 
   // next();
-})
+}) */
 
 // MongoConnection
 const mongoDBUriKey: string = process.env.MONGO_ATLAS_URI || "";
