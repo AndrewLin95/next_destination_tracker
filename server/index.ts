@@ -11,16 +11,6 @@ dotenv.config();
 const app: Express = express();
 const port: string = process.env.PORT || "8080";
 
-// MongoConnection
-const mongoDBUriKey: string = process.env.MONGO_ATLAS_URI || "";
-mongoose.connect(mongoDBUriKey);
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error'));
-db.once("open", () => console.log("Connected to DB!"));
-
-app.use(bodyParser.json({ limit: '10mb' }));
-app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
-
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*'); // Allow requests from any origin
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); // Allow the HTTP methods you need
@@ -47,6 +37,18 @@ app.use((req, res, next) => {
 
   // next();
 })
+
+// MongoConnection
+const mongoDBUriKey: string = process.env.MONGO_ATLAS_URI || "";
+mongoose.connect(mongoDBUriKey);
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error'));
+db.once("open", () => console.log("Connected to DB!"));
+
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
+
+
 
 const AuthUserSchema = require("./src/models/authUserSchema")
 
