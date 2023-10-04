@@ -53,6 +53,7 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
 
 
+
 const AuthUserSchema = require("./src/models/authUserSchema")
 
 passport.use(
