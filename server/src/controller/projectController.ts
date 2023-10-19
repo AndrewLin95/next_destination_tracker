@@ -121,6 +121,17 @@ export const setScheduleData = async (req: Request, res: Response) => {
   }
 }
 
+export const editScheduleData = async (req: Request, res: Response) => {
+  try {
+    const payload: SetSchedulePayload = req.body;
+    const responseDel = await projectService.deleteSchedule(payload.locationID, payload.projectID);
+    const responseSet = await projectService.setScheduleData(payload);
+    res.status(200).send(JSON.stringify(responseSet));
+  } catch (err) {
+    res.status(500).send(err);
+  }
+}
+
 export const deleteSchedule = async (req: Request, res: Response) => {
   try {
     const locationID: string = req.params.locationID;

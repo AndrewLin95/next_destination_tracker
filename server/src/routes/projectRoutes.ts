@@ -8,6 +8,7 @@ import {
   updateNote, 
   deleteLocation, 
   setScheduleData,
+  editScheduleData,
   deleteSchedule,
   updateScheduleSettings,
 } from '../controller/projectController';
@@ -21,7 +22,8 @@ router.get('/getprojects/:userID', getProjects)
 router.get('/geteachproject/:projectID', getEachProject)
 router.put('/updatenote', updateNote)
 router.put('/deletelocation/:projectID/:locationID', deleteLocation)
-router.post('/setscheduledata', setScheduleData)
+router.post('/setscheduledata/', setScheduleData)
+router.put('/editscheduledata/', editScheduleData)
 router.put('/deleteschedule/:projectID/:locationID', deleteSchedule)
 router.put('/updateschedulesettings', updateScheduleSettings)
 

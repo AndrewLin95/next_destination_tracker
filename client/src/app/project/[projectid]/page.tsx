@@ -37,6 +37,7 @@ import ScheduleModule from "./ScheduleModule";
 import ProjectProfileDialog from "./components/ProjectProfileDialog";
 import ScheduleSettingsDialog from "./components/ScheduleSettingsDialog";
 import SortFilterModal from "./searchComponents/SortFilterModal";
+import { is } from "date-fns/locale";
 
 interface InitResponseData {
   projectData: ProjectData;
@@ -388,6 +389,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       noteMessage: note.customNote,
       notePriority: note.priority,
       locationID: note.locationID,
+      isScheduleEdit: false,
     };
 
     e.dataTransfer.setData("application/json", JSON.stringify(dropData));
@@ -398,7 +400,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     time: string,
     date: string,
     dateUnix: number,
-    enabledOrDisabled: boolean
+    enabledOrDisabled: boolean,
   ) => {
     e.preventDefault();
     if (!enabledOrDisabled) {
@@ -415,9 +417,10 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
 
     const data = e.dataTransfer.getData("application/json");
     const parsedData: DroppedParsedData = JSON.parse(data);
+    console.log(parsedData.isScheduleEdit) ;
 
     const handlePostScheduleData = async () => {
-      const url = `/api/project/setscheduledata/`;
+      const url = parsedData.isScheduleEdit ? `/api/project/editscheduledata/` : `/api/project/setscheduledata/` ;
       const body = {
         ...parsedData,
         time: time,
@@ -429,12 +432,23 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       const authConfig = authConfigData((authState as AuthState).token);
 
       try {
-        const response = await axios.post<ScheduleDataResponse>(
+        let response;
+        if (parsedData.isScheduleEdit) {
+        response = await axios.put<ScheduleDataResponse>(
           url,
           body,
           authConfig
         );
+        } else {
+          response = await axios.post<ScheduleDataResponse>(
+            url,
+            body,
+            authConfig
+          );
+        }
+
         const scheduleResponseData = response.data;
+        console.log(scheduleResponseData);
         if (scheduleResponseData.status.statusCode === STATUS_CODES.SUCCESS) {
           const incomingLocationID =
             scheduleResponseData.locationData.locationID;

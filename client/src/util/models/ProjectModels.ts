@@ -170,6 +170,8 @@ export interface DroppedParsedData {
   noteMessage: string;
   noteName: string;
   notePriority: NOTE_PRIORITY;
+  locationID: string;
+  isScheduleEdit: boolean;
 }
 
 export interface DeleteScheduleResponse {

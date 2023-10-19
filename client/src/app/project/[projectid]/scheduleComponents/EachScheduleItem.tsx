@@ -18,6 +18,7 @@ interface Props {
   dateUnix: number;
   handleDeleteSchedule: (locationID: string) => void;
   stackedSegment: boolean;
+  handleDrag: (e: React.DragEvent<HTMLDivElement>, note: EachScheduleData) => void;
 }
 
 const EachScheduleItem: FC<Props> = ({
@@ -27,6 +28,7 @@ const EachScheduleItem: FC<Props> = ({
   dateUnix,
   handleDeleteSchedule,
   stackedSegment,
+  handleDrag,
 }) => {
   if (eachSchedule.dataSegment && eachSchedule.duration !== undefined) {
     const segmentHeight =
@@ -53,6 +55,8 @@ const EachScheduleItem: FC<Props> = ({
           backgroundImage: `linear-gradient(${scheduleColors[dayOfWeek]}${HEX_TRANSPARENCY.SeventyPercent}, transparent)`,
           textShadow: "1px 1px 2px black",
         }}
+        draggable={true}
+        onDragStart={(e) => handleDrag(e, eachSchedule)}
       >
         <div>
           <div className="flex flex-row relative">

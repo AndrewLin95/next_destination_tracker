@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import {
   EachScheduleData,
   ProjectData,
@@ -6,6 +6,8 @@ import {
 } from "@/util/models/ProjectModels";
 import EachScheduleItem from "./EachScheduleItem";
 import { getTimeInMinutes } from "../util";
+import { set } from "date-fns";
+import { is } from "date-fns/locale";
 
 interface Props {
   timeData: Map<string, string>;
@@ -15,7 +17,7 @@ interface Props {
     time: string,
     date: string,
     dateUnix: number,
-    enabledOrDisabled: boolean
+    enabledOrDisabled: boolean,
   ) => void;
   scheduleInfoData: {
     [key: string]: EachScheduleData[];
@@ -32,6 +34,20 @@ const CalendarColumns: FC<Props> = ({
   projectData,
   handleDeleteSchedule,
 }) => {
+  const [resizable, setResizable] = useState(20);
+
+  const handleDrag = (e: React.DragEvent<HTMLDivElement>, note: EachScheduleData) => {
+    const dropData = {
+      noteName: note.noteName,
+      noteMessage: note.noteMessage,
+      notePriority: note.notePriority,
+      locationID: note.locationID,
+      isScheduleEdit: true,
+    };
+  
+    e.dataTransfer.setData("application/json", JSON.stringify(dropData));
+  };
+  
   const allowDrop = (e: any) => {
     if (
       e.target.className ===
@@ -85,7 +101,7 @@ const CalendarColumns: FC<Props> = ({
                 time,
                 headerData.date,
                 headerData.dateUnix,
-                headerData.enabled
+                headerData.enabled,
               )
             }
           >
@@ -100,6 +116,7 @@ const CalendarColumns: FC<Props> = ({
                       dateUnix={headerData.dateUnix}
                       handleDeleteSchedule={handleDeleteSchedule}
                       stackedSegment={stackedSegment}
+                      handleDrag={handleDrag}
                     />
                   );
                 })

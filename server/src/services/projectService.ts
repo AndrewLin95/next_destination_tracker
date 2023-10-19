@@ -23,6 +23,7 @@ import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, URL_REGEX, SCHEDULE_SEGMENTS, MS
 import { getUnixTime, isSaturday, isSunday, nextSaturday, previousSunday } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz'
 import { generateFinalScheduleData, handleScheduleSequenceAdd, findDataSegments, handleDeleteSchedule, identifyNumOfConflicts, clearScheduleData, getTimeInMinutes } from '../utils/scheduleUtils';
+import { set } from 'mongoose';
 const ProjectSetupSchema = require('../models/projectSetupSchema');
 const ProjectLocationDataSchema = require('../models/projectLocationDataSchema');
 const ScheduleDataSchema = require('../models/scheduleDataSchema');
@@ -597,6 +598,11 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
   return statusPayload;
 }
 
+const editScheduleData = async (locationID: string, projectID: string, schedulePayload: SetSchedulePayload) => {
+  await deleteSchedule(locationID, projectID);
+  //setScheduleData(schedulePayload);
+}
+
 const deleteSchedule = async (locationID: string, projectID: string) => {
   const filter = {"locationID": locationID};
   const update = { $unset: { "mapData.scheduleDate": "", "noteData.scheduleDate": "" } };
@@ -710,6 +716,7 @@ const projectService = {
   updateNote,
   deleteLocation,
   setScheduleData,
+  editScheduleData,
   deleteSchedule,
   updateScheduleSettings,
 }
