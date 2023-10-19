@@ -1,5 +1,5 @@
 import { NoteData, ScheduleColors } from "@/util/models/ProjectModels";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import Note from "./Note";
 import { VIEW_TYPES } from "@/util/constants";
 

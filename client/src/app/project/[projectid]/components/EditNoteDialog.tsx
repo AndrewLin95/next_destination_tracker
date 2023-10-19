@@ -8,7 +8,7 @@ import {
   NOTE_PRIORITY,
   PRIORITY_STYLE,
 } from "@/util/constants";
-import { NoteData } from "@/util/models/ProjectModels";
+import { NoteData, priorityValues } from "@/util/models/ProjectModels";
 import {
   faPerson,
   faPersonWalking,
@@ -23,8 +23,6 @@ interface Props {
   setNoteDialogToggle: Dispatch<SetStateAction<Boolean>>;
   handleUpdateNotes: (newNoteData: NoteData) => void;
 }
-
-// TODO: ADD uploaded image to the preview
 
 const EditNoteDialog: FC<Props> = ({
   noteData,
@@ -44,7 +42,7 @@ const EditNoteDialog: FC<Props> = ({
   const [noteMessage, setNoteMessage] = useState<string>(
     noteData.customNote === undefined ? "" : noteData.customNote
   );
-  const [priority, setPriority] = useState<string>(noteData.priority);
+  const [priority, setPriority] = useState<priorityValues>(noteData.priority);
   const [existingImage, setExistingImage] = useState<string | undefined>(
     noteData.picture
   );
@@ -65,7 +63,7 @@ const EditNoteDialog: FC<Props> = ({
     const openHours: string = (e.target as HTMLFormElement).noteOpen.value;
     const closeHours: string = (e.target as HTMLFormElement).noteClose.value;
     const customNote: string = (e.target as HTMLFormElement).noteMessage.value;
-    const updatedPriority: string = priority;
+    const updatedPriority: priorityValues = priority;
 
     let picture: string;
     if (existingImage === "" || existingImage === undefined) {
@@ -97,8 +95,8 @@ const EditNoteDialog: FC<Props> = ({
         className="absolute h-screen w-screen bg-slate-900/40"
         onClick={() => setNoteDialogToggle(false)}
       />
-      <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[32rem] h-[22rem] bg-Background flex flex-col p-4">
-        <div className="text-xl font-bold pb-1 underline text-Accent">
+      <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[32rem] h-[22rem] flex flex-col p-4 border bg-primary border-dark_accent1 dark:bg-dark_primary dark:border-accent1">
+        <div className="text-xl font-bold pb-1 underline text-dark_accent3 dark:text-accent1">
           Edit Note
         </div>
         {/* add name prop to each input */}
@@ -109,7 +107,7 @@ const EditNoteDialog: FC<Props> = ({
               type="text"
               value={noteName}
               name="noteName"
-              className="px-2 text-sm w-[calc(100%-7rem)] bg-Background_Lighter capitalize"
+              className="px-2 text-sm w-[calc(100%-7rem)] capitalize bg-primary3 dark:bg-dark_primary3 "
               onChange={(e) => setNoteName(e.target.value)}
             />
           </div>
@@ -119,7 +117,7 @@ const EditNoteDialog: FC<Props> = ({
               type="text"
               value={noteAddress}
               name="noteAddress"
-              className="px-2 text-sm w-[calc(100%-7rem)] bg-Background_Lighter"
+              className="px-2 text-sm w-[calc(100%-7rem)] bg-primary3 dark:bg-dark_primary3"
               onChange={(e) => setNoteAddress(e.target.value)}
             />
           </div>
@@ -129,14 +127,14 @@ const EditNoteDialog: FC<Props> = ({
               type="time"
               value={noteOpen}
               name="noteOpen"
-              className="px-2 text-sm w-[calc(((100%-7rem)/2)-0.1275rem)] mr-1 bg-Background_Lighter"
+              className="px-2 text-sm w-[calc(((100%-7rem)/2)-0.1275rem)] mr-1 bg-primary3 dark:bg-dark_primary"
               onChange={(e) => setNoteOpen(e.target.value)}
             />
             <input
               type="time"
               value={noteClose}
               name="noteClose"
-              className="px-2 text-sm w-[calc(((100%-7rem)/2)-0.1275rem)] bg-Background_Lighter"
+              className="px-2 text-sm w-[calc(((100%-7rem)/2)-0.1275rem)] bg-primary3 dark:bg-dark_primary"
               onChange={(e) => setNoteClose(e.target.value)}
             />
           </div>
@@ -147,7 +145,7 @@ const EditNoteDialog: FC<Props> = ({
               value={noteMessage}
               name="noteMessage"
               placeholder="Enter a custom note"
-              className="px-2 text-sm w-[calc(100%-7rem)] resize-none overflow-y-auto bg-Background_Lighter"
+              className="px-2 text-sm w-[calc(100%-7rem)] resize-none overflow-y-auto bg-primary3 dark:bg-dark_primary"
               onChange={(e) => setNoteMessage(e.target.value)}
             />
           </div>
@@ -162,7 +160,7 @@ const EditNoteDialog: FC<Props> = ({
                   {imageList[0] ? (
                     <button
                       type="button"
-                      className={`${REMOVE_IMG_BTN_STYLE} w-[9.4rem] bg-SecondaryButton/40`}
+                      className={`${REMOVE_IMG_BTN_STYLE} w-[9.4rem]`}
                       onClick={onImageRemoveAll}
                     >
                       Remove Image:
@@ -170,7 +168,7 @@ const EditNoteDialog: FC<Props> = ({
                   ) : (
                     <button
                       type="button"
-                      className={`${UPLOAD_IMG_BTN_STYLE} w-[9.4rem] bg-Accent/40`}
+                      className={`${UPLOAD_IMG_BTN_STYLE} w-[9.4rem]`}
                       onClick={onImageUpload}
                     >
                       Upload Image:
@@ -198,7 +196,9 @@ const EditNoteDialog: FC<Props> = ({
           </div>
           <div className="flex flex-row justify-between items-center pt-1">
             <div className="flex flex-row justify-center items-center">
-              <div className="pr-2 font-bold text-Accent2">Priority:</div>
+              <div className="pr-2 font-bold text-dark_accent3 dark:text-accent1">
+                Priority:
+              </div>
               <FontAwesomeIcon
                 icon={faPerson}
                 size="lg"

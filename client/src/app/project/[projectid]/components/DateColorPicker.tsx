@@ -20,7 +20,7 @@ const DateColorPicker: FC<Props> = ({ dayOfWeek, color }) => {
       <div className="flex flex-row">
         <button
           type="button"
-          className={`${SIMPLE_BUTTON_STYLE} h-8 w-8`}
+          className={`${SIMPLE_BUTTON_STYLE} h-8 w-8 border border-dark_accent1 dark:border-accent1`}
           style={{ backgroundColor: newColor }}
           onClick={() => setTogglePicker(true)}
         />
@@ -35,8 +35,11 @@ const DateColorPicker: FC<Props> = ({ dayOfWeek, color }) => {
             className="absolute h-full w-full top-1 left-1"
             onClick={() => setTogglePicker(false)}
           />
-          <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
-            <div style={{ color: newColor }} className="bg-slate-400/90">
+          <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 border border-dark_accent1 dark:border_accent1">
+            <div
+              style={{ color: newColor }}
+              className="bg-dark_accent3/60 dark:bg-slate-800/90"
+            >
               {dayOfWeek}
             </div>
             <CompactPicker

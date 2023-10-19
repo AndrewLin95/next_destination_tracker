@@ -17,7 +17,7 @@ const HeaderTitle = () => {
           alt="Destination"
           width={144}
           height={144}
-          className="mix-blend-plus-lighter"
+          className="dark:mix-blend-plus-lighter light:bg-black"
         />
       </button>
     </div>

@@ -9,7 +9,6 @@ import {
   STATUS_CODES,
 } from "@/util/constants";
 import { FC, Dispatch, SetStateAction, useState } from "react";
-import { formatInTimeZone } from "date-fns-tz";
 import Image from "next/image";
 import { AuthState } from "@/util/models/AuthModels";
 import axios, { AxiosError, isAxiosError } from "axios";
@@ -39,14 +38,6 @@ const ProjectProfileDialog: FC<Props> = ({
     projectData.project.projectDescription
   );
 
-  // const [projectStartDate, setProjectStartDate] = useState(
-  //   formatInTimeZone(projectData.project.projectStartDate, "gmt", "yyyy-MM-dd")
-  // );
-
-  // const [projectEndDate, setProjectEndDate] = useState(
-  //   formatInTimeZone(projectData.project.projectEndDate, "gmt", "yyyy-MM-dd")
-  // );
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -54,8 +45,6 @@ const ProjectProfileDialog: FC<Props> = ({
     const projectName = (e.target as HTMLFormElement).projectName.value;
     const projectDescription = (e.target as HTMLFormElement).projectDescription
       .value;
-    // const dateStart = (e.target as HTMLFormElement).dateStart.value;
-    // const dateEnd = (e.target as HTMLFormElement).dateEnd.value;
 
     const handleUpdate = async () => {
       const url = `/api/project/updateproject`;
@@ -102,8 +91,8 @@ const ProjectProfileDialog: FC<Props> = ({
         className="absolute h-screen w-screen bg-slate-900/40"
         onClick={() => setProjectSettingsToggle(false)}
       />
-      <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[32rem] h-[18rem] bg-Background flex flex-col p-4">
-        <div className="text-xl font-bold pb-2 underline text-Accent">
+      <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[32rem] h-[18rem] flex flex-col p-4 border bg-primary border-dark_accent1 dark:bg-dark_primary dark:border-accent1">
+        <div className="text-xl font-bold pb-2 underline text-dark_accent3 dark:text-accent1">
           Edit Project Settings
         </div>
         <Image
@@ -120,7 +109,7 @@ const ProjectProfileDialog: FC<Props> = ({
               type="text"
               value={projectName}
               name="projectName"
-              className="px-2 text-sm w-[calc(100%-7rem)] bg-Background_Lighter"
+              className="px-2 text-sm w-[calc(100%-7rem)] bg-primary3 dark:bg-dark_primary3"
               onChange={(e) => setProjectName(e.target.value)}
             />
           </div>
@@ -130,7 +119,7 @@ const ProjectProfileDialog: FC<Props> = ({
               type="textarea"
               value={projectDescription}
               name="projectDescription"
-              className="px-2 text-sm w-[calc(100%-7rem)] bg-Background_Lighter"
+              className="px-2 text-sm w-[calc(100%-7rem)] bg-primary3 dark:bg-dark_primary3"
               onChange={(e) => setProjectDescription(e.target.value)}
             />
           </div>
@@ -154,13 +143,13 @@ const ProjectProfileDialog: FC<Props> = ({
           <div className="flex flex-row justify-end mt-2">
             <button
               type="submit"
-              className={`${FORM_SUBMIT_BUTTON} h-10 w-32 mr-2`}
+              className={`${FORM_SUBMIT_BUTTON} h-10 w-32 mr-2 br-1 rounded bg-accent1 dark:bg-dark_accent1`}
             >
               Submit
             </button>
             <button
               type="button"
-              className={`${FORM_CANCEL_BUTTON} h-10 w-24 bg-SecondaryButton/80`}
+              className={`${FORM_CANCEL_BUTTON} h-10 w-24 rounded bg-primary2 dark:bg-dark_primary2`}
               onClick={() => setProjectSettingsToggle(false)}
             >
               Cancel

@@ -11,7 +11,8 @@ import InLineTextButton from "@/components/InLineTextButton";
 import AuthContext from "./context/AuthContext";
 import { DecodedJWT } from "@/util/models/AuthModels";
 import { setUserProfile } from "@/util/authUtil";
-import { VERIFY_TOKEN_RESPONSE } from "@/util/constants";
+import { FORM_SUBMIT_BUTTON, VERIFY_TOKEN_RESPONSE } from "@/util/constants";
+import DarkModeButton from "@/components/DarkMode/DarkMode";
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -88,13 +89,15 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <div className="w-screen h-screen overflow-hidden flex flex-col justify-center items-center">
-        <div className="text-green-500" />
+      <div className="w-screen h-screen overflow-hidden flex flex-col justify-center items-center bg-primary text-black dark:bg-dark_primary dark:text-white">
+        <div className="text-green-500 rounded-md" />
         <div className="text-red-500" />
         <div className="text-yellow-500" />
-        <div className="h-5/12 w-4/5 max-w-sm flex flex-col py-12 px-8 border border-blue-200">
+        <div className="h-5/12 w-4/5 max-w-sm flex flex-col py-12 px-8 border bg-primary3 border-dark_accent2 dark:bg-dark_primary3 dark:border-accent2">
           {!signUpToggle ? (
-            <div className="flex justify-center text-5xl"> Welcome </div>
+            <div className="flex justify-center text-5xl text-dark_accent3 dark:text-accent1">
+              Welcome{" "}
+            </div>
           ) : (
             <div className="flex justify-center text-5xl"> Sign Up </div>
           )}
@@ -114,21 +117,21 @@ const Home: NextPage = () => {
             <div className="w-full">
               <form onSubmit={handleLogin}>
                 <input
-                  className="w-full my-2 p-2"
+                  className="w-full my-2 p-2 border rounded bg-accent1_lighter border-dark_accent1 dark:bg-dark_accent1_lighter/60 dark:border-accent1"
                   placeholder="Email"
                   type="email"
                   name="email"
                   required
                 />
                 <input
-                  className="w-full my-2 p-2"
+                  className="w-full my-2 p-2 border rounded bg-accent1_lighter border-dark_accent1 dark:bg-dark_accent1_lighter/60 dark:border-accent1"
                   placeholder="Password"
                   type="password"
                   name="password"
                   required
                 />
                 <button
-                  className="mt-2 w-full border-solid border-gray-600"
+                  className={`${FORM_SUBMIT_BUTTON} mt-2 w-full h-10`}
                   type="submit"
                 >
                   Login
@@ -147,34 +150,34 @@ const Home: NextPage = () => {
               <form onSubmit={handleSignUp}>
                 <div className="flex flex-row justify-around">
                   <input
-                    className="w-[50%] my-2 p-2 mr-2"
+                    className="w-[50%] my-2 p-2 mr-2 border rounded bg-accent1_lighter border-dark_accent1 dark:bg-dark_accent1_lighter/60 dark:border-accent1"
                     placeholder="First Name"
                     name="firstName"
                     required
                   />
                   <input
-                    className="w-[50%] my-2 p-2"
+                    className="w-[50%] my-2 p-2 border rounded bg-accent1_lighter border-dark_accent1 dark:bg-dark_accent1_lighter/60 dark:border-accent1"
                     placeholder="Last Name"
                     name="lastName"
                     required
                   />
                 </div>
                 <input
-                  className="w-full my-2 p-2"
+                  className="w-full my-2 p-2 border rounded bg-accent1_lighter border-dark_accent1 dark:bg-dark_accent1_lighter/60 dark:border-accent1"
                   placeholder="Email"
                   type="email"
                   name="email"
                   required
                 />
                 <input
-                  className="w-full my-2 p-2"
+                  className="w-full my-2 p-2 border rounded bg-accent1_lighter border-dark_accent1 dark:bg-dark_accent1_lighter/60 dark:border-accent1"
                   placeholder="Password"
                   type="password"
                   name="password"
                   required
                 />
                 <button
-                  className="mt-2 w-full border-solid border-gray-600"
+                  className={`${FORM_SUBMIT_BUTTON} mt-2 w-full h-10`}
                   type="submit"
                 >
                   Sign Up
@@ -190,6 +193,7 @@ const Home: NextPage = () => {
           )}
         </div>
       </div>
+      <DarkModeButton />
     </>
   );
 };

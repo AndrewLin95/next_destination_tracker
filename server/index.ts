@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express } from 'express';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
@@ -11,6 +11,36 @@ dotenv.config();
 const app: Express = express();
 const port: string = process.env.PORT || "8080";
 
+const cors = require('cors');
+app.use(cors());
+
+/* app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*'); // Allow requests from any origin
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); // Allow the HTTP methods you need
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept'); // Allow the headers you need
+
+  if (req.method === 'OPTIONS') {
+    // Handle preflight requests (OPTIONS method)
+    res.sendStatus(200);
+  } else {
+    // Continue processing other requests
+    next();
+  }
+
+  // res.header('Access-Control-Allow-Origin', '*');
+  // // res.header('Access-Control-Allow-Headers', 'Content-Type')
+
+  // // // Allow specific HTTP methods
+  // // res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+
+  // // // Handle preflight requests (OPTIONS requests)
+  // // if (req.method === 'OPTIONS') {
+  // //   return res.status(200).end();
+  // // }
+
+  // next();
+}) */
+
 // MongoConnection
 const mongoDBUriKey: string = process.env.MONGO_ATLAS_URI || "";
 mongoose.connect(mongoDBUriKey);
@@ -21,7 +51,10 @@ db.once("open", () => console.log("Connected to DB!"));
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
-const AuthUserSchema = require("./src/models/AuthUserSchema")
+
+
+
+const AuthUserSchema = require("./src/models/authUserSchema")
 
 passport.use(
   'login',

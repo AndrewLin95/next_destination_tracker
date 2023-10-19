@@ -19,7 +19,7 @@ const Header: FC<Props> = ({
     <div className="w-screen h-16 flex flex-row justify-between items-center">
       <HeaderTitle />
       <div className="flex flex-row items-center">
-        <div className="absolute left-1/2 transform -translate-x-1/2">
+        <div className="absolute left-1/2 transform -translate-x-1/2 text-white">
           {projectName}
         </div>
         <Image
