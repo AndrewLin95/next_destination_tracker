@@ -22,7 +22,7 @@ import { GoogleGeocodeResponse } from '../utils/googleGeocodingTypes';
 import { ERROR_CAUSE, STATUS_CODES, ERROR_DATA, URL_REGEX, SCHEDULE_SEGMENTS, MS_IN_WEEK, MS_IN_DAY, DEFAULT_SCHEDULE_COLORS, DELETE_RESPONSE, MS_IN_MINUTE } from '../utils/constants';
 import { getUnixTime, isSaturday, isSunday, nextSaturday, previousSunday } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz'
-import { generateFinalScheduleData, handleScheduleSequenceAdd, findDataSegments, handleDeleteSchedule, identifyNumOfConflicts, clearScheduleData, getTimeInMinutes } from '../utils/scheduleUtils';
+import { generateFinalScheduleData, handleScheduleSequenceAdd, findDataSegments, handleDeleteSchedule, identifyNumOfConflicts, clearScheduleData, getTimeInMinutes, checkIfConflictsExists } from '../utils/scheduleUtils';
 import { set } from 'mongoose';
 const ProjectSetupSchema = require('../models/projectSetupSchema');
 const ProjectLocationDataSchema = require('../models/projectLocationDataSchema');
@@ -517,7 +517,7 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
       numColumns: 1,
     }
 
-    // indentify conflicts
+    // identify conflicts
     const {conflictingLocationIDs, conflictingDataSegments} = identifyNumOfConflicts(schedulePayload.locationID, currTimeInMinutes, schedulePayload.date, scheduleData, schedulePayload.duration);
 
     // too many conflicts
@@ -598,9 +598,62 @@ const setScheduleData = async (schedulePayload: SetSchedulePayload) => {
   return statusPayload;
 }
 
-const editScheduleData = async (locationID: string, projectID: string, schedulePayload: SetSchedulePayload) => {
-  await deleteSchedule(locationID, projectID);
-  //setScheduleData(schedulePayload);
+const editScheduleData = async (payload: SetSchedulePayload) => {
+  try {
+    const scheduleData: ScheduleDataMongoResponse = await ScheduleDataSchema.findOne({"projectID": payload.projectID});
+    const keyData: ScheduleKeys | null = scheduleData.scheduleKeys.get(payload.locationID) ?? null;
+    
+    if (keyData) {
+      const parts = keyData.key.split(" ");
+      const date = parts.slice(0, 3).join(' ');
+      const time = parts.slice(3).join(' ');
+      const validDate = date.replace(/(\d+)(st|nd|rd|th),/, '$1,');
+      const dateUnix = new Date(validDate).getTime()
+
+      const oldPayload = {
+        time: time,
+        date: date,
+        dateUnix: dateUnix,
+        projectID: payload.projectID,
+        locationID: payload.locationID,
+        noteMessage: payload.noteMessage,
+        noteName: payload.noteName,
+        notePriority: payload.notePriority,
+        duration: keyData.duration,
+      }
+
+      const responseDel = await projectService.deleteSchedule(payload.locationID, payload.projectID);
+      //If there are schedule conflicts restore old data and throw error
+      const conflict = await checkIfConflictsExists(payload);
+      if (!conflict) {
+        const responseSet = await projectService.setScheduleData(payload);
+        return responseSet;
+      } else {
+        const responseSet = await projectService.setScheduleData(oldPayload);
+        const statusPayload: {status: StatusPayload} = {
+          status: {
+            statusCode: STATUS_CODES.BadRequest,
+            errorCause: ERROR_CAUSE.Schedule,
+            errorData: ERROR_DATA.ScheduleConflict,
+          }
+        }
+  
+        return statusPayload;
+      }
+    }
+
+  } catch (err) {
+    console.log(err);
+  }
+
+  const statusPayload: {status: StatusPayload} = {
+    status: {
+      statusCode: STATUS_CODES.ServerError,
+      errorCause: ERROR_CAUSE.Server,
+      errorData: ERROR_DATA.Server
+    }
+  }
+  return statusPayload;
 }
 
 const deleteSchedule = async (locationID: string, projectID: string) => {

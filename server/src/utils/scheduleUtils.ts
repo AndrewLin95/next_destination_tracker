@@ -1,7 +1,23 @@
 import { formatInTimeZone } from "date-fns-tz";
 import { DELETE_RESPONSE } from "./constants";
-import { DeleteScheduleResponse, EachScheduleData, HandleScheduleSequenceDeleteResponse, ScheduleDataMongoResponse, ScheduleKeys, HandleScheduleSequenceAddResponse } from "./models/ProjectModels"
+import { DeleteScheduleResponse, EachScheduleData, HandleScheduleSequenceDeleteResponse, ScheduleDataMongoResponse, ScheduleKeys, HandleScheduleSequenceAddResponse, SetSchedulePayload } from "./models/ProjectModels"
 const ScheduleDataSchema = require('../models/scheduleDataSchema')
+
+/**
+ * Check if there are any scheduling conflicts where new data is to be added.
+ * @param {SetSchedulePayload} payload - The new schedule Data to add
+ * @returns {EachScheduleData[]} - A promise that resolves to a list of EachScheduleData.
+ */
+export const checkIfConflictsExists = async (payload: SetSchedulePayload): Promise<boolean> => {
+  const projectScheduleData: ScheduleDataMongoResponse = await ScheduleDataSchema.findOne({'projectID': payload.projectID});
+  let currTimeInMinutes = getTimeInMinutes(payload.time);
+  const {conflictingLocationIDs, conflictingDataSegments} = identifyNumOfConflicts(payload.locationID, currTimeInMinutes, payload.date, projectScheduleData, payload.duration);
+  if (conflictingLocationIDs.size > 2) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 /**
  * For ADDING data to the scheduling ONLY. Recursively finds all subsequent conflicting data then returns the sorted dataset.

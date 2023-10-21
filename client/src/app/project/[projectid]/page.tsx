@@ -418,7 +418,6 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
 
     const data = e.dataTransfer.getData("application/json");
     const parsedData: DroppedParsedData = JSON.parse(data);
-    console.log(parsedData.isScheduleEdit) ;
 
     const handlePostScheduleData = async () => {
       const url = parsedData.isScheduleEdit ? `/api/project/editscheduledata/` : `/api/project/setscheduledata/` ;
