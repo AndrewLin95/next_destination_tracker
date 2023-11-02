@@ -1,4 +1,4 @@
-import { FC } from "react";
+import React, { FC, useState, useRef, useEffect } from "react";
 import { EachScheduleData, ScheduleColors } from "@/util/models/ProjectModels";
 import {
   BASE_SCHEDULE_HEIGHT,
@@ -40,6 +40,49 @@ const EachScheduleItem: FC<Props> = ({
       "iiii"
     ) as DAYS_OF_WEEK;
 
+    const [isResizing, setIsResizing] = useState(false);
+    const [dragStart, setDragStart] = useState({ y: 0 });
+    const [currentResizer, setCurrentResizer] = useState<EventTarget | null>(null);
+    const elRef = useRef<HTMLDivElement | null>(null);
+  
+    useEffect(() => {
+      const handleResizerMouseMove = (e: MouseEvent) => {
+        if (isResizing && elRef.current && currentResizer instanceof Element) {
+          if (currentResizer.classList.contains('bot')) {
+            const rect = elRef.current.getBoundingClientRect();
+            const movementY = e.clientY - dragStart.y;
+  
+            elRef.current.style.height = rect.height + movementY + 'px';
+          }
+  
+          setDragStart({ y: e.clientY });
+        }
+      };
+  
+      const handleResizerMouseUp = () => {
+        window.removeEventListener('mousemove', handleResizerMouseMove);
+        window.removeEventListener('mouseup', handleResizerMouseUp);
+        setIsResizing(false);
+        setCurrentResizer(null);
+      };
+  
+      if (isResizing) {
+        window.addEventListener('mousemove', handleResizerMouseMove);
+        window.addEventListener('mouseup', handleResizerMouseUp);
+      }
+  
+      return () => {
+        window.removeEventListener('mousemove', handleResizerMouseMove);
+        window.removeEventListener('mouseup', handleResizerMouseUp);
+      };
+    }, [isResizing, currentResizer, dragStart]);
+  
+    const handleResizerMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+      setCurrentResizer(e.currentTarget);
+      setDragStart({ y: e.clientY });
+      setIsResizing(true);
+    };
+
     return (
       <div
         className={`flex flex-col border border-dark_primary5 dark:border-primary5 justify-between`}
@@ -55,8 +98,9 @@ const EachScheduleItem: FC<Props> = ({
           backgroundImage: `linear-gradient(${scheduleColors[dayOfWeek]}${HEX_TRANSPARENCY.SeventyPercent}, transparent)`,
           textShadow: "1px 1px 2px black",
         }}
-        draggable={true}
-        onDragStart={(e) => handleDrag(e, eachSchedule)}
+        draggable={!isResizing}
+        onDragStart={(e) => {handleDrag(e, eachSchedule)}}
+        ref = {elRef}
       >
         <div>
           <div className="flex flex-row relative">
@@ -80,6 +124,7 @@ const EachScheduleItem: FC<Props> = ({
             priority={eachSchedule.notePriority}
           />
         </div>
+        <div className={`resizer bot`} onMouseDown={handleResizerMouseDown}></div>
       </div>
     );
   } else {
