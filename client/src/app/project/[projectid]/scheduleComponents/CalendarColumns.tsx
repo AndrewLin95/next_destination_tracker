@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import {
+  DroppedParsedData,
   EachScheduleData,
   ProjectData,
   ScheduleHeaderData,
@@ -24,6 +25,12 @@ interface Props {
   };
   projectData: ProjectData;
   handleDeleteSchedule: (locationID: string) => void;
+  editScheduleDuration: (
+    time: string,
+    date: string,
+    dateUnix: number,
+    data: DroppedParsedData,
+  ) => void;
 }
 
 const CalendarColumns: FC<Props> = ({
@@ -33,8 +40,8 @@ const CalendarColumns: FC<Props> = ({
   scheduleInfoData,
   projectData,
   handleDeleteSchedule,
+  editScheduleDuration,
 }) => {
-  const [resizable, setResizable] = useState(20);
 
   const handleDrag = (e: React.DragEvent<HTMLDivElement>, note: EachScheduleData) => {
     const dropData = {
@@ -43,6 +50,7 @@ const CalendarColumns: FC<Props> = ({
       notePriority: note.notePriority,
       locationID: note.locationID,
       isScheduleEdit: true,
+      duration: note.duration,
     };
   
     e.dataTransfer.setData("application/json", JSON.stringify(dropData));
@@ -113,10 +121,13 @@ const CalendarColumns: FC<Props> = ({
                       eachSchedule={data}
                       configSegments={projectData.scheduleConfig.minPerSegment}
                       scheduleColors={projectData.scheduleColors}
+                      time={time}
+                      date={headerData.date}
                       dateUnix={headerData.dateUnix}
                       handleDeleteSchedule={handleDeleteSchedule}
                       stackedSegment={stackedSegment}
                       handleDrag={handleDrag}
+                      editScheduleDuration={editScheduleDuration}
                     />
                   );
                 })
