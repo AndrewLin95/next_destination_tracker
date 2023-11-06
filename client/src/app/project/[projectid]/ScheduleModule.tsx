@@ -1,4 +1,5 @@
 import {
+  DroppedParsedData,
   ProjectData,
   ScheduleConfigData,
   ScheduleData,
@@ -22,6 +23,12 @@ interface Props {
   ) => void;
   handleDeleteSchedule: (locationID: string) => void;
   setScheduleSettingsToggle: Dispatch<SetStateAction<Boolean>>;
+  editScheduleDuration: (
+    time: string,
+    date: string,
+    dateUnix: number,
+    data: DroppedParsedData,
+  ) => void;
 }
 
 const ScheduleModule: FC<Props> = ({
@@ -31,6 +38,7 @@ const ScheduleModule: FC<Props> = ({
   handleDrop,
   handleDeleteSchedule,
   setScheduleSettingsToggle,
+  editScheduleDuration,
 }) => {
   return (
     <div className="h-full w-full">
@@ -38,7 +46,7 @@ const ScheduleModule: FC<Props> = ({
         <CalendarSettingsConfig
           setScheduleSettingsToggle={setScheduleSettingsToggle}
         />
-        {scheduleConfig.headerData.map((data, index) => {
+        {scheduleConfig.headerData.map((data) => {
           return (
             <CalendarColumnHeader
               key={data.date}
@@ -54,7 +62,7 @@ const ScheduleModule: FC<Props> = ({
           timeValueData={scheduleConfig.timeValueData}
           projectData={projectData}
         />
-        {scheduleConfig.headerData.map((data, index) => {
+        {scheduleConfig.headerData.map((data) => {
           return (
             <CalendarColumns
               key={data.date}
@@ -64,6 +72,7 @@ const ScheduleModule: FC<Props> = ({
               scheduleInfoData={scheduleData.scheduleData}
               projectData={projectData}
               handleDeleteSchedule={handleDeleteSchedule}
+              editScheduleDuration={editScheduleDuration}
             />
           );
         })}

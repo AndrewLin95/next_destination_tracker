@@ -1,11 +1,14 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import {
+  DroppedParsedData,
   EachScheduleData,
   ProjectData,
   ScheduleHeaderData,
 } from "@/util/models/ProjectModels";
 import EachScheduleItem from "./EachScheduleItem";
 import { getTimeInMinutes } from "../util";
+import { set } from "date-fns";
+import { is } from "date-fns/locale";
 
 interface Props {
   timeData: Map<string, string>;
@@ -15,13 +18,19 @@ interface Props {
     time: string,
     date: string,
     dateUnix: number,
-    enabledOrDisabled: boolean
+    enabledOrDisabled: boolean,
   ) => void;
   scheduleInfoData: {
     [key: string]: EachScheduleData[];
   };
   projectData: ProjectData;
   handleDeleteSchedule: (locationID: string) => void;
+  editScheduleDuration: (
+    time: string,
+    date: string,
+    dateUnix: number,
+    data: DroppedParsedData,
+  ) => void;
 }
 
 const CalendarColumns: FC<Props> = ({
@@ -31,7 +40,22 @@ const CalendarColumns: FC<Props> = ({
   scheduleInfoData,
   projectData,
   handleDeleteSchedule,
+  editScheduleDuration,
 }) => {
+
+  const handleDrag = (e: React.DragEvent<HTMLDivElement>, note: EachScheduleData) => {
+    const dropData = {
+      noteName: note.noteName,
+      noteMessage: note.noteMessage,
+      notePriority: note.notePriority,
+      locationID: note.locationID,
+      isScheduleEdit: true,
+      duration: note.duration,
+    };
+  
+    e.dataTransfer.setData("application/json", JSON.stringify(dropData));
+  };
+  
   const allowDrop = (e: any) => {
     if (
       e.target.className ===
@@ -85,7 +109,7 @@ const CalendarColumns: FC<Props> = ({
                 time,
                 headerData.date,
                 headerData.dateUnix,
-                headerData.enabled
+                headerData.enabled,
               )
             }
           >
@@ -97,9 +121,13 @@ const CalendarColumns: FC<Props> = ({
                       eachSchedule={data}
                       configSegments={projectData.scheduleConfig.minPerSegment}
                       scheduleColors={projectData.scheduleColors}
+                      time={time}
+                      date={headerData.date}
                       dateUnix={headerData.dateUnix}
                       handleDeleteSchedule={handleDeleteSchedule}
                       stackedSegment={stackedSegment}
+                      handleDrag={handleDrag}
+                      editScheduleDuration={editScheduleDuration}
                     />
                   );
                 })

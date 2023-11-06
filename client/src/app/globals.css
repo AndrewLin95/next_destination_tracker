@@ -44,6 +44,31 @@ h1 {
   padding: 2em;
 }
 
+/* Schedule resizer */
+.resizer {
+  width: 30px;
+  height: 8px;
+  border-radius: 5px;
+  background-color: rgb(100, 90, 90);
+  z-index: 2;
+}
+
+.bot {
+  margin-left: auto;
+  margin-right: auto;
+  bottom: -4px;
+  position: relative;
+  cursor: s-resize;
+}
+
+.top {
+  margin-left: auto;
+  margin-right: auto;
+  top: -4px;
+  position: relative;
+  cursor: n-resize;
+}
+
 /* ===== Scrollbar CSS ===== */
   /* Firefox */
   * {

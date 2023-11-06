@@ -18,10 +18,6 @@ const CalendarTimeColumn: FC<Props> = ({ timeValueData, projectData }) => {
         if (currTimeInMinutes < startTime || currTimeInMinutes > endTime) {
           return null;
         }
-
-        if (value.split(":")[1] === "30") {
-          return null;
-        }
         return (
           <div className="h-24 w-16 flex justify-center text-sm pt-1" key={key}>
             {value}

@@ -12,8 +12,12 @@ import {
   ScheduleDataMongoResponse,
   UpdateProjectPayload,
   ProjectSetupResponse,
+  ScheduleKeys,
 } from "../utils/models/ProjectModels";
 import { STATUS_CODES } from "../utils/constants";
+import { checkIfConflictsExists, getTimeInMinutes } from "../utils/scheduleUtils";
+
+const ScheduleDataSchema = require('../models/scheduleDataSchema');
 
 export const createNewProject = async (req: Request, res: Response) => {
   try {
@@ -116,6 +120,17 @@ export const setScheduleData = async (req: Request, res: Response) => {
 
     const response = await projectService.setScheduleData(payload);
     res.status(200).send(JSON.stringify(response))
+  } catch (err) {
+    res.status(500).send(err);
+  }
+}
+
+export const editScheduleData = async (req: Request, res: Response) => {
+  try {
+    const payload: SetSchedulePayload = req.body;
+    const response = await projectService.editScheduleData(payload);
+    res.status(200).send(JSON.stringify(response));
+
   } catch (err) {
     res.status(500).send(err);
   }

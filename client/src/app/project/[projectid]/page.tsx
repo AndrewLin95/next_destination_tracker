@@ -38,6 +38,7 @@ import ProjectProfileDialog from "./components/ProjectProfileDialog";
 import ScheduleSettingsDialog from "./components/ScheduleSettingsDialog";
 import SortFilterModal from "./searchComponents/SortFilterModal";
 import DarkModeButton from "@/components/DarkMode/DarkMode";
+import { is } from "date-fns/locale";
 
 interface InitResponseData {
   projectData: ProjectData;
@@ -389,6 +390,8 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
       noteMessage: note.customNote,
       notePriority: note.priority,
       locationID: note.locationID,
+      isScheduleEdit: false,
+      duration: 120,
     };
 
     e.dataTransfer.setData("application/json", JSON.stringify(dropData));
@@ -399,7 +402,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     time: string,
     date: string,
     dateUnix: number,
-    enabledOrDisabled: boolean
+    enabledOrDisabled: boolean,
   ) => {
     e.preventDefault();
     if (!enabledOrDisabled) {
@@ -417,67 +420,92 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
     const data = e.dataTransfer.getData("application/json");
     const parsedData: DroppedParsedData = JSON.parse(data);
 
-    const handlePostScheduleData = async () => {
-      const url = `/api/project/setscheduledata/`;
-      const body = {
-        ...parsedData,
-        time: time,
-        date: date,
-        dateUnix: dateUnix,
-        projectID: projectData.projectID,
-        duration: 120,
-      };
-      const authConfig = authConfigData((authState as AuthState).token);
+    handlePostScheduleData(time, date, dateUnix, parsedData);
+  };
 
-      try {
-        const response = await axios.post<ScheduleDataResponse>(
+  const editScheduleDuration = (
+    time: string,
+    date: string,
+    dateUnix: number,
+    data: DroppedParsedData,
+  ) => {
+    handlePostScheduleData(time, date, dateUnix, data);
+  };
+
+  const handlePostScheduleData = async (
+    time: string,
+    date: string,
+    dateUnix: number,
+    parsedData: DroppedParsedData
+  ) => {
+    const url = parsedData.isScheduleEdit ? `/api/project/editscheduledata/` : `/api/project/setscheduledata/` ;
+    const body = {
+      ...parsedData,
+      time: time,
+      date: date,
+      dateUnix: dateUnix,
+      projectID: projectData.projectID,
+    };
+    const authConfig = authConfigData((authState as AuthState).token);
+
+    try {
+      let response;
+      if (parsedData.isScheduleEdit) {
+      response = await axios.put<ScheduleDataResponse>(
+        url,
+        body,
+        authConfig
+      );
+      } else {
+        response = await axios.post<ScheduleDataResponse>(
           url,
           body,
           authConfig
         );
-        const scheduleResponseData = response.data;
-        if (scheduleResponseData.status.statusCode === STATUS_CODES.SUCCESS) {
-          const incomingLocationID =
-            scheduleResponseData.locationData.locationID;
-          const indexOfUpdate = noteData.findIndex(
-            (note) => note.locationID === incomingLocationID
-          );
+      }
 
-          const tempNoteData = [...noteData];
-          tempNoteData[indexOfUpdate] =
-            scheduleResponseData.locationData.noteData;
-          setNoteData(tempNoteData);
+      const scheduleResponseData = response.data;
+      console.log(scheduleResponseData);
+      if (scheduleResponseData.status.statusCode === STATUS_CODES.SUCCESS) {
+        const incomingLocationID =
+          scheduleResponseData.locationData.locationID;
+        const indexOfUpdate = noteData.findIndex(
+          (note) => note.locationID === incomingLocationID
+        );
 
-          const tempMapData = [...mapData];
-          tempMapData[indexOfUpdate] =
-            scheduleResponseData.locationData.mapData;
-          setMapData(tempMapData);
+        const tempNoteData = [...noteData];
+        tempNoteData[indexOfUpdate] =
+          scheduleResponseData.locationData.noteData;
+        setNoteData(tempNoteData);
 
-          const indexOfAllNoteDataUpdate = allLocationData.findIndex(
-            (note) => note.locationID === incomingLocationID
-          );
-          const tempAllLocationData = [...allLocationData];
-          tempAllLocationData[indexOfAllNoteDataUpdate] =
-            scheduleResponseData.locationData;
-          setAllLocationData(tempAllLocationData);
+        const tempMapData = [...mapData];
+        tempMapData[indexOfUpdate] =
+          scheduleResponseData.locationData.mapData;
+        setMapData(tempMapData);
 
-          setScheduleData(scheduleResponseData.scheduleData);
-        } else {
-          setErrorDialogData(scheduleResponseData.status);
+        const indexOfAllNoteDataUpdate = allLocationData.findIndex(
+          (note) => note.locationID === incomingLocationID
+        );
+        const tempAllLocationData = [...allLocationData];
+        tempAllLocationData[indexOfAllNoteDataUpdate] =
+          scheduleResponseData.locationData;
+        setAllLocationData(tempAllLocationData);
+
+        setScheduleData(scheduleResponseData.scheduleData);
+      } else {
+        setErrorDialogData(scheduleResponseData.status);
+        setErrorDialogToggle(true);
+      }
+    } catch (err) {
+      if (isAxiosError(err)) {
+        const responseBody: { status: StatusPayload } =
+          err.response?.data.status;
+        if (responseBody.status.statusCode === STATUS_CODES.ServerError) {
+          setErrorDialogData(responseBody.status);
           setErrorDialogToggle(true);
         }
-      } catch (err) {
-        if (isAxiosError(err)) {
-          const responseBody: { status: StatusPayload } =
-            err.response?.data.status;
-          if (responseBody.status.statusCode === STATUS_CODES.ServerError) {
-            setErrorDialogData(responseBody.status);
-            setErrorDialogToggle(true);
-          }
-        }
       }
-    };
-    handlePostScheduleData();
+    }
   };
 
   const handleDeleteSchedule = (locationID: string) => {
@@ -575,6 +603,7 @@ const ProjectPage: NextPage<Props> = ({ params }) => {
                 handleDrop={handleDrop}
                 handleDeleteSchedule={handleDeleteSchedule}
                 setScheduleSettingsToggle={setScheduleSettingsToggle}
+                editScheduleDuration={editScheduleDuration}
               />
             )}
             <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
